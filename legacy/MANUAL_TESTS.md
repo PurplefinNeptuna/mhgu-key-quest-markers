@@ -9,8 +9,9 @@ Retain the fresh emulator log before another run. Existing saves are used as-is.
 
 - **Ryujinx: full save.** Cover Village low/high, Hub low/high and G rank,
   including completed keys across the available tiers.
-- **Eden: personal progression save.** Cover currently unlocked quests and
-  menus, including incomplete keys and any completed keys already available.
+- **Eden: personal progression save, Village 2★ / Hub 1★.** Cover Village 1★
+  and 2★ plus Hub 1★, including incomplete keys and completed keys already
+  available. Higher Village/Hub tiers and G rank are outside this save's coverage.
 
 Keep each emulator's existing save. No transfer, replacement or save editing is
 needed. Higher ranks locked on Eden are an availability limit, not a failed
@@ -21,7 +22,7 @@ marker test; record that coverage as untested on Eden.
 - [ ] Game boots and an existing save loads; Forge lists Key Quest Markers as active.
 - [ ] The plugin row is small, unframed and initially closed; nested diagnostics open normally.
 - [ ] Keys in the ranks unlocked on this save show one `[KEY] ` prefix.
-- [ ] Verify representative keys: Find the Ferns / Wipe Out! (Village 1★), and Pecking Order (G1), where unlocked.
+- [ ] Verify representative Village 1★ keys: Find the Ferns / Wipe Out!, where available.
 - [ ] Ordinary, urgent and training quests have no added prefix.
 - [ ] Completed keys remain marked, and native completion/urgent icons remain correct.
 - [ ] First/last rows, scrolling and page changes preserve selection and title presentation.
@@ -35,6 +36,7 @@ marker test; record that coverage as untested on Eden.
 
 ## Full-rank coverage on Ryujinx
 
+- [ ] Verify Pecking Order (G1) as a representative G-rank key.
 - [ ] Village low/high, Hub low/high and G-rank keys show one `[KEY] ` prefix.
 - [ ] Completed keys remain marked across those categories, with native completion marks intact.
 
