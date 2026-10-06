@@ -1,5 +1,8 @@
 # Key Quest Markers r1
 
+Distribution: [READY_TO_DISTRIBUTE](DISTRIBUTION.json); governed by the
+[workspace standard](../../docs/DISTRIBUTION_STANDARD.md).
+
 Ready to distribute. Marked 2026-10-06 by the user after the scoped
 Eden/Ryujinx acceptance. The package is local and has not been published.
 
@@ -25,10 +28,11 @@ headers, existing devkitPro container and host C++ compiler. The recipe validate
 input hashes, all seven localized title inventories, the saved Kiranico match,
 host tests, native ABI and imports against actual listed Forge binaries.
 
-Output: `build/key-quest-markers/key-quest-markers-r1.zip`.
-Its sole entry is `romfs/nativeNX/plugins/key_quest_markers.nro`.
-The unpacked package is `build/key-quest-markers/package/`; the manifest,
-checksums, validation reports and checklist are beside it.
+Output: `build/key-quest-markers/releases/r1/key-quest-markers-r1.zip`.
+Its sole entry is `key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro`.
+The delivery package is `build/key-quest-markers/releases/r1/key-quest-markers/`.
+README, notices, release manifest and checksums sit beside the ZIP. Build and
+validation reports remain under `build/key-quest-markers/`.
 
 Preparation does not install, enable or launch anything. The user accepted r1
 on 2026-10-06: Eden Village 1★/2★ and Hub 1★; Ryujinx full-rank coverage.

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "mod": "key-quest-markers",
+  "status": "READY_TO_DISTRIBUTE",
+  "reason": "User approved local distribution readiness on 2026-10-06.",
+  "publication": {
+    "published": false,
+    "url": null,
+    "date": null
+  },
+  "version": "r1",
+  "package_name": "key-quest-markers",
+  "archive": "key-quest-markers-r1.zip",
+  "approval": {
+    "date": "2026-10-06",
+    "basis": "Explicit user instruction: those 3 should all be ready to distribute"
+  },
+  "target": "MHGU Nintendo Switch 1.4.0; Eden and Ryujinx with Forge.",
+  "limitations": [
+    "Higher ranks remain untested on Eden.",
+    "Language and secondary screen combinations were not individually enumerated; acceptance follows checked applicable items.",
+    "Installed-file hashes corroborate current candidate identity; logs do not embed NRO hashes."
+  ],
+  "readme": "mods/key-quest-markers/README.md",
+  "notices": [
+    "mods/key-quest-markers/THIRD_PARTY.md"
+  ],
+  "support": {},
+  "payloads": {
+    "romfs/nativeNX/plugins/key_quest_markers.nro": {
+      "source": "build/key-quest-markers/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "sha256": "bba3c51df5254d5949de929033e40c57ee7a27a88db489c33b1b5dfe902889dd"
+    }
+  },
+  "evidence": {
+    "static": [
+      "build/key-quest-markers/binary-validation.json",
+      "build/key-quest-markers/host-tests.json",
+      "build/key-quest-markers/input-validation.json"
+    ],
+    "manual": [
+      "mods/key-quest-markers/RUNTIME_RESULTS.json"
+    ],
+    "manual_summary": "User accepted Eden Village 1/2 star and Hub 1 star; Ryujinx full-rank coverage. Higher ranks not tested on Eden; languages/screens not individually enumerated.",
+    "static_summary": {
+      "native_abi_assertions": "passed",
+      "imports": "Resolved against recorded Forge inventory",
+      "input_validation": "Pinned inputs, seven localized title inventories and saved Kiranico match"
+    }
+  },
+  "dependencies": [
+    {
+      "name": "Forge loader",
+      "emulator": "Eden",
+      "sha256": "9d472d56f81f834f366171426dbd0131af19c7697e132c731c3fd3f335af53d0",
+      "scope": "Recorded import-validation inventory; activation not inferred."
+    },
+    {
+      "name": "Forge loader",
+      "emulator": "Ryujinx",
+      "sha256": "724247b3a8b4c478bf2a7966b492e7920dcc18d7f2aa2b2f9571a3ce99a5718b",
+      "scope": "Recorded import-validation inventory; activation not inferred."
+    },
+    {
+      "name": "Forge loader",
+      "emulator": "Ryujinx",
+      "sha256": "374684063adb939b389f0e4d1c8766c09e52339bfe9eaedadd4a8f44635252a7",
+      "scope": "Recorded import-validation inventory; activation not inferred."
+    }
+  ]
+}
