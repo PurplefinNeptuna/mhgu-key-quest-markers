@@ -1,6 +1,7 @@
 # Key Quest Markers r1
 
-**Ready for release.** Marked 2026-10-06 after the scoped Eden/Ryujinx acceptance.
+Ready to distribute. Marked 2026-10-06 by the user after the scoped
+Eden/Ryujinx acceptance. The package is local and has not been published.
 
 Forge plugin for MHGU Nintendo Switch 1.4.0 on Eden and Ryujinx.
 It prefixes progression key quest titles with `[KEY] `, including completed
@@ -24,7 +25,7 @@ headers, existing devkitPro container and host C++ compiler. The recipe validate
 input hashes, all seven localized title inventories, the saved Kiranico match,
 host tests, native ABI and imports against actual listed Forge binaries.
 
-Output: `build/key-quest-markers/key-quest-markers-r1-experimental.zip`.
+Output: `build/key-quest-markers/key-quest-markers-r1.zip`.
 Its sole entry is `romfs/nativeNX/plugins/key_quest_markers.nro`.
 The unpacked package is `build/key-quest-markers/package/`; the manifest,
 checksums, validation reports and checklist are beside it.
