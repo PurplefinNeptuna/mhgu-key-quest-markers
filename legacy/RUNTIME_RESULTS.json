@@ -223,5 +223,8 @@
   ],
   "binary_changed_by_recording": false,
   "installed_by_recording": false,
-  "publication_performed": false
+  "publication_performed": false,
+  "release_status": "READY_FOR_RELEASE",
+  "release_marked_date": "2026-10-06",
+  "release_marked_by": "Explicit user request: just mark it as ready for release"
 }

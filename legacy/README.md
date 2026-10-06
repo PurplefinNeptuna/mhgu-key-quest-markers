@@ -1,5 +1,7 @@
 # Key Quest Markers r1
 
+**Ready for release.** Marked 2026-10-06 after the scoped Eden/Ryujinx acceptance.
+
 Forge plugin for MHGU Nintendo Switch 1.4.0 on Eden and Ryujinx.
 It prefixes progression key quest titles with `[KEY] `, including completed
 keys. It uses the native quest-group classification by quest ID. Kiranico was
