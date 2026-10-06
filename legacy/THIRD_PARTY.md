@@ -4,8 +4,8 @@ Build: maintained Forge headers and pinned libnx/cimgui; repositories/licenses
 unchanged. Game binaries/assets and detailed research/hashes stay ignored.
 Recipe contains only short exact-build byte windows.
 
-`src/start.S` / `src/plugin.ld` reuse owned LS scaffolding. NSO/NRO
-parsers: `scripts/modern_longsword_controls.py`, `scripts/patch_better_inputs_compat.py`.
+`src/start.S` / `src/plugin.ld` use owned ARM32 plugin scaffolding. Shared
+NSO/NRO parsers: `scripts/mhgu_binary.py`.
 
 `src/svc.S` privately adapts libnx `nx/source/kernel/svc32.s`. Original allows
 MIT/Apache 2.0; this copy uses MIT. Source SHA-256: candidate manifest.
