@@ -57,7 +57,7 @@ operation. `forge/mem.h` needs an explicit C linkage wrapper for its C exports.
 
 Forge dispatches initialization before original `sApp::run`, before the quest
 menu/detail consumers begin. This installation boundary and emulator cache
-behavior need runtime acceptance. The private backend retains the existing
+behavior were exercised in the accepted user tests. The private backend retains the existing
 direct guest code-write behavior and kernel cache flush; it does not establish
 native Switch portability. Ryujinx's separate APSR issue is outside this plugin;
 the getter uses a standard function-entry hook with no displaced GE operation.
@@ -75,6 +75,29 @@ BSS. Runtime headroom is not reserved or proven by a static inventory; allocatio
 failure leaves the getter unchanged. The sole replacement path is the new
 plugin NRO. Other title-getter hooks conflict and cause initial rejection.
 
-Status: static checks are required before packaging. Eden and Ryujinx gameplay
-acceptance is **NOT RUN**. Do not label r1 compatible or release-ready until both
-[manual checklists](MANUAL_TESTS.md) pass against the exact artifact.
+## Accepted runtime coverage: 2026-10-06
+
+The user completed the [checklist](MANUAL_TESTS.md) and reported all applicable
+checks passed. Both installed NROs match staged r1 SHA-256
+`bba3c51df5254d5949de929033e40c57ee7a27a88db489c33b1b5dfe902889dd`.
+
+- Eden development `master-10bcd2d849-master`, Forge `1.4.1-originalbi1`:
+  Village 1★/2★ and Hub 1★ on the personal progression save. The log records
+  the plugin loading and `Active: progression key titles marked`.
+- Ryujinx Nextendo 1.8.12, original Forge 1.4.1: full-save Village/Hub/G-rank
+  coverage, including completed keys. The latest log records the enabled marker
+  package and MHGU 1.4.0. Forge's `level = error` setting suppresses plugin info
+  messages; marker activity and the UI checks are user-confirmed.
+
+Eden's higher ranks remain untested. Detailed language/screen combinations
+were not individually enumerated; the checked applicable items are the manual
+acceptance record. Compatibility is scoped to these builds and tested workflows.
+
+Retained logs also contain emulator messages: Eden GPU macro assertions and an
+unmapped-memory message before forced stopping; Ryujinx shader/audio/video
+errors, and a renderer disposal exception after termination in the preceding
+run. These logs do not identify a key-quest hook fault or establish causation.
+They are preserved in [RUNTIME_RESULTS.json](RUNTIME_RESULTS.json); the acceptance
+record does not claim error-free emulator logs. No plugin binary changed during
+acceptance recording, and no release publication or installation was performed
+by that recording step.

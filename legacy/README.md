@@ -1,6 +1,6 @@
 # Key Quest Markers r1
 
-Experimental Forge plugin for MHGU Nintendo Switch 1.4.0 on Eden and Ryujinx.
+Forge plugin for MHGU Nintendo Switch 1.4.0 on Eden and Ryujinx.
 It prefixes progression key quest titles with `[KEY] `, including completed
 keys. It uses the native quest-group classification by quest ID. Kiranico was
 used to verify the 118-key interpretation; the plugin needs no website access.
@@ -27,8 +27,10 @@ Its sole entry is `romfs/nativeNX/plugins/key_quest_markers.nro`.
 The unpacked package is `build/key-quest-markers/package/`; the manifest,
 checksums, validation reports and checklist are beside it.
 
-Preparation does not install, enable or launch anything. r1 requires user-run
-acceptance on both emulators. See [manual tests](MANUAL_TESTS.md) and
+Preparation does not install, enable or launch anything. The user accepted r1
+on 2026-10-06: Eden Village 1★/2★ and Hub 1★; Ryujinx full-rank coverage.
+The installed NROs match the staged candidate. See [runtime results](RUNTIME_RESULTS.json),
+[completed manual tests](MANUAL_TESTS.md) and
 [compatibility and implementation constraints](COMPATIBILITY.md).
 
 Research: [verified data and native callers](../../docs/KEY_QUEST_MARKERS_RESEARCH.md).
