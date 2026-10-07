@@ -22,7 +22,7 @@
     "Language and secondary screen combinations were not individually enumerated; acceptance follows checked applicable items.",
     "Installed-file hashes corroborate current candidate identity; logs do not embed NRO hashes."
   ],
-  "readme": "mods/key-quest-markers/README.md",
+  "readme": "mods/key-quest-markers/DISTRIBUTION_README.md",
   "notices": [
     "mods/key-quest-markers/LICENSE",
     "mods/key-quest-markers/THIRD_PARTY.md"
