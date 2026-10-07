@@ -63,13 +63,17 @@ def repack(blob, baseline, selected):
 
 
 def independent_arc(path):
+    from paths import configured
+    tool=configured('salad',MOD/'work/inputs/SaladSoftware.py')
+    pinned=json.loads((MOD/'dependencies.lock.json').read_text())['optional_verifiers']['salad_sha256']
+    require(tool.is_file() and hashlib.sha256(tool.read_bytes()).hexdigest()==pinned, 'Supply the pinned SaladSoftware verifier in build.local.json; dependency updates require revalidation')
     code = '''import importlib.util,sys,hashlib,json
 s=importlib.util.spec_from_file_location('salad',sys.argv[1]);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 a=m.MTArc();a.load(sys.argv[2])
 print(json.dumps([[f['filename_base'].split(b'\\0',1)[0].decode('ascii'),f['ext_hash'],hashlib.sha256(a.extract_file(f,sys.argv[2])).hexdigest()] for f in a.files]))
 '''
     result = subprocess.run([str(PYTHON), '-c', code,
-                             str(ROOT/'tools/saladsoftware/SaladSoftware.py'), str(path)],
+                             str(tool), str(path)],
                             check=True, capture_output=True, text=True)
     return {(name, kind): digest for name, kind, digest in json.loads(result.stdout.splitlines()[-1])}
 
@@ -77,7 +81,7 @@ print(json.dumps([[f['filename_base'].split(b'\\0',1)[0].decode('ascii'),f['ext_
 def independent_gmd(path, expected):
     # Published decoder is used ONLY to read. Its known lossy encoder is never
     # called. Prefix preservation is checked independently by byte comparison.
-    module = ROOT/'tools/gmd/node_modules/@beequeue/gmd/dist/index.js'
+    module = MOD/'vendor/gmd/index.js'
     code = '''const fs=require('node:fs');const {decodeGmd}=require(process.argv[1]);
 const g=decodeGmd(fs.readFileSync(process.argv[2]));
 console.log(JSON.stringify(g.entries.map(e=>({key:e.key??null,text:e.text}))));'''

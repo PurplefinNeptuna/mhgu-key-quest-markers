@@ -1,4 +1,6 @@
-# Key Quest Markers r1
+# Key Quest Markers r2
+
+Current cleanup release: **r2**. New host/ARM/static checks passed; no new gameplay test was run. Earlier manual reports retain their original version. See [cleanup evidence](CLEANUP_VALIDATION.json) and [development workflow](DEVELOPMENT.md).
 
 ## Build this mod
 
@@ -20,7 +22,7 @@ The author keeps all rights to owned code; third-party and font licenses remain 
 
 
 Distribution: [READY_TO_DISTRIBUTE](DISTRIBUTION.json); governed by the
-[workspace standard](../../docs/DISTRIBUTION_STANDARD.md).
+[workspace standard](docs/DISTRIBUTION_STANDARD.md).
 
 Ready to distribute. Marked 2026-10-06 by the user after the scoped
 Eden/Ryujinx acceptance. The package is local and has not been published.
@@ -34,7 +36,7 @@ The prefix follows the native quest-name getter into quest lists and details.
 Its other callers need the manual checks below. Native completion marks,
 sorting, unlock conditions, language selection and fallback remain native.
 Urgent and training categories receive no prefix. The plugin is always enabled;
-its compact Forge Plugin UI row displays status and nested diagnostics.
+it has no settings panel. Startup/failure messages use Forge logs.
 
 ## Build and package
 
@@ -47,9 +49,9 @@ headers, existing devkitPro container and host C++ compiler. The recipe validate
 input hashes, all seven localized title inventories, the saved Kiranico match,
 host tests, native ABI and imports against actual listed Forge binaries.
 
-Output: `build/key-quest-markers/releases/r1/key-quest-markers-r1.zip`.
+Output: `build/key-quest-markers/releases/r2/key-quest-markers-r2.zip`.
 Its sole entry is `key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro`.
-The delivery package is `build/key-quest-markers/releases/r1/key-quest-markers/`.
+The delivery package is `build/key-quest-markers/releases/r2/key-quest-markers/`.
 README, notices, release manifest and checksums sit beside the ZIP. Build and
 validation reports remain under `build/key-quest-markers/`.
 
@@ -59,7 +61,7 @@ The installed NROs match the staged candidate. See [runtime results](RUNTIME_RES
 [completed manual tests](MANUAL_TESTS.md) and
 [compatibility and implementation constraints](COMPATIBILITY.md).
 
-Research: [verified data and native callers](../../docs/KEY_QUEST_MARKERS_RESEARCH.md).
+Research: [verified data and native callers](docs/KEY_QUEST_MARKERS_RESEARCH.md).
 
 ## Runtime failures
 

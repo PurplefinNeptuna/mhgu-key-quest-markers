@@ -229,5 +229,11 @@
   "release_marked_by": "Explicit user request: just mark it as ready for release",
   "published": false,
   "distribution_status_date": "2026-10-06",
-  "distribution_status_basis": "Explicit user instruction: those 3 should all be ready to distribute"
+  "distribution_status_basis": "Explicit user instruction: those 3 should all be ready to distribute",
+  "current_cleanup_release": {
+    "version": "r2",
+    "nro_sha256": "7884dca6c0b59168a8e84793a00b8b9520ec1fe4e9614df0ef0d7bcde3ddbe66",
+    "manual_test": "NOT RUN",
+    "static_evidence": "CLEANUP_VALIDATION.json"
+  }
 }

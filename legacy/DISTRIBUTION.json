@@ -2,50 +2,63 @@
   "schema_version": 1,
   "mod": "key-quest-markers",
   "status": "READY_TO_DISTRIBUTE",
-  "reason": "User approved local distribution readiness on 2026-10-06.",
+  "reason": "User requested standalone development and settings-only/quiet logging cleanup of ready plugins. r2 has fresh compiled/static validation; no new gameplay run.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r1",
+  "version": "r2",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r1.zip",
+  "archive": "key-quest-markers-r2.zip",
   "approval": {
-    "date": "2026-10-06",
-    "basis": "Explicit user instruction: those 3 should all be ready to distribute"
+    "date": "2026-10-07",
+    "basis": "Explicit user instruction: implement the approved standalone/settings/logging plan and prepare local deliveries after required gates pass."
   },
   "target": "MHGU Nintendo Switch 1.4.0; Eden and Ryujinx with Forge.",
   "limitations": [
+    "r2 settings/log cleanup is statically and computationally validated; no separate Eden, Ryujinx or Switch gameplay run was performed.",
     "Higher ranks remain untested on Eden.",
     "Language and secondary screen combinations were not individually enumerated; acceptance follows checked applicable items.",
     "Installed-file hashes corroborate current candidate identity; logs do not embed NRO hashes."
   ],
   "readme": "mods/key-quest-markers/README.md",
   "notices": [
+    "mods/key-quest-markers/LICENSE",
     "mods/key-quest-markers/THIRD_PARTY.md"
   ],
-  "support": {},
+  "support": {
+    "CLEANUP_VALIDATION.json": "mods/key-quest-markers/CLEANUP_VALIDATION.json",
+    "DEVELOPMENT.md": "mods/key-quest-markers/DEVELOPMENT.md",
+    "RUNTIME_RESULTS.json": "mods/key-quest-markers/RUNTIME_RESULTS.json"
+  },
   "payloads": {
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
       "source": "build/key-quest-markers/package/romfs/nativeNX/plugins/key_quest_markers.nro",
-      "sha256": "bba3c51df5254d5949de929033e40c57ee7a27a88db489c33b1b5dfe902889dd"
+      "sha256": "7884dca6c0b59168a8e84793a00b8b9520ec1fe4e9614df0ef0d7bcde3ddbe66"
     }
   },
   "evidence": {
     "static": [
       "build/key-quest-markers/binary-validation.json",
       "build/key-quest-markers/host-tests.json",
-      "build/key-quest-markers/input-validation.json"
+      "build/key-quest-markers/input-validation.json",
+      "build/key-quest-markers/standalone-tests.json",
+      "build/key-quest-markers/runtime-policy.json"
     ],
     "manual": [
       "mods/key-quest-markers/RUNTIME_RESULTS.json"
     ],
-    "manual_summary": "User accepted Eden Village 1/2 star and Hub 1 star; Ryujinx full-rank coverage. Higher ranks not tested on Eden; languages/screens not individually enumerated.",
+    "manual_summary": "Historical r1 evidence: User accepted Eden Village 1/2 star and Hub 1 star; Ryujinx full-rank coverage. Higher ranks not tested on Eden; languages/screens not individually enumerated. r2: no new manual/gameplay test.",
     "static_summary": {
       "native_abi_assertions": "passed",
       "imports": "Resolved against recorded Forge inventory",
       "input_validation": "Pinned inputs, seven localized title inventories and saved Kiranico match"
+    },
+    "runtime_confirmation": {
+      "version": "r2",
+      "fresh_gameplay_test": false,
+      "scope": "Fresh host/ARM/static cleanup checks only; earlier runtime reports remain scoped to their original payloads."
     }
   },
   "dependencies": [

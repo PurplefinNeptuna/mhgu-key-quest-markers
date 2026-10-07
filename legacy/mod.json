@@ -2,7 +2,7 @@
   "schema_version": 1,
   "mod": "key-quest-markers",
   "kind": "plugin",
-  "version": "r1",
+  "version": "r2",
   "recipe": "key_quest_markers",
   "compiler_image": "docker.io/devkitpro/devkita64@sha256:1fc388c3a0d34bd2045a6dadcb1020e069d5f876a187fd705de14b4440c00282"
 }

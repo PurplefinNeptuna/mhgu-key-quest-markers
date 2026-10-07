@@ -29,3 +29,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Optional independent GMD readback uses @beequeue/gmd 0.2.0 with bundled binary-util 1.1.1, both MIT; licenses accompany vendor/gmd and vendor/binary-util. SaladSoftware is an explicitly supplied ARC verification tool; it is not exported because redistribution terms were not recorded.

@@ -113,7 +113,6 @@ bool runtime_install() {
             installed == InstallResult::CleanupFailure ?
             "Inactive: cleanup failed; arena retained; restart" :
             "Inactive: hook preparation failed");
-        forge_log_warn("[key-quest-markers] Installation result: %u", unsigned(installed));
         return false;
     }
     __atomic_store_n(&enabled, 1u, __ATOMIC_RELEASE);
@@ -129,7 +128,7 @@ void runtime_update() {
     if (!own) {
         __atomic_store_n(&enabled, 0u, __ATOMIC_RELEASE);
         set_status("ERROR: quest-title hook changed; restart required");
-        forge_log_warn("[key-quest-markers] External hook change; markers disabled; arena retained");
+        forge_log_warn("[key-quest-markers] External hook change; markers disabled; remove the conflicting patch and restart");
     }
 }
 bool runtime_active() { return __atomic_load_n(&enabled, __ATOMIC_ACQUIRE) != 0; }

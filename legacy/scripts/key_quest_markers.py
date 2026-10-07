@@ -122,7 +122,12 @@ def snapshot():
 def prepare():
     image, _ = prior.main_image(MAIN.read_bytes())
     quests, groups = research.local_inventory(WORK / 'inputs')
-    comparison = research.compare(quests, WORK / 'research/kiranico-quest.html')
+    pinned=json.loads((RECIPE/'research/quest-baseline.json').read_text())
+    if sorted({q['id'] for q in quests if q['key']})!=pinned['key_ids']:raise ValueError('Quest classification differs from verified r1 reference facts')
+    comparison={'key_count':len(pinned['key_ids']),'html_sha256':pinned['kiranico_html_sha256']}
+    _,common=research.read_arc(WORK/'inputs/loc/arc/village/common.arc')
+    group=common[("quest\\quest_group",0x61CF79AF)]['data']
+    (WORK/'research').mkdir(exist_ok=True);(WORK/'research/quest_group.qsg').write_bytes(group)
     if comparison['key_count'] != 118 or groups['count'] != 1509:
         raise ValueError('Verified quest inventory changed')
     maxima, counts = {}, Counter()
@@ -230,7 +235,7 @@ arm-none-eabi-readelf -aW /output/plugin.elf > /output/readelf.txt
 arm-none-eabi-objdump -d /output/plugin.elf > /output/disassembly.txt
 '''
     args = ['podman', '--root', CONTAINER_STORAGE, '--runroot',
-            f'/tmp/mhgu-forge-container-{os.getuid()}', '--storage-driver', 'vfs', 'run', '--rm',
+            f'/tmp/mhgu-forge-container-{os.getuid()}', '--storage-driver', 'vfs', 'run', '--pull=never', '--rm',
             '--network=none', '-v', f'{MOD}:/mod:ro', '-v', f'{ROOT}:/workspace:ro', '-v', f'{native}:/output:rw',
             prior.IMAGE, 'bash', '-lc', command.replace('{diagnostics}', os.environ.get('MHGU_DIAGNOSTICS', '0'))]
     result = subprocess.run(list(map(str, args)), capture_output=True, text=True)
@@ -269,7 +274,7 @@ arm-none-eabi-objdump -d /output/plugin.elf > /output/disassembly.txt
     target = package / 'romfs/nativeNX/plugins/key_quest_markers.nro'
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_bytes(payload)
-    archive = OUT / 'candidates/key-quest-markers-r1-experimental.zip'
+    archive = OUT / 'candidates/key-quest-markers-r2-experimental.zip'
     archive.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         entry = zipfile.ZipInfo(str(target.relative_to(package)), (1980, 1, 1, 0, 0, 0))
@@ -287,7 +292,7 @@ arm-none-eabi-objdump -d /output/plugin.elf > /output/disassembly.txt
         SCRIPTS / 'key_quest_research.py', SCRIPTS / 'mhgu_binary.py',
         SCRIPTS / 'mhgu_assets.py']
     status = 'USER_ACCEPTED' if acceptance else 'EXPERIMENTAL_STATIC_VALIDATED_RUNTIME_NOT_RUN'
-    manifest = {'revision': 'r1', 'status': status, 'published': False,
+    manifest = {'revision': 'r2', 'status': status, 'published': False,
                 'distribution_status_date': acceptance.get('distribution_status_date') if acceptance else None,
                 'distribution_status_basis': acceptance.get('distribution_status_basis') if acceptance else None,
                 'installed_by_recipe': False, 'title_slot_bytes': validation['title_slot_bytes'],

@@ -54,7 +54,7 @@ def quest_title(data):
 def local_inventory(inputs):
     provenance = json.loads((inputs / "provenance.json").read_text())
     for item in provenance:
-        path = Path(item["copy"])
+        path = inputs/item["copy"]
         require(path.resolve().is_relative_to(inputs.resolve()), "Copy outside input directory")
         require(hashlib.sha256(path.read_bytes()).hexdigest() == item["sha256"],
                 f"Copied input changed: {path}")

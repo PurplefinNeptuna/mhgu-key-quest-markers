@@ -1,0 +1,21 @@
+{
+  "version": "r2",
+  "prior_version": "r1",
+  "nro_sha256": "7884dca6c0b59168a8e84793a00b8b9520ec1fe4e9614df0ef0d7bcde3ddbe66",
+  "runtime_test": "NOT RUN",
+  "manual_evidence_scope": "Earlier reports apply only to their recorded payload/version. PDB r14 marker confirmed on Eden; r15 cleanup had static checks without a separate gameplay retest.",
+  "layout_checkpoint": "18ccbdc",
+  "source_base_commit": "7371ddc3b99ee6ac970397cc78ecb9d2c9c69904",
+  "panels": "Settings and save/reset feedback only; settings-free plugins have no panel.",
+  "logging": "One startup summary; committed preferences/availability changes and actionable fixed-reason failures; no normal hit/camera/geometry/counter logs.",
+  "formatter": "Forge fixed buffer bounded; integer/string ARM32 arguments tested in compiled fixtures; hot hooks call no formatter.",
+  "failure_deduplication": "Process-lifetime masks, distinct IDs and concurrent races checked.",
+  "overlays": "Damage numbers and gold reward markers continue with settings closed, covered by compiled fixtures.",
+  "isolated_export": "Same NRO bytes with only exported source snapshots and explicitly copied inputs; no parent Git, sibling tooling or installed emulator source needed.",
+  "prior_release": {
+    "archive": "key-quest-markers-r1.zip",
+    "nro_sha256": "bba3c51df5254d5949de929033e40c57ee7a27a88db489c33b1b5dfe902889dd"
+  },
+  "forge_renderer": "Disclosed and unchanged",
+  "publication": "Local only; no install, activation, publication or push."
+}
