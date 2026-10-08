@@ -80,5 +80,32 @@
       "sha256": "374684063adb939b389f0e4d1c8766c09e52339bfe9eaedadd4a8f44635252a7",
       "scope": "Recorded import-validation inventory; activation not inferred."
     }
-  ]
+  ],
+  "gamebanana": {
+    "ai_code": {
+      "used": true,
+      "software": [
+        {
+          "name": "OpenAI Codex",
+          "url": "https://openai.com/codex/"
+        }
+      ],
+      "scope": "writing, modifying and debugging this mod's code."
+    },
+    "ai_assets": [],
+    "credits": [
+      {
+        "name": "Forge",
+        "author": "Jeffi",
+        "url": "https://github.com/jeffi6375/forge",
+        "scope": "Plugin loading and rendering."
+      },
+      {
+        "name": "libnx",
+        "author": "Hydrosphere Developers",
+        "url": "https://github.com/switchbrew/libnx",
+        "scope": "MIT-licensed ARM32 system-call code."
+      }
+    ]
+  }
 }
