@@ -25,7 +25,7 @@
   "readme": "mods/key-quest-markers/DISTRIBUTION_README.md",
   "notices": [
     "mods/key-quest-markers/LICENSE",
-    "mods/key-quest-markers/THIRD_PARTY.md"
+    "mods/key-quest-markers/DISTRIBUTION_NOTICES.md"
   ],
   "support": {
     "CLEANUP_VALIDATION.json": "mods/key-quest-markers/CLEANUP_VALIDATION.json",
