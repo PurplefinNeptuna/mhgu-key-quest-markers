@@ -53,7 +53,9 @@ Output: `build/key-quest-markers/releases/r2/key-quest-markers-r2.zip`.
 Its sole entry is `key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro`.
 The delivery package is `build/key-quest-markers/releases/r2/key-quest-markers/`.
 The ZIP contains `README.md` beside the `key-quest-markers/` runtime folder.
-The same README, notices, release manifest and checksums sit beside the ZIP. Build and
+The same README, notices, release manifest and checksums sit beside the ZIP.
+The adjacent `NOTICES.html` is a notices-only HTML alternative formatted for
+GameBanana. Notices remain outside the ZIP. Build and
 validation reports remain under `build/key-quest-markers/`.
 
 Preparation does not install, enable or launch anything. The user accepted r1
