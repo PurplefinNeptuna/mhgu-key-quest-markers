@@ -1,75 +1,28 @@
-# Key Quest Markers r2
+# Key Quest Markers
 
-Current cleanup release: **r2**. New host/ARM/static checks passed; no new gameplay test was run. Earlier manual reports retain their original version. See [cleanup evidence](CLEANUP_VALIDATION.json) and [development workflow](DEVELOPMENT.md).
+Prefixes progression key quest titles with `[KEY] ` using the native quest-group
+classification. Completed keys remain marked; urgent and training categories
+retain their native titles. The plugin has no settings panel.
 
-## Build this mod
+Current local release: **r2**, READY_TO_DISTRIBUTE and unpublished.
+[Installation and settings](DISTRIBUTION_README.md); [status and payload hashes](DISTRIBUTION.json).
 
-Run `./build.sh doctor`, `./build.sh prepare`, `./build.sh build`,
-`./build.sh test --host`, `./build.sh test`, `./build.sh verify`, and
-`./build.sh package` from this folder. The entry point also works from any other
-current directory. `package --release` requires the approved payload and full
-validation. `build --diagnostics` produces a development build only.
+## Development and evidence
 
-Dependencies are pinned in `dependencies.lock.json`; Python requirements are
-pinned in `requirements.txt`. Downloads occur only with `prepare --fetch`.
-Copy `build.local.example.json` to ignored `build.local.json` and configure
-copies of your MHGU 1.4.0 main/SDK, Forge loader, and required resource inputs.
-No installed emulator package or emulator settings file is needed.
-
-The coordinating workspace retains root `build/` and `work/` outputs. An
-independent checkout uses its own ignored `build/` and `work/` directories.
-The author keeps all rights to owned code; third-party and font licenses remain separate.
+Use [DEVELOPMENT.md](DEVELOPMENT.md) for pinned inputs, build/test/package/export
+commands. [Runtime evidence](RUNTIME_RESULTS.json) retains the version and limits of user
+reports. [THIRD_PARTY.md](THIRD_PARTY.md) records development provenance;
+[DISTRIBUTION_NOTICES.md](DISTRIBUTION_NOTICES.md) supplies release credits.
 
 
-Distribution: [READY_TO_DISTRIBUTE](DISTRIBUTION.json); governed by the
-[workspace standard](docs/DISTRIBUTION_STANDARD.md).
+R2 has host/ARM/static cleanup evidence and no new gameplay run.
+[CLEANUP_VALIDATION.json](CLEANUP_VALIDATION.json) records the checks.
+Prior r1 acceptance covers Eden Village 1/2-star and Hub 1-star on the
+progression save, and Ryujinx full-rank coverage. Higher ranks on Eden and
+individual language/screen combinations were not all enumerated.
 
-Ready to distribute. Marked 2026-10-06 by the user after the scoped
-Eden/Ryujinx acceptance. The package is local and has not been published.
-
-Forge plugin for MHGU Nintendo Switch 1.4.0 on Eden and Ryujinx.
-It prefixes progression key quest titles with `[KEY] `, including completed
-keys. It uses the native quest-group classification by quest ID. Kiranico was
-used to verify the 118-key interpretation; the plugin needs no website access.
-
-The prefix follows the native quest-name getter into quest lists and details.
-Its other callers need the manual checks below. Native completion marks,
-sorting, unlock conditions, language selection and fallback remain native.
-Urgent and training categories receive no prefix. The plugin is always enabled;
-it has no settings panel. Startup/failure messages use Forge logs.
-
-## Build and package
-
-```bash
-python3 scripts/key_quest_markers.py all
-```
-
-Requires the preserved executable/quest research inputs, pinned local Forge
-headers, existing devkitPro container and host C++ compiler. The recipe validates
-input hashes, all seven localized title inventories, the saved Kiranico match,
-host tests, native ABI and imports against actual listed Forge binaries.
-
-Output: `build/key-quest-markers/releases/r2/key-quest-markers-r2.zip`.
-Its sole entry is `key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro`.
-The delivery package is `build/key-quest-markers/releases/r2/key-quest-markers/`.
-The ZIP contains `README.md` beside the `key-quest-markers/` runtime folder.
-The same README, notices, release manifest and checksums sit beside the ZIP.
-The adjacent `NOTICES.html` is a notices-only HTML alternative formatted for
-GameBanana. Notices remain outside the ZIP. Build and
-validation reports remain under `build/key-quest-markers/`.
-
-Preparation does not install, enable or launch anything. The user accepted r1
-on 2026-10-06: Eden Village 1★/2★ and Hub 1★; Ryujinx full-rank coverage.
-The installed NROs match the staged candidate. See [runtime results](RUNTIME_RESULTS.json),
-[completed manual tests](MANUAL_TESTS.md) and
-[compatibility and implementation constraints](COMPATIBILITY.md).
-
-Research: [verified data and native callers](docs/KEY_QUEST_MARKERS_RESEARCH.md).
-
-## Runtime failures
-
-An unsupported build or a pre-existing patch of the getter leaves the plugin
-inactive. Missing quest data, unknown/conflicting IDs, an unreadable or oversized
-title, cache contention or full storage returns the original title. There is no
-save/config writer. Restart the game after package changes; hot unloading is
-unsupported because native UI retains title pointers.
+Technical references: [native research](RESEARCH.md),
+[compatibility and storage constraints](COMPATIBILITY.md),
+[runtime results](RUNTIME_RESULTS.json) and [manual tests](MANUAL_TESTS.md).
+Missing/unsupported data returns the original title. Native UI retains title
+pointers, so hot unloading is unsupported.
