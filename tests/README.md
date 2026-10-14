@@ -1,26 +1,23 @@
 # Fixtures
 
-`core` tests cover all badge states, obsolete unfinished keys, completed keys,
-satisfied alternatives, simultaneous urgents, unresolved/conflicting metadata,
-viewing without completing, exact colors and stateless row reuse. They consume
-explicit policy facts and do not infer native progression semantics.
+Core policy fixtures cover all badge states, alternatives, obsolete unfinished
+keys, simultaneous urgents, viewing versus completing and conflicting records.
+The hook harness executes production ownership-aware rollback with Forge doubles.
 
-The hook harness includes the production installer/rollback with a byte-backed
-Forge double. It checks unsupported-code rejection and that original/partial/owned redirects
-restore, foreign modifications survive and disabled Patch Drop does not write.
+`resource.py` only reads the copied native GUI/atlas layout and rejects corrupt
+bounds. It checks that no ARC is staged. The fifteen original row sequences and
+twelve-object index layout are inputs, and remain unchanged at runtime.
 
-`resource.py` exercises unsupported/truncated inputs and bounds, all 15 row
-sequences, old bindings, atlas references and every unrelated archive resource.
-`arm.py` executes the compiled seven-argument pass-through detour and actual
-1.5.0 handshake, checks callee-saved state with clobbering doubles in all 16 GE
-patterns, compiles native Hook declarations, and records direct caller windows.
+`arm.py` runs the compiled seven-argument pass-through callback in all sixteen GE
+patterns, checks callee-saved state, named 70-byte metadata with canaries, the
+1.5.0 request and native Hook declarations, and retains caller continuation code.
 
-`native_adapter.py` runs the compiled parent/row callbacks in Unicorn with
-native-shaped memory and native query/setter doubles. It checks real red/grey/
-yellow decisions, offered versus inactive urgents, flags, prerequisites, actual
-completion versus new indicators, mismatched GUI objects, invalid context and
-row reuse. It also checks that original calls precede setters, TLS frames restore,
-the stack balances and game input records stay unchanged.
+`native_adapter.py` runs the compiled parent/row/GUI adapter with native-shaped
+memory, MT constructor/query doubles and real game ARM draw-list/destructor code.
+Its twenty-one cases cover states, progression evidence, both holder tables, missing
+context, bad objects, object/cache allocation failure and repeated insertion.
+It checks colors, pose/size, unchanged index arrays and saved records, actual native
+draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
 
-Neither host fixtures nor Unicorn executes live Forge or renders the game GUI.
-Manual acceptance is tracked separately in the native audit.
+The GPU commands are doubles. No fixture launches Forge or establishes actual
+in-game pixels, clipping or gameplay acceptance.

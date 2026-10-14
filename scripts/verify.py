@@ -31,7 +31,7 @@ def verify():
         offset=int(offset,16);expected=ast.literal_eval('['+raw+']')
         if image[offset:offset+32]!=bytes(expected):raise ValueError('Signature mismatch: '+hex(offset))
         windows.append(hex(offset))
-    if len(windows)!=17:raise ValueError('Supporting signature windows missing')
+    if len(windows)!=36:raise ValueError('Supporting signature windows missing')
     assert image[0x616cb0:0x616cb8]==bytes.fromhex('f04f2de904d04de2')
     if 'kqm_verified_contract' in names:raise ValueError('Inactive release gate remains in production')
     disasm=subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-objdump','-d',elf],text=True)
@@ -39,16 +39,16 @@ def verify():
     if writes:raise ValueError('Unexpected processor status writes: '+str(writes))
     if imports&{'igBegin','igTreeNode_Str','forge_graphics_getContext','forge_config_create'}:
         raise ValueError('Unrequested settings/overlay dependency')
-    expected={'romfs/nativeNX/plugins/key_quest_markers_rs.nro','romfs/nativeNX/eng/arc/village/common_eng.arc'}
+    expected={'romfs/nativeNX/plugins/key_quest_markers_rs.nro'}
     source=BUILD_ROOT/'package';actual={str(p.relative_to(source)) for p in source.rglob('*') if p.is_file()}
     if actual!=expected:raise ValueError('Unexpected runtime payload files')
     resources=json.loads((BUILD_ROOT/'resource.json').read_text())
-    if digest(source/'romfs/nativeNX/eng/arc/village/common_eng.arc')!=resources['archive_sha256']:
-        raise ValueError('Resource receipt differs')
+    if resources['archive_replacements']!=0:
+        raise ValueError('Unexpected archive replacement')
     record('verify.json',{'status':'PASSED','nro_sha256':digest(nro_path),'elf_sha256':digest(elf),
         'exports':sorted(exports),'strong_imports':sorted(imports),'signature_windows':windows,'hook_abi_bytes':24,
         'ordinary_hook_slots':2,'forge_trampoline_bytes':32,'forge_pool_chunk_bytes':16384,
         'compiled_status_writes':writes,'runtime_active':True,
-        'gui_attachment':'Checked at each native callback','progression_semantics':'Native stages, alternatives and offered urgent IDs','runtime_test':'NOT RUN'})
+        'gui_attachment':'Game-owned native children and expanded draw caches','progression_semantics':'Native stages, alternatives and offered urgent IDs','runtime_test':'NOT RUN'})
     print('PASS: native imports/signatures, Hook ABI compilation, active callback path and payload inventory')
 if __name__=='__main__':verify()

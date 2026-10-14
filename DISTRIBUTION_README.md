@@ -1,8 +1,7 @@
-# Native Quest Badges — Rust r2 candidate
+# Native Quest Badges — Rust r3 candidate
 
-**Active DEVELOPMENT build.** Adds Rise-style quest badges to English HD MHGU
-1.4.0 on Nintendo Switch emulators Eden/Ryujinx. Requires a compatible Forge
-1.5.0 loader with its 24-byte Hook ABI; older loaders are rejected.
+**Active DEVELOPMENT build.** Adds Rise-style native badges to English HD MHGU
+1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching 24-byte Hook ABI.
 
 ## Badges
 
@@ -14,43 +13,46 @@
 | Completed, old or inactive urgent | Grey |
 | Ordinary or unresolved quest | Hidden |
 
-Badges are 24×24, left of the existing quest row with a four-pixel gap. They reuse
-the HD lobby emblem directly. No separate emblem file, replacement atlas,
-settings, config, overlay, header counter or progression changes are included.
+The 24×24 badges sit left of the existing rows with a four-pixel gap. New native
+GUI children reuse the already-loaded HD lobby emblem. The package replaces no
+ARC or atlas and contains no separate image, overlay, settings, counter or
+progression changes. The game draws the badges and releases them with the menu.
 
 ## Installation
 
-The ZIP contains this guide and the `key-quest-markers-rs` runtime folder:
+Close the game first. Back up and disable/remove the old Rust badge candidate
+folder as a whole; do not copy r3 over it and leave its old `common_eng.arc` behind.
+Keep that backup outside the emulator's enabled mod directory.
 
-- `romfs/nativeNX/plugins/key_quest_markers_rs.nro`
-- `romfs/nativeNX/eng/arc/village/common_eng.arc`
+Extract the ZIP and put its `key-quest-markers-rs` folder in the emulator's MHGU mod
+location beside Forge and the English HD Project, then enable it. The runtime
+folder contains only:
 
-Close the game before changing packages. Back up an existing candidate and place
-the named folder in the emulator's MHGU mod directory beside the compatible
-Forge and English HD packages, then enable it in the emulator's mod controls.
-Replace the old r1 candidate if present; it intentionally did not display badges.
-This ZIP does not include or upgrade Forge. On Ryujinx, confirm the loader version
-rather than assuming a compatible loader is installed.
+```text
+romfs/nativeNX/plugins/key_quest_markers_rs.nro
+```
 
-Disable the original Key Quest Markers prefix plugin during use. `[KEY]` should
-disappear from list and detail titles; this plugin does not rewrite quest names.
-Keep the original package so it can be restored.
+Keep the HD Project enabled. Disable the original Key Quest Markers prefix plugin
+so `[KEY]` disappears from list/detail titles. Only one Rust badge candidate should
+be enabled. The ZIP does not include or replace Forge; confirm Ryujinx's loader is
+also 1.5.0 before testing.
 
-The replacement English common archive retains its selected HD resources and
-adds the badge object to the native row animation. Other languages are untouched.
-Another mod replacing this same archive needs a deliberate resource merge; file
-ordering alone cannot combine changes. To remove this candidate, close the game,
-disable/remove its folder and restore your previous packages as desired.
+Forge's Loaded Plugins list should show **Native Quest Badges r3**. There is no
+Plugin UI settings panel. Earlier forge-rs entries omitted the name, so a loaded
+plugin could be missing from that list. This candidate reports actual initialization
+or GUI failures once at ERROR level, without requiring a loader config change.
+
+To remove it, close the game and disable/remove its folder. Restore previous
+packages from your backups if desired. No saves or game archives need changing.
 
 ## Validation limits
 
-Host fixtures, compiled ARM callbacks, seven-argument forwarding, native imports,
-archive readback and all 15 row bindings pass automated checks. The active callback
-fixtures reach the native visibility/color setters for red, grey and yellow states.
-These checks do not render the game UI or establish gameplay compatibility.
+Host policy/rollback checks, ARM argument forwarding and named registration,
+native imports, runtime GUI insertion, allocation failure cleanup, unchanged
+lookup arrays, and native draw-list/destructor execution pass automated fixtures.
+These checks do not establish actual in-game pixels or gameplay acceptance.
 
-English HD trials on Eden and Ryujinx remain pending: Village/Hub/G-rank,
+Manual English HD acceptance remains pending on Eden and Ryujinx: Village/Hub/G,
 scrolling, selection, confirmation, reopening, quest return and progression
-advancement. Check badge size, clipping and colors. If badges are hidden by a
-runtime validation failure, Forge logs a deduplicated reason. This is a development
-candidate; keep rollback packages available during testing.
+advancement. Check badge placement, clipping, size and colors. Keep rollback
+packages available while testing this development build.

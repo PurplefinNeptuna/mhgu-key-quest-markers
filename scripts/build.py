@@ -4,13 +4,11 @@ import argparse, hashlib, json, os, shutil, subprocess, sys, zipfile, zlib
 from html import escape
 from pathlib import Path
 from paths import MOD, ROOT, CONFIG, BUILD_ROOT, WORK_ROOT, CARGO_TARGET, PYTHON, input_path
-from gui_badge import extend, verify as verify_gui
-from mhgu_assets import read_arc, repack
 
 def digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def source_hashes():
     """Tie receipts to the exact owned executable/resource recipe inputs."""
-    files=['Cargo.toml','Cargo.lock','.cargo/config.toml','armv7a-none-eabi.json','build.rs','scripts/gui_badge.py']
+    files=['Cargo.toml','Cargo.lock','.cargo/config.toml','armv7a-none-eabi.json','build.rs','scripts/gui_layout.py']
     files += [str(p.relative_to(MOD)) for folder in ['src','core/src','link']
               for p in sorted((MOD/folder).rglob('*')) if p.is_file()]
     return {n:digest(MOD/n) for n in files}
@@ -49,27 +47,11 @@ def doctor():
 
 def prepare():
     doctor()
-    source=input_path('common_eng.arc');blob,entries=read_arc(source)
-    keys=[k for k in entries if k[0]=='eng\\GUI\\05_meeting_p\\count\\counter']
-    if len(keys)!=1: raise ValueError('Missing/ambiguous counter GUI')
-    key=keys[0];patched=extend(entries[key]['data'])
-    selected={k:('HD',e) for k,e in entries.items()}
-    replacement=dict(entries[key]);replacement.update(data=patched,packed=zlib.compress(patched,9))
-    selected[key]=('native-badge',replacement)
-    result=repack(blob,entries,selected)
-    target=BUILD_ROOT/'package/romfs/nativeNX/eng/arc/village/common_eng.arc'
-    target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(result)
-    _,again=read_arc(target)
-    if again.keys()!=entries.keys(): raise ValueError('ARC resource inventory changed')
-    verify_gui(entries[key]['data'],again[key]['data'])
-    for k in entries:
-        if k!=key and (entries[k]['data']!=again[k]['data'] or entries[k]['packed']!=again[k]['packed']):
-            raise ValueError('Unrelated resource changed: '+str(k))
-    record('resource.json',{'status':'PASSED','source_sha256':digest(source),'archive_sha256':digest(target),
-           'gui_sha256':hashlib.sha256(patched).hexdigest(),'resource':list(key),'resources':len(entries),
-           'changed_resources':1,'old_gui_bytes':len(entries[key]['data']),'new_gui_bytes':len(patched),
-           'existing_row_sequences':15,'badge_slot':12,'badge_id':21,'texture_id':22,
-           'new_atlas':False,'vertex_buffer_preserved':True,'attachment_runtime':'NOT VERIFIED'})
+    # The runtime constructs native children. The copied HD archive is only a
+    # layout fixture; it is never modified or included in the runtime package.
+    from gui_layout import inspect
+    info=inspect(input_path('common_eng.arc'))
+    record('resource.json',info)
 
 def build():
     prepare();env,_=environment();lock=digest(MOD/'Cargo.lock')
@@ -96,26 +78,26 @@ def test():
     run([arm_python,MOD/'tests/arm.py'])
     run([arm_python,MOD/'tests/native_adapter.py'])
     verify();record('tests.json',{'status':'PASSED','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'),
-                     'resource_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/eng/arc/village/common_eng.arc'),
+                     'archive_replacements':0,
                      'host':True,'resource':True,'arm':True,'runtime_test':'NOT RUN'})
 def verify(): run([PYTHON,MOD/'scripts/verify.py'])
 def package():
     verify();source=BUILD_ROOT/'package';nro=source/'romfs/nativeNX/plugins/key_quest_markers_rs.nro'
     test_record=json.loads((BUILD_ROOT/'tests.json').read_text())
-    if test_record['status']!='PASSED' or test_record['nro_sha256']!=digest(nro) or test_record.get('resource_sha256')!=digest(source/'romfs/nativeNX/eng/arc/village/common_eng.arc'): raise ValueError('Test this exact build first')
+    if test_record['status']!='PASSED' or test_record['nro_sha256']!=digest(nro) or test_record.get('archive_replacements')!=0: raise ValueError('Test this exact build first')
     dest=BUILD_ROOT/'delivery';dest.mkdir(parents=True,exist_ok=True)
     payloads={str(p.relative_to(source)):digest(p) for p in source.rglob('*') if p.is_file()}
-    named=dest/'key-quest-markers-rs'
+    spec=json.loads((MOD/'DISTRIBUTION.json').read_text());package_name=spec['package_name']
+    named=dest/package_name
     previous={str(p.relative_to(named)) for p in named.rglob('*') if p.is_file()}
     if previous-payloads.keys(): raise ValueError('Preserving unexpected previous candidate files')
     shutil.copytree(source,named,dirs_exist_ok=True)
     guide=(MOD/'DISTRIBUTION_README.md').read_bytes();(dest/'README.md').write_bytes(guide)
-    archive=dest/'key-quest-markers-rs-r2-candidate.zip'
+    archive=dest/'key-quest-markers-rs-r3-candidate.zip'
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
         z.writestr('README.md',guide)
-        for n in sorted(payloads): z.write(source/n,'key-quest-markers-rs/'+n)
+        for n in sorted(payloads): z.write(source/n,package_name+'/'+n)
     import mod_distribution as distribution
-    spec=json.loads((MOD/'DISTRIBUTION.json').read_text())
     (dest/'README.html').write_bytes(distribution.readme_html(guide))
     (dest/'GAMEBANANA_README.html').write_bytes(distribution.gamebanana_readme_html(guide,spec['gamebanana']))
     notices='\n\n'.join((MOD/n).read_text() for n in ['DISTRIBUTION_NOTICES.md','LICENSE','vendor/forge-rs/LICENSE',
@@ -123,15 +105,15 @@ def package():
     (dest/'NOTICES.txt').write_text(notices);(dest/'NOTICES.html').write_text('<pre>'+escape(notices)+'</pre>\n')
     evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','native-adapter','verify','tests']}
     (dest/'VALIDATION.json').write_text(json.dumps(evidence,indent=2)+'\n')
-    manifest={'mod':'key-quest-markers-rs','version':'r2','status':'DEVELOPMENT','runtime_test':'NOT RUN',
-              'runtime_active':True,'package_name':'key-quest-markers-rs','payloads':payloads,'archive_sha256':digest(archive)}
+    manifest={'mod':'key-quest-markers-rs','version':'r3','status':'DEVELOPMENT','runtime_test':'NOT RUN',
+              'runtime_active':True,'package_name':package_name,'payloads':payloads,'archive_sha256':digest(archive)}
     (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (dest/'SHA256SUMS').write_text(''.join(digest(p)+'  '+str(p.relative_to(dest))+'\n'
                  for p in sorted(dest.rglob('*')) if p.is_file() and p.name!='SHA256SUMS'))
     with zipfile.ZipFile(archive) as z:
         assert z.testzip() is None and z.read('README.md')==guide
-        assert set(z.namelist())=={'README.md',*('key-quest-markers-rs/'+n for n in payloads)}
-        for n,h in payloads.items(): assert hashlib.sha256(z.read('key-quest-markers-rs/'+n)).hexdigest()==h==digest(named/n)
+        assert set(z.namelist())=={'README.md',*(package_name+'/'+n for n in payloads)}
+        for n,h in payloads.items(): assert hashlib.sha256(z.read(package_name+'/'+n)).hexdigest()==h==digest(named/n)
     for line in (dest/'SHA256SUMS').read_text().splitlines():
         h,n=line.split('  ',1);assert digest(dest/n)==h
     print('Verified active DEVELOPMENT candidate:',archive)

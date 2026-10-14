@@ -1,6 +1,7 @@
 //! Native quest-row candidate. Forge supplies lifecycle, allocation and logging.
 #![no_std]
 extern crate alloc;
+mod gui;
 mod hooks;
 mod memory;
 mod native;
@@ -8,14 +9,46 @@ mod offers;
 mod signatures;
 use core::sync::atomic::{AtomicU32, Ordering};
 static REPORTED: AtomicU32 = AtomicU32::new(0);
-#[forge::entry]
+// forge-rs exposes only the six-byte version prefix. The matching native loader
+// also owns name[64] at offset 6 and hides empty names in its Loaded Plugins list.
+#[repr(C)]
+struct PluginMetadata {
+    version: forge::ForgeVersion,
+    name: [u8; 64],
+}
+const _: () = assert!(
+    core::mem::size_of::<PluginMetadata>() == 70
+        && core::mem::offset_of!(PluginMetadata, name) == 6
+);
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
+    if params.is_null() {
+        return;
+    }
+    let mut name = [0; 64];
+    let label = b"Native Quest Badges r3";
+    name[..label.len()].copy_from_slice(label);
+    // The pinned Forge loader provides the complete writable 70-byte record.
+    // This narrow ABI extension leaves vendored bindings and their pins intact.
+    unsafe {
+        params.cast::<PluginMetadata>().write(PluginMetadata {
+            version: forge::REQUIRED_VERSION,
+            name,
+        });
+    }
+}
+#[unsafe(no_mangle)]
+pub extern "C" fn forge_onInit() {
+    forge::log::init().expect("Failed to initialize Forge logger");
+    start();
+}
 fn start() {
     match hooks::install() {
         Ok(owner) => {
             core::mem::forget(owner);
             log::info!("Native quest badges installed");
         }
-        Err(reason) => log::warn!("Native quest badges: {reason}"),
+        Err(reason) => log::error!("Native quest badges: {reason}"),
     }
 }
 /// Hot hooks publish only bit flags. Deduplicated diagnostics run in Forge's
@@ -25,13 +58,21 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
     let errors = native::take_errors();
     let old = REPORTED.fetch_or(errors, Ordering::Relaxed);
     for (bit, message) in [
-        (1, "counter GUI attachment mismatch"),
+        (1, "counter GUI holder unavailable"),
         (2, "quest singleton missing"),
         (4, "quest/progression record unavailable or conflicting"),
         (8, "counter urgent offer context unavailable"),
+        (
+            16,
+            "native badge object/cache allocation or initialization failed",
+        ),
+        (
+            64,
+            "native row/HD atlas mismatch; remove old candidate ARC files",
+        ),
     ] {
         if errors & !old & bit != 0 {
-            log::warn!("Native quest badges hidden: {message}");
+            log::error!("Native quest badges hidden: {message}");
         }
     }
 }

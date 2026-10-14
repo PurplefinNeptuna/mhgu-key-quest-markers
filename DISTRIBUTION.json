@@ -3,16 +3,16 @@
   "mod": "key-quest-markers-rs",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "Active native implementation. Source, resource and compiled ARM fixtures are validated; Eden/Ryujinx rendering and gameplay acceptance remain untested.",
+  "reason": "Runtime native GUI children with game-owned draw caches; no archive replacement or overlay. Named registration and ERROR-level failures. Live r3 acceptance pending.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r2",
+  "version": "r3",
   "package_name": "key-quest-markers-rs",
-  "archive": "key-quest-markers-rs-r2-candidate.zip",
-  "candidate": "build/key-quest-markers-rs/candidates/r2/delivery/",
+  "archive": "key-quest-markers-rs-r3-candidate.zip",
+  "candidate": "build/key-quest-markers-rs/candidates/r3/delivery/",
   "candidate_builder": "scripts/build.py",
   "runtime_test": "NOT RUN",
   "runtime_active": true,
@@ -25,34 +25,9 @@
           "url": "https://openai.com/codex/"
         }
       ],
-      "scope": "Implementing the Rust native callbacks, progression classification, GUI resource recipe, tests, standalone build/package tooling and explanatory comments."
+      "scope": "Implementing Rust native callbacks, runtime GUI insertion and allocation cleanup, progression classification, tests, standalone build/package tooling and explanatory comments."
     },
-    "ai_assets": [
-      {
-        "description": "Existing English common resources retained from MHGU HD Project. Its author describes ESRGAN upscaling; this candidate generates no artwork. Specific model and dataset details are not disclosed upstream.",
-        "software": [
-          {
-            "name": "ESRGAN (several models; exact models not specified upstream)",
-            "url": "https://github.com/xinntao/ESRGAN",
-            "author": "Xintao Wang and ESRGAN contributors; specific upscale model creators not disclosed upstream"
-          }
-        ],
-        "inputs": [
-          {
-            "name": "MHXX/MHGU game textures",
-            "author": "Capcom",
-            "url": "https://github.com/Monkbreh/MHGU-HD-Project"
-          }
-        ],
-        "datasets": [
-          {
-            "name": "Training dataset details not disclosed upstream",
-            "author": "Dataset authors not specified by MHGU HD Project",
-            "url": "https://github.com/Monkbreh/MHGU-HD-Project"
-          }
-        ]
-      }
-    ],
+    "ai_assets": [],
     "credits": [
       {
         "name": "Forge",
@@ -76,13 +51,13 @@
         "name": "MHGU HD Project",
         "author": "Monkbreh / Monke",
         "url": "https://github.com/Monkbreh/MHGU-HD-Project",
-        "scope": "Retained HD English common resources; upstream describes ESRGAN upscaling, models/datasets undisclosed. No generated artwork in this candidate."
+        "scope": "External English HD dependency supplying the already-loaded lobby emblem. No HD files are included in this plugin."
       },
       {
         "name": "Monster Hunter Generations Ultimate",
         "author": "Capcom",
         "url": "https://www.monsterhunter.com/",
-        "scope": "Original game resources retained in the English common archive."
+        "scope": "Native GUI and quest APIs and the original emblem loaded from the user supplied game; no game asset files are shipped."
       }
     ]
   }

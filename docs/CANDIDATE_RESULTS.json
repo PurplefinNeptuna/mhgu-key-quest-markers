@@ -1,36 +1,31 @@
 {
-  "version": "r2",
+  "version": "r3",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
   "host_tests": 10,
   "typed_arm_cases": 16,
-  "compiled_active_adapter_cases": 14,
+  "compiled_active_adapter_cases": 21,
+  "archive_replacements": 0,
+  "runtime_gui": "Native children and game-owned expanded draw caches",
   "resource_checks": {
     "status": "PASSED",
     "source_sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
-    "archive_sha256": "5fab7fc84c932f32038e1400dfffba203101509f614e0049e44fc269fb28ec74",
-    "gui_sha256": "3d982abb9c440cc8350b0de7e31eafe75d543da001e4844bdc10bf5572b308d8",
-    "resource": [
-      "eng\\GUI\\05_meeting_p\\count\\counter",
-      580158356
-    ],
-    "resources": 115,
-    "changed_resources": 1,
-    "old_gui_bytes": 77040,
-    "new_gui_bytes": 139632,
-    "existing_row_sequences": 15,
-    "badge_slot": 12,
-    "badge_id": 21,
+    "source_gui_sha256": "95730f3adbaf2c017968cb0079a0caa666de541cecd66ff8ad223e1137b30c5a",
+    "row_animation": 20,
+    "existing_objects": 12,
+    "existing_drawables": 9,
+    "existing_sequences": 15,
+    "instances": 63,
     "texture_id": 22,
+    "archive_replacements": 0,
     "new_atlas": false,
-    "vertex_buffer_preserved": true,
-    "attachment_runtime": "NOT VERIFIED"
+    "runtime_test": "NOT RUN"
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "736f9eaff4f9bca4c840f81f54c9b41c1a8dc5675490f68c20015b6eb891e097",
-    "elf_sha256": "443ccf84327defe336ac0fa290bc2169a7361f63afaefcc7b38e7be58c0c140b",
+    "nro_sha256": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889",
+    "elf_sha256": "b1654c7ed52a068516db3c79a1b2f6d38da6d107e8127f2ba0330ce96b436b81",
     "exports": [
       "fini",
       "forge_onInit",
@@ -62,17 +57,36 @@
       "0x3b1a18",
       "0x3b1d70",
       "0x50cbd0",
-      "0x56e530",
-      "0x56e6fc",
       "0x3b57d0",
       "0x7aef68",
-      "0x545630",
-      "0x54700c",
-      "0xb7f380",
-      "0xb7f988",
       "0x3b2174",
       "0x546f28",
-      "0x54af8c"
+      "0x54af8c",
+      "0x7aa47c",
+      "0x540c08",
+      "0x540c38",
+      "0xa4faf0",
+      "0xa4fb58",
+      "0xa4e0b8",
+      "0xa47950",
+      "0xa4844c",
+      "0xa48668",
+      "0xa4f6a4",
+      "0xa4f77c",
+      "0xa494a0",
+      "0xa4964c",
+      "0xa4dc24",
+      "0xa4a9f4",
+      "0xa47a94",
+      "0xa4dca0",
+      "0xa47a04",
+      "0xa4aa24",
+      "0xa4aa5c",
+      "0xa4aa94",
+      "0xa4aac8",
+      "0xa4aafc",
+      "0xa4dc54",
+      "0xa4fa5c"
     ],
     "hook_abi_bytes": 24,
     "ordinary_hook_slots": 2,
@@ -80,9 +94,14 @@
     "forge_pool_chunk_bytes": 16384,
     "compiled_status_writes": [],
     "runtime_active": true,
-    "gui_attachment": "Checked at each native callback",
+    "gui_attachment": "Game-owned native children and expanded draw caches",
     "progression_semantics": "Native stages, alternatives and offered urgent IDs",
     "runtime_test": "NOT RUN"
+  },
+  "gui_registration": {
+    "name": "Native Quest Badges r3",
+    "metadata_bytes": 70,
+    "canaries": "PASSED"
   },
   "standalone": {
     "build_test_package": "PASSED",
@@ -91,14 +110,14 @@
     "payload_sha256_matches_workspace": true
   },
   "remaining_acceptance": [
-    "Live English HD GUI load, attachment, clipping and colors",
+    "Live English HD pixels, clipping, size and native cleanup",
     "Eden/Ryujinx Village/Hub/G progression and menu/quest transitions"
   ],
   "installed_by_this_implementation": false,
   "published": false,
+  "reported_r2_runtime": "No badges; Damage Numbers callbacks run but its metadata name is blank",
   "payload_sha256": {
-    "romfs/nativeNX/eng/arc/village/common_eng.arc": "5fab7fc84c932f32038e1400dfffba203101509f614e0049e44fc269fb28ec74",
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "736f9eaff4f9bca4c840f81f54c9b41c1a8dc5675490f68c20015b6eb891e097"
+    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889"
   },
   "full_distribution_check_mods": 14
 }

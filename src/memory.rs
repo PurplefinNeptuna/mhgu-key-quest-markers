@@ -54,6 +54,9 @@ fn mapped(address: u32, bytes: usize, permissions: u32) -> bool {
             && address as u64 + bytes as u64 <= info.address + info.size
     }
 }
+pub fn writable(address: u32, bytes: usize) -> bool {
+    mapped(address, bytes, 3)
+}
 pub fn readable(address: u32, bytes: usize) -> bool {
     mapped(address, bytes, 1)
 }

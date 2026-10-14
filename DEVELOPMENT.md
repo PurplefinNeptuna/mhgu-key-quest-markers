@@ -26,9 +26,9 @@ Run from any directory:
 ./build.sh export --output /path/to/new/source-folder
 ```
 
-`prepare` verifies inputs and builds the resource only. All commands are offline;
+`prepare` verifies inputs and the read-only native GUI layout fixture. All commands are offline;
 there is no download, install, game launch or settings command. Outputs use the
-workspace's `build/key-quest-markers-rs/candidates/r2/` and matching `work/` folder,
+workspace's `build/key-quest-markers-rs/candidates/r3/` and matching `work/` folder,
 or the independent checkout's own `build/` and `work/` folders after export.
 
 The workspace coordinator also supports
@@ -37,17 +37,21 @@ explicitly registered DEVELOPMENT candidate. It delegates to the owned builder,
 verifies ZIP/runtime/support/checksums, and does not grant release approval.
 Run the full coordinator `check` before committing distribution work.
 
-r2 activates the parent and row hooks after checking the executable and matching
-Forge ABI. The parent copies the native counter's offered urgent IDs into a scoped
-Forge SDK TLS frame; the nested row callback reads native progression/completion
-and updates the added native GUI object. Runtime identity and memory checks hide
-badges only when their actual inputs cannot be established. There is no artificial
-enable gate or setting. See `docs/NATIVE_AUDIT.md` for the native data paths.
+r3 activates the parent and row hooks after executable/Forge validation. The
+parent copies offered urgent IDs into scoped Forge SDK TLS; the row callback reads
+native progression/completion and creates missing cGUIObjTexture children. They
+are attached to each row's main Null, using the game's MT allocation/constructor
+and sibling-link functions. The native draw cache grows from 152 to 168 bytes.
+Original object-index arrays and resource descriptors remain untouched. See the
+native audit for exact ownership and the source of these sizes.
 
-The old inactive r1 candidate is preserved separately. Manual gameplay acceptance
-is still pending; no automated game suite exists.
+The build only reads the copied HD common archive as a layout fixture; it does
+not stage any ARC. r1/r2 and the original C++/PC releases remain preserved. r3
+supplies the missing 70-byte named plugin metadata and reports failures at ERROR.
+No command installs, launches, edits saves or changes emulator settings.
 
-Owned code explains native offsets and resource/table ownership beside its use.
-Forge owns allocation, hooks, patches, logging and callbacks. Narrow SVC bindings
-cover only memory queries, title identity and cache flushes unavailable as exports.
-Native UI setters cover the game GUI operations not wrapped by forge-rs.
+Forge owns lifecycle/logging, allocation for plugin data, hooks, patches, singleton
+lookup, main addresses and SDK TLS. DTI lookup uses its high-level wrapper. The
+bindings do not expose the native GUI hierarchy or MT allocator/constructor
+operations needed for game-owned children; checked raw native calls fill that gap.
+Using Forge malloc for these objects would mismatch their native destructors.

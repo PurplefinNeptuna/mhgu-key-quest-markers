@@ -13,10 +13,11 @@
   The Rust toolchain itself is an externally supplied build tool.
 - Original game assets are by Capcom. Copied English HD common archive input:
   `fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438`.
-  Retained HD assets are from MHGU HD Project by Monkbreh / Monke,
+  The external HD assets are from MHGU HD Project by Monkbreh / Monke,
   https://github.com/Monkbreh/MHGU-HD-Project. Its public README describes ESRGAN
-  upscaling; specific models and training datasets are not disclosed. This recipe
-  generates no artwork and ships no replacement emblem atlas.
+  upscaling; specific models and training datasets are not disclosed. The read-only
+  fixture ships none of these assets; native children reference the already-loaded
+  emblem. No artwork is generated.
 - GUI format reference: https://github.com/RTHKKona/MHGU-Modding,
   `templates/gui_mhgu.bt`; saved Ghidra/DTI research is summarized in the audit.
 - Owned resource/import/export helpers are bounded project snapshots. There are

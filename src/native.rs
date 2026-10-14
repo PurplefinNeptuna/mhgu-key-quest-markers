@@ -1,6 +1,7 @@
 //! The game's GUI-holder API is not wrapped by Forge. Every pointer stays local
 //! to the synchronous row callback; native calls are made only on the pinned build.
 use crate::{
+    gui,
     memory::{self, BASE},
     offers,
 };
@@ -112,77 +113,21 @@ fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
             && completed(profile, other.id)
     })
 }
-fn badge_objects(ui: u32) -> Option<[u32; 8]> {
-    let holder = memory::word(ui.checked_add(0x24)?)?;
-    if !memory::readable(holder, 0x29c) {
-        return None;
-    }
-    let holder_vft = memory::word(holder)?;
-    let descriptor_getter = memory::word(holder_vft.checked_add(0xac)?)?;
-    if !memory::executable(descriptor_getter, 4) {
-        return None;
-    }
-    // The normal builder selects GUI set 5 (English counter) before returning.
-    // Checking that native identity plus every new object rejects other menus.
-    let identity: unsafe extern "C" fn(u32) -> u32 =
-        unsafe { core::mem::transmute((base() + 0x546f28) as usize) };
-    if unsafe { identity(holder) } != 5 {
-        return None;
-    }
-    let count = memory::word(holder.checked_add(0x298)?)?;
-    let array = memory::word(holder.checked_add(0xf8)?)?;
-    if !(24..=512).contains(&count) || !memory::readable(array, count as usize * 4) {
-        return None;
-    }
-    let dti = forge::mt::dti::MtDti::find("cGUIObjTexture")? as *const _ as u32;
-    let mut result = [0; 8];
-    for (i, object) in result.iter_mut().enumerate() {
-        let instance = memory::word(array + (16 + i as u32) * 4)?;
-        let objects = memory::word(instance.checked_add(0xd8)?)?;
-        if !memory::readable(objects, 13 * 4) {
-            return None;
-        }
-        let p = memory::word(objects + 12 * 4)?;
-        if !memory::readable(p, 304) || memory::word(p + 0x50) != Some(21) {
-            return None;
-        }
-        let vft = memory::word(p)?;
-        let getter = memory::word(vft.checked_add(0x14)?)?;
-        if !memory::executable(getter, 4) {
-            return None;
-        }
-        let get: unsafe extern "C" fn(u32) -> u32 =
-            unsafe { core::mem::transmute(getter as usize) };
-        if unsafe { get(p) } != dti {
-            return None;
-        }
-        *object = p;
-    }
-    Some(result)
-}
-fn set(ui: u32, row: usize, badge: Badge) {
-    let visible: unsafe extern "C" fn(u32, u32, u32, u32) =
-        unsafe { core::mem::transmute((base() + 0x56e530) as usize) };
-    let color: unsafe extern "C" fn(u32, u32, u32, u32) =
-        unsafe { core::mem::transmute((base() + 0x56e6fc) as usize) };
-    // Slot 12 is the added object in resource instances 16..23. These native
-    // setters handle object visibility and all four vertex colors respectively.
-    unsafe {
-        if badge != Badge::Hidden {
-            color(ui, 16 + row as u32, 12, badge.rgba());
-        }
-        visible(ui, 16 + row as u32, 12, u32::from(badge != Badge::Hidden));
-    }
+fn set(object: u32, badge: Badge) {
+    gui::set(object, badge);
 }
 /// Apply the copied decision after the normal game row update. Hide first so
 /// invalid metadata cannot leave yesterday's quest badge on a newly reused row.
 pub fn update(ui: u32, quests: u32) {
-    let Some(_objects) = badge_objects(ui) else {
-        error(1);
-        return;
+    let objects = match gui::objects(ui) {
+        Ok(objects) => objects,
+        Err(flags) => {
+            error(flags);
+            return;
+        }
     };
-    for i in 0..8 {
-        set(ui, i, Badge::Hidden);
+    for object in objects {
+        set(object, Badge::Hidden);
     }
     let Some(quest) = singleton(c"sQuest") else {
         error(2);
@@ -267,6 +212,6 @@ pub fn update(ui: u32, quests: u32) {
         return;
     }
     for (i, badge) in badges.into_iter().enumerate() {
-        set(ui, i, badge);
+        set(objects[i], badge);
     }
 }
