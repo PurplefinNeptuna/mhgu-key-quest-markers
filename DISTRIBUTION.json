@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "mod": "key-quest-markers-rs",
+  "status": "DEVELOPMENT",
+  "runtime_platform": "switch",
+  "reason": "Inactive r1: native current-progression availability and GUI attachment are not established. Host/resource/ARM build checks do not grant gameplay acceptance.",
+  "publication": {
+    "published": false,
+    "url": null,
+    "date": null
+  },
+  "version": "r1",
+  "package_name": "key-quest-markers-rs",
+  "archive": "key-quest-markers-rs-r1-candidate.zip",
+  "candidate": "build/key-quest-markers-rs/candidates/r1/delivery/",
+  "candidate_builder": "scripts/build.py",
+  "runtime_test": "NOT RUN",
+  "runtime_active": false,
+  "gamebanana": {
+    "ai_code": {
+      "used": true,
+      "software": [
+        {
+          "name": "OpenAI Codex",
+          "url": "https://openai.com/codex/"
+        }
+      ],
+      "scope": "Implementing Rust plugin scaffolding, native resource recipe, tests, build/package tooling and explanatory comments."
+    },
+    "ai_assets": [
+      {
+        "description": "Existing English common resources retained from MHGU HD Project. Its author describes ESRGAN upscaling; this candidate generates no artwork. Specific model and dataset details are not disclosed upstream.",
+        "software": [
+          {
+            "name": "ESRGAN (several models; exact models not specified upstream)",
+            "url": "https://github.com/xinntao/ESRGAN",
+            "author": "Xintao Wang and ESRGAN contributors; specific upscale model creators not disclosed upstream"
+          }
+        ],
+        "inputs": [
+          {
+            "name": "MHXX/MHGU game textures",
+            "author": "Capcom",
+            "url": "https://github.com/Monkbreh/MHGU-HD-Project"
+          }
+        ],
+        "datasets": [
+          {
+            "name": "Training dataset details not disclosed upstream",
+            "author": "Dataset authors not specified by MHGU HD Project",
+            "url": "https://github.com/Monkbreh/MHGU-HD-Project"
+          }
+        ]
+      }
+    ],
+    "credits": [
+      {
+        "name": "Forge",
+        "author": "Jeffi / Skyline Project",
+        "url": "https://github.com/jeffi6375/forge",
+        "scope": "Loader API and native hooks."
+      },
+      {
+        "name": "forge-rs",
+        "author": "Fexty",
+        "url": "https://github.com/Fexty12573/forge-rs",
+        "scope": "Rust runtime, callbacks, allocation, singleton lookup and patch bindings."
+      },
+      {
+        "name": "libnx",
+        "author": "Hydrosphere Developers",
+        "url": "https://github.com/switchbrew/libnx",
+        "scope": "MIT-licensed ARM32 syscall wrappers."
+      },
+      {
+        "name": "MHGU HD Project",
+        "author": "Monkbreh / Monke",
+        "url": "https://github.com/Monkbreh/MHGU-HD-Project",
+        "scope": "Retained HD English common resources; upstream describes ESRGAN upscaling, models/datasets undisclosed. No generated artwork in this candidate."
+      },
+      {
+        "name": "Monster Hunter Generations Ultimate",
+        "author": "Capcom",
+        "url": "https://www.monsterhunter.com/",
+        "scope": "Original game resources retained in the English common archive."
+      }
+    ]
+  }
+}

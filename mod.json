@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "mod": "key-quest-markers-rs",
+  "kind": "plugin",
+  "version": "r1",
+  "runtime_platform": "forge-switch"
+}
