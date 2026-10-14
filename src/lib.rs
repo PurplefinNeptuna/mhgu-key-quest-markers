@@ -26,7 +26,7 @@ pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
         return;
     }
     let mut name = [0; 64];
-    let label = b"Native Quest Badges r4";
+    let label = b"Native Quest Badges r5";
     name[..label.len()].copy_from_slice(label);
     // The pinned Forge loader provides the complete writable 70-byte record.
     // This narrow ABI extension leaves vendored bindings and their pins intact.
@@ -70,6 +70,12 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
     ] {
         if errors & !old & bit != 0 {
             log::error!("Native quest badges hidden: {message}");
+            if bit == 16 {
+                let stage = gui::take_failure();
+                log::error!(
+                    "Native quest badge creation stage {stage}: 1=MT allocation, 2=constructor result, 3=destructor, 4=object type/fields, 5=texture binding, 6=cache methods, 7=cache allocation, 8=cache memory"
+                );
+            }
             if bit == 64 {
                 let stage = gui::take_failure();
                 log::error!(

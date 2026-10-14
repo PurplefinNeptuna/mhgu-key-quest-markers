@@ -45,8 +45,11 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     u.mem_map(ENGINE,4096);u.mem_map(0x41000000,0x20000);u.mem_map(GAME,0x2000000)
     # Real game code rebuilds/traverses the draw cache and destroys the owned tree.
     for first,last in [(0xa494a0,0xa4964c),(0xa48668,0xa486fc),(0xa475e0,0xa47648),
-                       (0xa38828,0xa38944),(0xa38bc0,0xa38e50),(0xa49b28,0xa49bac),(0xa4844c,0xa48470)]:
+                       (0xa38828,0xa38944),(0xa38bc0,0xa38e50),(0xa49b28,0xa49bac),(0xa4844c,0xa48470),(0x540c08,0x540c64),
+                       (0xa4d0d8,0xa4d32c),(0xa4f60c,0xa4f840)]:
         u.mem_write(GAME+first,native_image[first:last])
+    # Exercise the actual texture setters too, including their dirty propagation.
+    u.mem_write(GAME+0xa47000,native_image[0xa47000:0xa57000])
     imports={};next_import=ENGINE+0x300
     for name,e,*_ in nro.symbols:
         if name and not e[5]:imports[name.decode()]=next_import;next_import+=4
@@ -70,6 +73,25 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     word(MODULE+names['kqm_tls_slot'],1);u.mem_write(MODULE+names['kqm_active'],b'\x01')
     word(CONTROLLER+0x54,UI);word(UI+0x24,HOLDER);word(HOLDER,VFT+0x100);word(VFT+0x1ac,GAME+0x1010)
     word(HOLDER+0x298,primary_count);word(HOLDER+0xf8,INSTANCE_ARRAY);word(HOLDER+0x294,INSTANCE_ARRAY+0x400)
+    # The real DTI exposes three virtual slots. +0x0c is deliberately null:
+    # earlier fixtures invented a placement-constructor slot that MHGU lacks.
+    for offset in range(0,20,4):
+        target=struct.unpack_from('<I',native_image,0x178ff90+offset)[0]
+        word(VFT+0x200+offset,GAME+target if target else 0)
+    assert read(VFT+0x20c)==0
+    word(ROOT_DTI+4,1);word(DTI+4,2)
+    # Relocate the real Object/Polygon/Texture vtables and constructor globals.
+    # Matrix/color/sGUI contents are fixture inputs; constructor instructions run.
+    for table in [0x178f948,0x178fc40,0x178fcc0]:
+        for offset in range(0,128,4):
+            target=struct.unpack_from('<I',native_image,table+offset)[0]
+            word(GAME+table+offset,GAME+target if target else 0)
+    for got,target in [(0x1843638,GAME+0x178f948),(0x1843748,GAME+0x178fc40),
+                       (0x18437bc,GAME+0x178fcc0),(0x1843664,ROOT_DTI),
+                       (0x1839bd0,DATA+0xf0000),(0x1839514,DATA+0xf0100),
+                       (0x1838eb8,DATA+0xf0200)]:word(GAME+got,target)
+    u.mem_write(DATA+0xf0000,struct.pack('<16f',*[float(i%5==0)for i in range(16)]))
+    word(DATA+0xf0100,0xffffffff);word(DATA+0xf0200,DATA+0xf0300)
     word(VFT+0x208,GAME+0x1064);word(VFT+0x31c,GAME+0x1038)
     word(VFT+0x404+0x54,GAME+0x1060)
     word(GUI_RESOURCE+0x64,GUI_HEADER);word(GUI_HEADER+0xac,OBJECT_TABLE)
@@ -78,8 +100,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         word(OBJECT_TABLE+(30+j)*36+0x14,DTI);word(OBJECT_TABLE+(30+j)*36+0x20,0)
     word(DTI,VFT+0x200);word(DTI+24,304//4);word(DTI+28,0x1b6313a3)
     word(ROOT_DTI+24,176//4)
-    word(VFT+0x20c,GAME+0x1020);word(ALLOCATOR,VFT+0x300);word(VFT+0x320,GAME+0x1030);word(VFT+0x334,GAME+0x1034)
-    word(VFT+0x14,GAME+0x1000);word(VFT+0x404+0x14,GAME+0x1014)
+    word(ALLOCATOR,VFT+0x300);word(VFT+0x320,GAME+0x1030);word(VFT+0x334,GAME+0x1034)
+    word(VFT+0x514,GAME+0x1000);word(VFT+0x14,GAME+0x1000);word(VFT+0x404+0x14,GAME+0x1014)
     word(VFT+0x404+0x58,GAME+0x540c08);word(VFT+0x404+0x5c,GAME+0x540c38)
     word(VFT+4,GAME+0x1040);word(VFT+0x504,GAME+0xa475e0)
     for offset,target in [(0x38,0x1050),(0x3c,0x1054),(0x40,0x1058)]:word(VFT+offset,GAME+target)
@@ -159,7 +181,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==GAME+0xb80f94:
             assert r[:2]==[GUI_RESOURCE,20];ret(cpu,DATA+0x60000+constructing*0x40);return
         if address==GAME+0x1038:
-            assert r[:3]==[ALLOCATOR,48,16];ret(cpu,DATA+0x2a000+constructing*0x100);return
+            assert r[0]==ALLOCATOR and r[2]==16
+            if r[1]==48:ret(cpu,DATA+0x2a000+constructing*0x100)
+            elif r[1]==152:ret(cpu,original_caches[constructing])
+            else:
+                assert r[1]==168;ret(cpu,0 if fail_cache else allocate(168))
+            return
         if address==GAME+0x1064:
             objects=DATA+0x2a000+constructing*0x100
             pointer=read(objects+factory_index*4);factory_index+=1;ret(cpu,pointer);return
@@ -170,26 +197,22 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert r==[ALLOCATOR,304,16,0x1b6313a3];object_attempts+=1
             ret(cpu,0 if fail_object or object_attempts==fail_at else allocate(304));return
         if address==GAME+0x1034:release(r[1]);ret(cpu);return
-        if address==GAME+0x1020:
-            assert r[0]==DTI and r[1]in allocations;word(r[1],VFT);word(r[1]+0x54,0x2020001);created.append(r[1]);ret(cpu,r[1]);return
+        if address==GAME+0xa4f60c:
+            assert r[0]in allocations;created.append(r[0]) # Execute the real constructor below.
+        if address in [GAME+0xa56a7c,GAME+0xa56a8c]:ret(cpu,DTI);return
+        if address in [GAME+0xba2544,GAME+0xba28c4]:ret(cpu);return
         if address==GAME+0x1040:release(r[0]);ret(cpu);return
-        if address==GAME+0x540c08:
-            assert r[0]in roots and r[1]in [152,168]
-            ret(cpu,original_caches[constructing] if r[1]==152 else 0 if fail_cache else allocate(168));return
-        if address==GAME+0x540c38:release(r[1]);ret(cpu);return
-        if address-GAME in STYLE:ret(cpu);return
-        if address==GAME+0xa4faf0:assert r[1]==22;word(r[0]+0x104,ATLAS);ret(cpu);return
-        if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==(136.,344.,198.,406.);ret(cpu);return
+        # Style calls execute the original game instructions.
+        if address==GAME+0xa4faf0:assert r[1]==22
+        if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==(136.,344.,198.,406.)
         if address==GAME+0xa47950:
             row=next(i for i,p in enumerate(parents) if read(r[0]+0x70)==p) if read(r[0]+0x70) else None
-            word(r[0]+0x54,(read(r[0]+0x54)&~1)|r[1])
-            if row is not None:states[row]=r[1];word(roots[row]+0x8c,read(roots[row]+0x8c)|1)
-            ret(cpu);return
+            if row is not None:states[row]=r[1]
         if address==GAME+0xa4e0b8:
             row=next(i for i,p in enumerate(parents) if read(r[0]+0x70)==p);assert r[2]<4
-            colors[row]=read(r[1]);ret(cpu);return
-        if address in [GAME+0x1050,GAME+0x1054,GAME+0x1058]:
-            if address==GAME+0x1054 and read(r[0]+0x50)==BADGE_ID:drawn.append(r[0])
+            colors[row]=read(r[1])
+        if address in [GAME+0x1050,GAME+0x1054,GAME+0x1058,GAME+0xa4e628,GAME+0xa4fc9c,GAME+0xa4eddc]:
+            if address in [GAME+0x1054,GAME+0xa4fc9c] and read(r[0]+0x50)==BADGE_ID:drawn.append(r[0])
             ret(cpu);return
         if address==GAME+0x523da4:assert r[0]==PROFILE+0x42c;ret(cpu,int(r[1]in completed));return
         if address==GAME+0x3b1a18:assert r[:2]==[QUEST,2];ret(cpu,int(prerequisites));return
@@ -240,6 +263,11 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
                            2:0xff808080 if 303 in completed else urgency,3:0xff39d2ff if simultaneous and 206 in offered else 0xff808080,4:0xff808080}
         for p in created:
             assert read(p+0x74)==GUI_OWNER
+            i=next(i for i,parent in enumerate(parents) if read(p+0x70)==parent)
+            assert read(p+0x54)&1==states[i]
+            if i in colors:assert struct.unpack('<4I',u.mem_read(p+0xa4,16))==(colors[i],)*4
+            assert read(p+0x104)==ATLAS
+            assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==(136.,344.,198.,406.)
             assert struct.unpack('<2f',u.mem_read(p+0x80,8))==(-28.,8.)
             assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(24.,24.)
         for root in roots:call(GAME+0xa494a0,root,0x12345678)
@@ -261,6 +289,6 @@ results=[test_case('all badge states and native draw traversal'),test_case('urge
          test_case('repeated row update reuses native children',repeat=True),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
-          'native_animation_constructor':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
+          'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')

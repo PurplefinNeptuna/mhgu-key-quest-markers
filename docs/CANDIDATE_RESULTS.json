@@ -1,5 +1,5 @@
 {
-  "version": "r4",
+  "version": "r5",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
@@ -24,8 +24,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "e29fe7711acde87e77dac19bc51f4d0c686d6cbf0e7cee0e53294ba5de762087",
-    "elf_sha256": "f151ce630ed140039afe107a8ccf42f37b2e354efeca20823763881e2794af10",
+    "nro_sha256": "9e671b3f62a52fa529ef9abb39c854ff9108ebecff7b6b6463326d1d7cb8c1b5",
+    "elf_sha256": "0ae65902fea245e5fef19a8bfcf7fd2e9a6c1e3cd3023764cfcc1e7efbe0c823",
     "exports": [
       "fini",
       "forge_onInit",
@@ -51,6 +51,8 @@
       "nnosSetTlsValue"
     ],
     "signature_windows": [
+      "0xa4f60c",
+      "0xa4d0d8",
       "0x616cb0",
       "0x54d030",
       "0x523da4",
@@ -90,6 +92,8 @@
     ],
     "hook_abi_bytes": 24,
     "ordinary_hook_slots": 2,
+    "texture_constructor": "0xa4f60c",
+    "texture_dti_placement_virtual": false,
     "forge_trampoline_bytes": 32,
     "forge_pool_chunk_bytes": 16384,
     "compiled_status_writes": [],
@@ -99,7 +103,7 @@
     "runtime_test": "NOT RUN"
   },
   "gui_registration": {
-    "name": "Native Quest Badges r4",
+    "name": "Native Quest Badges r5",
     "metadata_bytes": 70,
     "canaries": "PASSED"
   },
@@ -118,10 +122,17 @@
   "published": false,
   "reported_r2_runtime": "No badges; Damage Numbers callbacks run but its metadata name is blank",
   "payload_sha256": {
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "e29fe7711acde87e77dac19bc51f4d0c686d6cbf0e7cee0e53294ba5de762087"
+    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "9e671b3f62a52fa529ef9abb39c854ff9108ebecff7b6b6463326d1d7cb8c1b5"
   },
   "full_distribution_check_mods": 14,
-  "native_constructor_regression": {
+  "reported_r3_runtime": {
+    "result": "FAILED: no badges",
+    "eden_error": "Native quest badges hidden: native row/HD atlas mismatch; remove old candidate ARC files",
+    "installed_nro_sha256": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889",
+    "badge_package_contains_arc": false,
+    "hd_archive_matches_copied_input": true
+  },
+  "row_owner_regression": {
     "old_r3": "FAILED as expected with native constructor-built rows",
     "new_r4": "PASSED",
     "owner": "instance+0x6c cGUI, distinct from animation instance",
@@ -133,11 +144,18 @@
       "0xa48460"
     ]
   },
-  "reported_r3_runtime": {
+  "texture_constructor_regression": {
+    "old_r4": "FAILED as expected with the real null DTI placement slot",
+    "new_r5": "PASSED: actual ARM constructor, setters, cache allocation/free and destructors",
+    "placement_virtual": false,
+    "native_constructor": "0xa4f60c",
+    "base_constructor": "0xa4d0d8"
+  },
+  "reported_r4_runtime": {
     "result": "FAILED: no badges",
-    "eden_error": "Native quest badges hidden: native row/HD atlas mismatch; remove old candidate ARC files",
-    "installed_nro_sha256": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889",
-    "badge_package_contains_arc": false,
-    "hd_archive_matches_copied_input": true
+    "eden_error": "Native quest badges hidden: native badge object/cache allocation or initialization failed",
+    "installed_nro_sha256": "e29fe7711acde87e77dac19bc51f4d0c686d6cbf0e7cee0e53294ba5de762087",
+    "log_checked": "2026-10-15 06:15:25 +0700",
+    "row_validation_error": false
   }
 }

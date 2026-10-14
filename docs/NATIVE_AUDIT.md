@@ -1,8 +1,8 @@
-# Native implementation audit — active r4
+# Native implementation audit — active r5
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r4
+The blanket r1 disable gate and unresolved-state placeholders are removed. r5
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -79,8 +79,9 @@ Native root/array/descriptor fields are:
 
 New storage is allocated through the cGUIObjTexture DTI's MT allocator
 (`MtDti::getAllocator`, main+0x7aa47c; allocator vft +0x20 alloc/+0x34 free).
-The DTI's native in-place constructor at vft +0x0c runs only after a checked
-304-byte aligned allocation. Failed unpublished objects are destroyed/freed by
+The standalone native constructor at main+0xa4f60c runs only after a checked
+304-byte aligned allocation. The Texture DTI has three virtual slots; +0x0c is
+null, so forge-rs's generic instantiate wrapper does not apply to this game class. Failed unpublished objects are destroyed/freed by
 scoped guards. Forge's DTI new wrapper returns a long-lived mutable reference;
 the checked raw call keeps native ownership and borrowing local instead.
 
@@ -132,7 +133,7 @@ Installation validates both trampolines and redirects, flushes code caches and
 publishes active state only after both hooks succeed. The hooks use two 16-byte
 slots in Forge's shared 16 KiB CodeMemory pool. No additional hook engine exists.
 
-The row typed callback forwards r0..r4 and three stack arguments. Unicorn runs
+The row typed callback forwards r0..r3 and three stack arguments. Unicorn runs
 the compiled NRO with clobbering original doubles for all sixteen incoming GE
 patterns, checks original forwarding and AAPCS callee-saved integer/VFP state.
 Direct row callers 0x616bfc/0x618bbc set their own condition flags before use;
@@ -161,14 +162,14 @@ The user reported Rust Damage Numbers in Plugin UI but absent from Loaded Plugin
 and no quest badges. The installed badge NRO/archive matched r2. The checked Eden
 logs show Forge1.5.0; its config filters at ERROR, hiding r2's INFO/WARN messages.
 forge-rs's entry macro writes only the version prefix; Forge's list skips empty
-names. r4 supplies the full 70-byte metadata record (name at offset6) and retains
+names. The candidate supplies the full 70-byte metadata record (name at offset6) and retains
 Forge logging with failures at ERROR. Vendored pins are unchanged.
 
 The installed HD Project and r2 badge package both replace common_eng.arc. The
 inspected Eden source selects the alphabetically first file, letting HD Project's
 unmodified counter win. Individual live file ownership was not logged. The user
 then explicitly chose native runtime insertion with all ARC files untouched.
-r4 implements that choice and contains only the NRO. Remove/disable the old Rust
+The candidate implements that choice and contains only the NRO. Remove/disable the old Rust
 candidate as a whole so its old ARC cannot remain as a leftover installation file.
 Installed packages/settings/saves were read only; no installation or launch occurred.
 
@@ -180,15 +181,17 @@ row transitions. The resource fixture checks the unmodified fifteen-sequence,
 twelve-object row and existing HD atlas; the package check rejects any ARC payload.
 
 The compiled fixture uses unmodified twelve-object rows, native-shaped metadata,
-query/MT factory and property doubles and the game's actual ARM animation
-constructors, child-link helpers, draw walker and root/container destructors. It verifies object creation, direct-child links, unchanged index arrays,
+query/MT allocation and original-row factory/property doubles and the game's
+actual ARM animation and texture constructors, texture style/rectangle/color/
+visibility setters, cache allocator/free, child-link helpers, draw walker and
+root/container/texture destructors. It verifies object creation, direct-child links, unchanged index arrays,
 expanded cache bounds with canaries, actual traversal of visible badges, repeated
 updates without additional allocation, native cleanup, failure rollback and every
 badge state. Protected quest/completion/progression records remain unchanged.
 Pixel rendering and the game's actual query results still require a manual trial.
 
 No emulator was launched, package installed, save modified or loader replaced by
-this implementation. r4 is active DEVELOPMENT, with manual acceptance pending on
+this implementation. r5 is active DEVELOPMENT, with manual acceptance pending on
 English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
@@ -209,5 +212,26 @@ animation addresses, using the original counter object records for hierarchy/IDs
 Factories, property initialization and GPU calls remain doubles.
 
 Future row validation failures log their precise guard stage outside the hot hook.
-This correction has source and executable-fixture evidence; live r4 acceptance
-is still pending. r3 failed gameplay and must not be treated as accepted.
+This correction passed the owner regression. The later r4 trial passed these row
+checks but failed during object creation, as described below. Neither r3 nor r4
+has gameplay acceptance.
+
+## r4 runtime failure and r5 correction
+
+The fresh Eden trial used the exact r4 NRO and reached error16 (object/cache
+creation), with no row validation error. The cGUIObjTexture DTI vtable at
+main+0x178ff90 contains destructor0x32c, destructor0xa568a8 and factory0xa4f550;
+the following word at +0x0c is zero. r4 required that nonexistent placement slot
+before allocating anything, so it could not create a badge.
+
+r5 retains checked MT allocation and calls the actual placement constructor
+0xa4f60c with storage in r0. Both that function and its Polygon base constructor
+0xa4d0d8 have checked instruction windows. Native texture constructors, setters,
+cache allocation/free and texture destructors now execute in the compiled fixture.
+DTI +0x0c stays null, reproducing r4's failure and allowing r5 to proceed.
+Creation errors report a bounded stage number outside the hot hook. No archive,
+installed payload, emulator setting or save is changed by preparation.
+
+The real GPU renderer and live current-progression queries remain manual gates.
+The Eden report also contains a later unmapped-memory message during shutdown;
+no evidence here attributes that separate message to this failed creation path.

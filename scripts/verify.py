@@ -31,7 +31,9 @@ def verify():
         offset=int(offset,16);expected=ast.literal_eval('['+raw+']')
         if image[offset:offset+32]!=bytes(expected):raise ValueError('Signature mismatch: '+hex(offset))
         windows.append(hex(offset))
-    if len(windows)!=36:raise ValueError('Supporting signature windows missing')
+    if struct.unpack_from('<5I',image,0x178ff90)!=(0x32c,0xa568a8,0xa4f550,0,0):
+        raise ValueError('Texture DTI vtable differs; placement virtual is unavailable')
+    if len(windows)!=38:raise ValueError('Supporting signature windows missing')
     assert image[0x616cb0:0x616cb8]==bytes.fromhex('f04f2de904d04de2')
     if 'kqm_verified_contract' in names:raise ValueError('Inactive release gate remains in production')
     disasm=subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-objdump','-d',elf],text=True)
@@ -47,7 +49,7 @@ def verify():
         raise ValueError('Unexpected archive replacement')
     record('verify.json',{'status':'PASSED','nro_sha256':digest(nro_path),'elf_sha256':digest(elf),
         'exports':sorted(exports),'strong_imports':sorted(imports),'signature_windows':windows,'hook_abi_bytes':24,
-        'ordinary_hook_slots':2,'forge_trampoline_bytes':32,'forge_pool_chunk_bytes':16384,
+        'ordinary_hook_slots':2,'texture_constructor':'0xa4f60c','texture_dti_placement_virtual':False,'forge_trampoline_bytes':32,'forge_pool_chunk_bytes':16384,
         'compiled_status_writes':writes,'runtime_active':True,
         'gui_attachment':'Game-owned native children and expanded draw caches','progression_semantics':'Native stages, alternatives and offered urgent IDs','runtime_test':'NOT RUN'})
     print('PASS: native imports/signatures, Hook ABI compilation, active callback path and payload inventory')

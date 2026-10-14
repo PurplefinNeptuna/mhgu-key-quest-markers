@@ -226,24 +226,25 @@ impl Drop for Constructed {
         }
     }
 }
-fn create(row: Row, dti: &MtDti) -> Option<u32> {
+fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
     let address = dti as *const _ as u32;
-    let construct = method(address, 12)?;
-    let mut storage = Allocation::texture(dti)?;
-    let f: unsafe extern "C" fn(u32, u32) -> u32 =
-        unsafe { core::mem::transmute(construct as usize) };
-    let object = unsafe { f(address, storage.pointer) };
+    let mut storage = Allocation::texture(dti).ok_or(1u32)?;
+    // This game's Texture DTI has only three virtual slots: no placement
+    // constructor at +0x0c. The verified standalone constructor takes storage in r0.
+    let f: unsafe extern "C" fn(u32) -> u32 =
+        unsafe { core::mem::transmute((base() + 0xa4f60c) as usize) };
+    let object = unsafe { f(storage.pointer) };
     if object != storage.pointer {
-        return None;
+        return Err(2);
     }
-    let destroy = method(object, 4)?;
+    let destroy = method(object, 4).ok_or(3u32)?;
     let mut owned = Constructed {
         pointer: object,
         destroy,
     };
     storage.pointer = 0; // Constructor succeeded: the native destructor now owns the block.
     if !is_type(object, address) {
-        return None;
+        return Err(4);
     }
     unsafe {
         word(object + 0x50, ID);
@@ -255,7 +256,10 @@ fn create(row: Row, dti: &MtDti) -> Option<u32> {
         bits(object + 0x84, 8.0);
         bits(object + 0xb4, 24.0);
         bits(object + 0xb8, 24.0);
-        word(object + 0x54, memory::word(object + 0x54)? | 0x20000);
+        word(
+            object + 0x54,
+            memory::word(object + 0x54).ok_or(4u32)? | 0x20000,
+        );
     }
     // Match the native Tex_icon's static style; each of these setters has a
     // two-integer ABI. No sequence records or shared resource bytes are changed.
@@ -276,8 +280,8 @@ fn create(row: Row, dti: &MtDti) -> Option<u32> {
         integer(offset, object, value);
     }
     integer(0xa4faf0, object, 22);
-    if memory::word(object + 0x104)? == 0 {
-        return None;
+    if memory::word(object + 0x104).ok_or(5u32)? == 0 {
+        return Err(5);
     }
     let rect = [136f32, 344., 198., 406.];
     let f: unsafe extern "C" fn(u32, *const f32) =
@@ -285,18 +289,18 @@ fn create(row: Row, dti: &MtDti) -> Option<u32> {
     unsafe { f(object, rect.as_ptr()) };
     set(object, Badge::Hidden);
 
-    let allocate = method(row.root, 0x58)?;
-    let release = method(row.root, 0x5c)?;
+    let allocate = method(row.root, 0x58).ok_or(6u32)?;
+    let release = method(row.root, 0x5c).ok_or(6u32)?;
     let f: unsafe extern "C" fn(u32, u32) -> u32 =
         unsafe { core::mem::transmute(allocate as usize) };
     let cache = unsafe { f(row.root, CACHE_BYTES as u32) };
     if cache == 0 {
-        return None;
+        return Err(7);
     }
     let free: unsafe extern "C" fn(u32, u32) = unsafe { core::mem::transmute(release as usize) };
     if !memory::writable(cache, CACHE_BYTES) || cache & 15 != 0 {
         unsafe { free(row.root, cache) };
-        return None;
+        return Err(8);
     }
     unsafe { core::ptr::write_bytes(cache as *mut u8, 0, CACHE_BYTES) };
     // Publish only after both allocations and complete initialization succeed.
@@ -315,7 +319,7 @@ fn create(row: Row, dti: &MtDti) -> Option<u32> {
     }
     owned.pointer = 0; // Reachable from the row: native ownership takes over.
     unsafe { free(row.root, row.cache) };
-    Some(object)
+    Ok(object)
 }
 /// Called only after the original normal counter row builder on its GUI thread.
 /// Validate all eight rows first, hide old badges, then create missing native children.
@@ -377,7 +381,10 @@ pub fn objects(ui: u32) -> Result<[u32; 8], u32> {
         result[i] = if row.badge != 0 {
             row.badge
         } else {
-            create(row, texture).ok_or(16u32)?
+            create(row, texture).map_err(|stage| {
+                FAILURE.store(stage, Ordering::Relaxed);
+                16u32
+            })?
         };
     }
     Ok(result)

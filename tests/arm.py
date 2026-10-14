@@ -55,7 +55,7 @@ for ge in range(16):
         actual=[cpu.reg_read(r) for r in regs[:4]]+list(struct.unpack('<3I',cpu.mem_read(sp,12)))
         assert actual==values and cpu.reg_read(arm.UC_ARM_REG_CPSR)&0xf0000==ge<<16
         calls.append(actual)
-        # A native AAPCS callee may clobber r0-r4,r12,d0-d7,d16-d31 and flags.
+        # A native AAPCS callee may clobber r0-r3,r12,d0-d7,d16-d31 and flags.
         # Keep its own callee-saved registers, so any detour corruption is visible.
         for r in regs[:4]+[regs[12]]:cpu.reg_write(r,0xdeadbeef)
         for r in ds[:8]+ds[16:]:cpu.reg_write(r,0x7ff10000ffff0000)
@@ -71,7 +71,7 @@ for ge in range(16):
 u=machine();params=ENGINE+0x200;u.reg_write(arm.UC_ARM_REG_R0,params);u.mem_write(params-8,b'\xa5'*86)
 u.emu_start(MODULE+names['forge_onLoad'],RETURN,count=1000)
 assert struct.unpack('<3H',u.mem_read(params,6))==(1,5,0)
-assert bytes(u.mem_read(params+6,64)).rstrip(b'\0')==b'Native Quest Badges r4'
+assert bytes(u.mem_read(params+6,64)).rstrip(b'\0')==b'Native Quest Badges r5'
 assert bytes(u.mem_read(params-8,8))==bytes(u.mem_read(params+70,8))==b'\xa5'*8
 # Compile the native header's struct without SDK includes; compiler-derived
 # offsets independently agree with the production Rust compile-time assertions.
@@ -90,7 +90,7 @@ for at,size in [(0x616c00,48),(0x618bc0,40),(0x618cbc,28),(0x782bb4,4),(0x782e04
         '--start-address='+str(at),'--stop-address='+str(at+size),binary],text=True)
     assert '\tsel\t' not in text;windows[hex(at)]=text.split('Disassembly of section .data:')[-1].strip()
 record('arm.json',{'status':'PASSED','typed_detour_cases':checks,'forwarded_integer_arguments':7,
-        'registered_name':'Native Quest Badges r4','metadata_bytes':70,'hook_abi_bytes':24,'minimum_forge_version':'1.5.0','GE':'unchanged before original in all 16 patterns; no restoration required at audited direct continuations',
+        'registered_name':'Native Quest Badges r5','metadata_bytes':70,'hook_abi_bytes':24,'minimum_forge_version':'1.5.0','GE':'unchanged before original in all 16 patterns; no restoration required at audited direct continuations',
         'preserved':['r4-r11','d8-d15','sp','incoming stack words'],'direct_caller_windows':windows,
         'live_flags':'Row and parent direct callers replace NZCVQ before conditional use or make an unconditional next call; no incoming GE consumer',
         'runtime_test':'NOT RUN','resource_attachment':'NOT VERIFIED'})
