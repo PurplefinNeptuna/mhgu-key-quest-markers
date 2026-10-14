@@ -115,7 +115,7 @@ pub fn install() -> Result<Vec<Patch>, &'static str> {
             || !memory::copy(base + offset, &mut actual)
             || actual != bytes
         {
-            return Err("MHGU 1.4.0 code mismatch; disable the old prefix plugin");
+            return Err("MHGU 1.4.0 code mismatch at a required function");
         }
     }
     if !offers::init() {
@@ -148,7 +148,9 @@ pub fn install() -> Result<Vec<Patch>, &'static str> {
             && continuation & 3 == 0
             && memory::executable(continuation, 16)
             && memory::copy(continuation, &mut code)
-            && code[..8] == SIGNATURES[i].1[..8]
+            // Supporting signatures may be reordered or added. Compare against
+            // this target's pre-hook snapshot, not an unrelated table position.
+            && &code[..8] == patches[i].original_bytes()
             && code[8..12] == 0xe51ff004u32.to_le_bytes()
             && code[12..] == (targets[i] + 8).to_le_bytes();
         if valid {

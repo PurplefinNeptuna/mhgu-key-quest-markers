@@ -10,8 +10,8 @@ CONFIG=json.loads((MOD/'build.local.json').read_text()) if (MOD/'build.local.jso
 # build.sh remains usable from any working directory after an independent export.
 for key in ('rust_bin','cargo_home','cargo_forge','devkitarm','inputs','arm_python'):
     if key in CONFIG and not Path(CONFIG[key]).is_absolute(): CONFIG[key]=str(MOD/CONFIG[key])
-BUILD_ROOT=ROOT/'build/key-quest-markers-rs/candidates/r5'
-WORK_ROOT=ROOT/'work/key-quest-markers-rs/candidates/r5'
+BUILD_ROOT=ROOT/'build/key-quest-markers-rs/candidates/r6'
+WORK_ROOT=ROOT/'work/key-quest-markers-rs/candidates/r6'
 CARGO_TARGET=WORK_ROOT/'cargo-target'
 FORGE=MOD/'vendor/forge-rs'
 DEPS=MOD/'vendor'

@@ -1,11 +1,11 @@
 {
-  "version": "r5",
+  "version": "r6",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
   "host_tests": 10,
   "typed_arm_cases": 16,
-  "compiled_active_adapter_cases": 22,
+  "compiled_active_adapter_cases": 24,
   "archive_replacements": 0,
   "runtime_gui": "Native children and game-owned expanded draw caches",
   "resource_checks": {
@@ -24,8 +24,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "9e671b3f62a52fa529ef9abb39c854ff9108ebecff7b6b6463326d1d7cb8c1b5",
-    "elf_sha256": "0ae65902fea245e5fef19a8bfcf7fd2e9a6c1e3cd3023764cfcc1e7efbe0c823",
+    "nro_sha256": "617382d047da92579d8d0c0588a03e7dc4f7d276c31329485f0bba1b0e0f43f0",
+    "elf_sha256": "e4bc8d459c818c554a75f98b3a3b2b0138579bfe7ae7f6c041c0bd1c6e1001e2",
     "exports": [
       "fini",
       "forge_onInit",
@@ -103,7 +103,7 @@
     "runtime_test": "NOT RUN"
   },
   "gui_registration": {
-    "name": "Native Quest Badges r5",
+    "name": "Native Quest Badges r6",
     "metadata_bytes": 70,
     "canaries": "PASSED"
   },
@@ -112,7 +112,7 @@
     "inputs": "Externally supplied, copied into independent checkout",
     "parent_source_dependencies": false,
     "payload_sha256_matches_workspace": true,
-    "native_constructor_cases": 22
+    "native_constructor_cases": 24
   },
   "remaining_acceptance": [
     "Live English HD pixels, clipping, size and native cleanup",
@@ -122,7 +122,7 @@
   "published": false,
   "reported_r2_runtime": "No badges; Damage Numbers callbacks run but its metadata name is blank",
   "payload_sha256": {
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "9e671b3f62a52fa529ef9abb39c854ff9108ebecff7b6b6463326d1d7cb8c1b5"
+    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "617382d047da92579d8d0c0588a03e7dc4f7d276c31329485f0bba1b0e0f43f0"
   },
   "full_distribution_check_mods": 14,
   "reported_r3_runtime": {
@@ -157,5 +157,17 @@
     "installed_nro_sha256": "e29fe7711acde87e77dac19bc51f4d0c686d6cbf0e7cee0e53294ba5de762087",
     "log_checked": "2026-10-15 06:15:25 +0700",
     "row_validation_error": false
+  },
+  "reported_r5_runtime": {
+    "result": "FAILED during initialization; hooks restored",
+    "eden_error": "Native quest badges: Forge hook failed; restored originals",
+    "installed_nro_sha256": "9e671b3f62a52fa529ef9abb39c854ff9108ebecff7b6b6463326d1d7cb8c1b5",
+    "log_checked": "2026-10-15 06:26:30 +0700"
+  },
+  "startup_regression": {
+    "old_r5": "FAILED as expected: compares constructor bytes with hook trampoline bytes",
+    "new_r6": "PASSED: actual forge_onInit, installer and patched entry branches",
+    "forced_active_flag": false,
+    "first_and_second_hook_rollback": "PASSED"
   }
 }

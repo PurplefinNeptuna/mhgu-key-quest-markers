@@ -1,4 +1,4 @@
-# Native Quest Badges — Rust r5 candidate
+# Native Quest Badges — Rust r6 candidate
 
 **DEVELOPMENT build; in-game acceptance pending.** Adds Rise-style native badges to English HD MHGU
 1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching 24-byte Hook ABI.
@@ -21,7 +21,7 @@ progression changes. The game draws the badges and releases them with the menu.
 ## Installation
 
 Close the game first. Back up and disable/remove the old Rust badge candidate
-folder as a whole; do not copy r5 over it and leave its old `common_eng.arc` behind.
+folder as a whole; do not copy r6 over it and leave its old `common_eng.arc` behind.
 Keep that backup outside the emulator's enabled mod directory.
 
 Extract the ZIP and put its `key-quest-markers-rs` folder in the emulator's MHGU mod
@@ -37,7 +37,7 @@ so `[KEY]` disappears from list/detail titles. Only one Rust badge candidate sho
 be enabled. The ZIP does not include or replace Forge; confirm Ryujinx's loader is
 also 1.5.0 before testing.
 
-Forge's Loaded Plugins list should show **Native Quest Badges r5**. There is no
+Forge's Loaded Plugins list should show **Native Quest Badges r6**. There is no
 Plugin UI settings panel. Earlier forge-rs entries omitted the name, so a loaded
 plugin could be missing from that list. This candidate reports actual initialization
 or GUI failures once at ERROR level, without requiring a loader config change.
@@ -45,8 +45,8 @@ or GUI failures once at ERROR level, without requiring a loader config change.
 To remove it, close the game and disable/remove its folder. Restore previous
 packages from your backups if desired. No saves or game archives need changing.
 
-r5 corrects r4’s constructor call, which prevented badge creation. It retains the
-GUI owner correction from r4.
+r6 corrects r5’s startup hook check, which restored valid hooks before the menu
+could run. It retains the native constructor and GUI owner corrections.
 
 ## Validation limits
 

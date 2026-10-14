@@ -1,8 +1,8 @@
-# Native implementation audit — active r5
+# Native implementation audit — active r6
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r5
+The blanket r1 disable gate and unresolved-state placeholders are removed. r6
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -191,7 +191,7 @@ badge state. Protected quest/completion/progression records remain unchanged.
 Pixel rendering and the game's actual query results still require a manual trial.
 
 No emulator was launched, package installed, save modified or loader replaced by
-this implementation. r5 is active DEVELOPMENT, with manual acceptance pending on
+this implementation. r6 is active DEVELOPMENT, with manual acceptance pending on
 English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
@@ -235,3 +235,26 @@ installed payload, emulator setting or save is changed by preparation.
 The real GPU renderer and live current-progression queries remain manual gates.
 The Eden report also contains a later unmapped-memory message during shutdown;
 no evidence here attributes that separate message to this failed creation path.
+
+## r5 startup failure and r6 correction
+
+The latest Eden log used the exact r5 NRO and reported “Forge hook failed;
+restored originals” during initialization. No row or creation callback ran.
+Adding constructor signature windows at the beginning of SIGNATURES shifted the
+table, but the installer still compared the first hook trampoline with
+SIGNATURES[0] and the second with SIGNATURES[1]. Those were constructor bytes,
+so the installer rejected valid hooks and rolled them back.
+
+r6 compares each trampoline with its own Patch original-byte snapshot. The full
+signature table is still validated before any write; adding/reordering supporting
+windows cannot change which original bytes a hook must preserve.
+
+The compiled fixture now starts at forge_onInit, supplies the native 20-byte Patch
+and 24-byte Hook return ABIs, runs the real installer, enters both patched game
+addresses, and then performs native texture creation, setters, drawing traversal
+and cleanup. It never forces ACTIVE. Additional cases corrupt the first/second
+trampoline independently and verify both target bytes are restored. The unchanged
+r5 NRO fails this startup regression with the same error as the user’s log; r6
+passes. Forge/kernel allocation/query operations, original menu builders, native
+quest query results and GPU commands remain doubles. Live pixels/gameplay remain
+manual acceptance gates. No installed mod or emulator configuration was changed.

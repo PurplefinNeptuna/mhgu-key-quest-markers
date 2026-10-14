@@ -4,10 +4,10 @@
 Forge/kernel/MT factories and GPU commands are doubles; game archive bytes are
 unchanged. This checks object insertion and real draw-list traversal, not pixels.
 """
-import json,struct,subprocess,sys
+import json,struct,subprocess,sys,re
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from paths import BUILD_ROOT,CONFIG,input_path
+from paths import MOD,BUILD_ROOT,CONFIG,input_path
 from verify import symbols
 from mhgu_binary import Nro,main_image
 from build import record,digest
@@ -38,7 +38,7 @@ CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
-              simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0):
+              simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0):
     global CASES
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
@@ -50,6 +50,9 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         u.mem_write(GAME+first,native_image[first:last])
     # Exercise the actual texture setters too, including their dirty propagation.
     u.mem_write(GAME+0xa47000,native_image[0xa47000:0xa57000])
+    # Copy every checked window, including non-hook constructor signatures first.
+    for raw in re.findall(r'\(\s*0x([0-9a-f]+)',(MOD/'src/signatures.rs').read_text()):
+        offset=int(raw,16);u.mem_write(GAME+offset,native_image[offset:offset+32])
     imports={};next_import=ENGINE+0x300
     for name,e,*_ in nro.symbols:
         if name and not e[5]:imports[name.decode()]=next_import;next_import+=4
@@ -69,8 +72,6 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     def word(p,v):u.mem_write(p,struct.pack('<I',v))
     def read(p):return struct.unpack('<I',u.mem_read(p,4))[0]
     def half(p,v):u.mem_write(p,struct.pack('<H',v))
-    word(MODULE+base_symbol,GAME);word(MODULE+names['kqm_original'],ENGINE);word(MODULE+names['kqm_parent_original'],ENGINE+4)
-    word(MODULE+names['kqm_tls_slot'],1);u.mem_write(MODULE+names['kqm_active'],b'\x01')
     word(CONTROLLER+0x54,UI);word(UI+0x24,HOLDER);word(HOLDER,VFT+0x100);word(VFT+0x1ac,GAME+0x1010)
     word(HOLDER+0x298,primary_count);word(HOLDER+0xf8,INSTANCE_ARRAY);word(HOLDER+0x294,INSTANCE_ARRAY+0x400)
     # The real DTI exposes three virtual slots. +0x0c is deliberately null:
@@ -139,10 +140,14 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     u.reg_write(arm.UC_ARM_REG_C1_C0_2,0xf00000);u.reg_write(arm.UC_ARM_REG_FPEXC,0x40000000)
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
     constructing=None;factory_index=0
+    plugin_heap=DATA+0x120000;hook_count=0;startup_logs=[]
     allocations={};freed=[];created=[];drawn=[];object_attempts=0
     def allocate(size):
         nonlocal heap
         p=heap;heap=(p+size+31)&~15;allocations[p]=size;u.mem_write(p+size,b'\xa5'*16);return p
+    def plugin_allocate(size):
+        nonlocal plugin_heap
+        pointer=plugin_heap;plugin_heap=(pointer+size+15)&~15;return pointer
     def release(p):
         assert p not in freed,('double free',hex(p));freed.append(p)
         if p in allocations:assert bytes(u.mem_read(p+allocations[p],16))==b'\xa5'*16,('allocation overflow',hex(p))
@@ -155,23 +160,54 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             out+=c
         raise AssertionError('unterminated string')
     def trace(cpu,address,size,_):
-        nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index
+        nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index,hook_count
         r=[cpu.reg_read(x)for x in REGS[:4]]
         if address==RETURN:cpu.emu_stop();return
+        if address==MODULE+names['mwc_svc_get_info']:
+            assert r[1]==18;cpu.mem_write(r[0],struct.pack('<Q',0x0100770008dd8000));ret(cpu);return
+        if address==MODULE+names['mwc_svc_flush']:ret(cpu);return
+        if address==imports.get('nnosAllocateTlsSlot'):word(r[0],1);ret(cpu);return
+        if address==imports.get('forge_log_getLevel'):ret(cpu,0);return
+        if address==imports.get('forge_log'):startup_logs.append(text(cpu,r[2]));ret(cpu);return
+        if address==imports.get('malloc'):ret(cpu,plugin_allocate(r[0]));return
+        if address==imports.get('free'):ret(cpu);return
+        if address==imports.get('forge_patch_create'):
+            # AAPCS returns this 20-byte struct through hidden r0; arguments shift.
+            out,target,source,length=r;assert length==8
+            patch,original=plugin_allocate(8),plugin_allocate(8)
+            cpu.mem_write(patch,bytes(cpu.mem_read(source,8)));cpu.mem_write(original,bytes(cpu.mem_read(target,8)))
+            cpu.mem_write(out,struct.pack('<5I',target,8,patch,original,0));ret(cpu,out);return
+        if address in [imports.get('forge_patch_enable'),imports.get('forge_patch_disable'),imports.get('forge_patch_destroy')]:
+            target,length,patch,original,enabled=struct.unpack('<5I',cpu.mem_read(r[0],20))
+            if address==imports.get('forge_patch_enable'):
+                cpu.mem_write(target,bytes(cpu.mem_read(patch,length)));word(r[0]+16,1)
+            elif enabled:
+                cpu.mem_write(target,bytes(cpu.mem_read(original,length)));word(r[0]+16,0)
+            ret(cpu);return
+        if address==imports.get('forge_hook_create'):
+            # Matching 24-byte Hook uses hidden r0 too. Forge owns the continuation.
+            out,target,detour,original_out=r;hook_count+=1
+            continuation=ENGINE+0x800+(hook_count-1)*16
+            code=bytes(cpu.mem_read(target,8))+struct.pack('<II',0xe51ff004,target+8)
+            if hook_count==fail_hook:code=b'\0'*4+code[4:]
+            cpu.mem_write(continuation,code);word(original_out,continuation)
+            cpu.mem_write(target,struct.pack('<II',0xe51ff004,detour))
+            cpu.mem_write(out,struct.pack('<6I',target,detour,continuation,0,0,0));ret(cpu,out);return
         if address==MODULE+names['mwc_svc_query']:
-            cpu.mem_write(r[0],struct.pack('<QQ6I',GAME,0x2000000,0,0,7,0,0,0));word(r[1],0);ret(cpu);return
+            region,size=(ENGINE,4096) if ENGINE<=r[2]<ENGINE+4096 else (GAME,0x2000000)
+            cpu.mem_write(r[0],struct.pack('<QQ6I',region,size,0,0,7,0,0,0));word(r[1],0);ret(cpu);return
         if address==imports.get('nnosGetTlsValue'):assert r[0]==1;ret(cpu,tls_value);return
         if address==imports.get('nnosSetTlsValue'):assert r[0]==1;tls_value=r[1];ret(cpu);return
         if address==imports.get('forge_mem_getMainTextAddr'):ret(cpu,GAME);return
         if address==imports.get('forge_singleton_getInstanceByName'):ret(cpu,{'sQuest':QUEST,'sUserInfo':PROFILE}.get(text(cpu,r[0]),0));return
-        if address==ENGINE+4:
+        if address in [ENGINE+4,ENGINE+0x810]:
             assert r[:2]==[CONTROLLER,0 if invalid_info else INFO] and tls_value!=0
             parent_return=cpu.reg_read(arm.UC_ARM_REG_LR);parent_sp=cpu.reg_read(arm.UC_ARM_REG_SP)
             cpu.reg_write(arm.UC_ARM_REG_SP,parent_sp-16);cpu.mem_write(parent_sp-16,struct.pack('<4I',0,0,ROWS,0))
             for reg,value in zip(REGS[:4],[UI,0,2,0]):cpu.reg_write(reg,value)
-            cpu.reg_write(arm.UC_ARM_REG_LR,ENGINE+8);cpu.reg_write(arm.UC_ARM_REG_PC,MODULE+names['kqm_row']);calls.append('parent');return
+            cpu.reg_write(arm.UC_ARM_REG_LR,ENGINE+8);cpu.reg_write(arm.UC_ARM_REG_PC,GAME+0x616cb0);calls.append('parent');return
         if address==ENGINE+8:cpu.reg_write(arm.UC_ARM_REG_SP,parent_sp);cpu.reg_write(arm.UC_ARM_REG_PC,parent_return);return
-        if address==ENGINE:
+        if address in [ENGINE,ENGINE+0x800]:
             sp=cpu.reg_read(arm.UC_ARM_REG_SP);assert r+list(struct.unpack('<3I',cpu.mem_read(sp,12)))==[UI,0,2,0,0,0,ROWS]
             calls.append('row-original');ret(cpu);return
         if address==GAME+0x546f28:assert r[0]==HOLDER;ret(cpu,gui_identity);return
@@ -222,6 +258,21 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     def call(address,a=0,b=0):
         u.reg_write(arm.UC_ARM_REG_SP,STACK);u.reg_write(arm.UC_ARM_REG_LR,RETURN);u.reg_write(arm.UC_ARM_REG_R0,a);u.reg_write(arm.UC_ARM_REG_R1,b)
         u.emu_start(address,RETURN+4,count=1000000);assert u.reg_read(arm.UC_ARM_REG_SP)==STACK,(hex(u.reg_read(arm.UC_ARM_REG_PC)),hex(u.reg_read(arm.UC_ARM_REG_SP)))
+    # Exercise the actual lifecycle/installer before any row callback; no forced
+    # ACTIVE flag can hide a startup regression. Forge/kernel calls remain doubles.
+    assert read(MODULE+base_symbol)==0 and bytes(u.mem_read(MODULE+names['kqm_active'],1))==b'\0'
+    assert read(MODULE+names['kqm_original'])==read(MODULE+names['kqm_parent_original'])==0
+    call(MODULE+names['forge_onInit'])
+    if fail_hook:
+        assert hook_count==fail_hook
+        assert not read(MODULE+names['kqm_active'])&255
+        assert any('restored originals' in message for message in startup_logs)
+        for offset in [0x616cb0,0x54d030]:assert bytes(u.mem_read(GAME+offset,8))==native_image[offset:offset+8]
+        CASES+=1;return {'case':label,'startup_rollback':True,'failed_hook':fail_hook}
+    assert bytes(u.mem_read(MODULE+names['kqm_active'],1))==b'\x01',startup_logs
+    assert hook_count==2 and read(MODULE+names['kqm_original'])==ENGINE+0x800
+    assert read(MODULE+names['kqm_parent_original'])==ENGINE+0x810
+    assert any('installed' in message for message in startup_logs)
     # Run both real ARM constructor functions. a38828 supplies the GUI owner;
     # a38bc0 writes each object's owner/resource and links the original ARC tree.
     # Factories and property initialization are doubles, not the ownership path.
@@ -238,11 +289,11 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     constructing=None
     if invalid_owner:word(read(DATA+0x2a000+8)+0x74,DATA+0x28000)
     if invalid_object:word(read(DATA+0x2a000+7*0x100+8)+0x50,99)
-    call(MODULE+names['kqm_parent'],CONTROLLER,0 if invalid_info else INFO)
+    call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO)
     assert tls_value==0 and calls==['parent','row-original']
     if fail_at:
         assert len(created)==fail_at-1 and not states and not colors
-        call(MODULE+names['kqm_parent'],CONTROLLER,INFO) # Recover while retaining valid hidden native children.
+        call(GAME+0x54d030,CONTROLLER,INFO) # Recover while retaining valid hidden native children.
         assert tls_value==0 and calls==['parent','row-original']*2
     assert [bytes(u.mem_read(p,n))for p,n in protected]==immutable
     for i in range(8):assert bytes(u.mem_read(DATA+0x2a000+i*0x100,48))==arrays[i]
@@ -254,7 +305,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         assert len(created)==8 and len(allocations)==16
         assert all(p in freed for p in original_caches)
         if repeat:
-            call(MODULE+names['kqm_parent'],CONTROLLER,0 if invalid_info else INFO);assert len(created)==8 and len(allocations)==16
+            call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8 and len(allocations)==16
         if invalid_info or ordinary or bad_count:assert states==dict.fromkeys(range(8),0) and not colors
         else:
             assert states==dict(enumerate([1,1,1,1,1,0,0,0]))
@@ -278,7 +329,9 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         for root in roots:call(GAME+0xa48668,root)
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
-results=[test_case('all badge states and native draw traversal'),test_case('urgent inactive',offered=()),
+results=[test_case('first malformed trampoline rolls back',fail_hook=1),
+         test_case('second malformed trampoline rolls back both targets',fail_hook=2),
+         test_case('all badge states and native draw traversal'),test_case('urgent inactive',offered=()),
          test_case('urgent unavailable',available=False),test_case('urgent prerequisites incomplete',prerequisites=False),
          test_case('viewing still red'),test_case('key completion',completed=(207,213)),test_case('urgent completion',completed=(303,213)),
          test_case('resource object mismatch',invalid_object=True),test_case('animation address is not the GUI owner',invalid_owner=True),test_case('no offer context',invalid_info=True),
@@ -289,6 +342,6 @@ results=[test_case('all badge states and native draw traversal'),test_case('urge
          test_case('repeated row update reuses native children',repeat=True),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
-          'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
+          'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')
