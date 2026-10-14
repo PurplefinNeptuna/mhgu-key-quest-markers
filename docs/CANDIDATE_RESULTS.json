@@ -1,11 +1,11 @@
 {
-  "version": "r6",
+  "version": "r7",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
   "host_tests": 10,
   "typed_arm_cases": 16,
-  "compiled_active_adapter_cases": 24,
+  "compiled_active_adapter_cases": 25,
   "archive_replacements": 0,
   "runtime_gui": "Native children and game-owned expanded draw caches",
   "resource_checks": {
@@ -24,8 +24,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "617382d047da92579d8d0c0588a03e7dc4f7d276c31329485f0bba1b0e0f43f0",
-    "elf_sha256": "e4bc8d459c818c554a75f98b3a3b2b0138579bfe7ae7f6c041c0bd1c6e1001e2",
+    "nro_sha256": "0bc68c1053cfee62a442645d5144e87f6c15e455f218cd495168e19c63f68d36",
+    "elf_sha256": "96b250460f0b0f022b647a60b2a8c5fb320e64d3d573e9553ebfe3e594385b41",
     "exports": [
       "fini",
       "forge_onInit",
@@ -51,6 +51,10 @@
       "nnosSetTlsValue"
     ],
     "signature_windows": [
+      "0x5456e4",
+      "0xa38ffc",
+      "0xa47d2c",
+      "0xa38b58",
       "0xa4f60c",
       "0xa4d0d8",
       "0x616cb0",
@@ -103,7 +107,7 @@
     "runtime_test": "NOT RUN"
   },
   "gui_registration": {
-    "name": "Native Quest Badges r6",
+    "name": "Native Quest Badges r7",
     "metadata_bytes": 70,
     "canaries": "PASSED"
   },
@@ -112,7 +116,7 @@
     "inputs": "Externally supplied, copied into independent checkout",
     "parent_source_dependencies": false,
     "payload_sha256_matches_workspace": true,
-    "native_constructor_cases": 24
+    "native_constructor_cases": 25
   },
   "remaining_acceptance": [
     "Live English HD pixels, clipping, size and native cleanup",
@@ -122,7 +126,7 @@
   "published": false,
   "reported_r2_runtime": "No badges; Damage Numbers callbacks run but its metadata name is blank",
   "payload_sha256": {
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "617382d047da92579d8d0c0588a03e7dc4f7d276c31329485f0bba1b0e0f43f0"
+    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "0bc68c1053cfee62a442645d5144e87f6c15e455f218cd495168e19c63f68d36"
   },
   "full_distribution_check_mods": 14,
   "reported_r3_runtime": {
@@ -169,5 +173,22 @@
     "new_r6": "PASSED: actual forge_onInit, installer and patched entry branches",
     "forced_active_flag": false,
     "first_and_second_hook_rollback": "PASSED"
+  },
+  "reported_r6_runtime": {
+    "result": "FAILED: no icon and game freeze",
+    "installed_nro_sha256": "617382d047da92579d8d0c0588a03e7dc4f7d276c31329485f0bba1b0e0f43f0",
+    "preserved_eden_log_sha256": "dbe9d6c3b91aa1f9cafe9ae2d3c42d2e0b3bd3f4ac0dd6657171c2f652234204",
+    "native_return_offset": "0x5457c8",
+    "native_function": "0x5456e4",
+    "object_lookup_index": 12
+  },
+  "map_lifetime_regression": {
+    "old_r6": "FAILED in actual resource cleanup at lookup index12, matching live crash",
+    "new_r7": "PASSED: actual cleanup and animation clear functions",
+    "runtime_object_map_entries": 13,
+    "preserved_original_bindings": 12,
+    "native_map_allocator": "cGUIInstance MT alloc1/free",
+    "separate_map_and_texture_allocator_fixtures": true,
+    "map_allocation_failure": "PASSED"
   }
 }

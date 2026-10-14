@@ -1,8 +1,8 @@
-# Native implementation audit — active r6
+# Native implementation audit — active r7
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r6
+The blanket r1 disable gate and unresolved-state placeholders are removed. r7
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -73,7 +73,7 @@ Native root/array/descriptor fields are:
 | Object +0x68/+0x6c/+0x70 | First child, next sibling, parent |
 | Object +0x74/+0x78 | Borrowed cGUI owner and rGUI context |
 | Object +0x50 | Object ID |
-| Root +0x9c/+0xa0 | Original animation descriptor and object-index array; unchanged |
+| Root +0x9c/+0xa0 | Original descriptor and live object-index map (first twelve bindings preserved) |
 | Root +0xa4/+0x80 | Owned draw-cache allocation and command-list start |
 | Root +0x8c bits1/2 | Draw-list/transform dirty flags |
 
@@ -113,8 +113,8 @@ and commands. Ordinary row/menu visibility is inherited through the native tree.
 
 Root destruction frees its new cache, then recursively destroys children. Texture
 child destruction releases native graphics buffers and its MT allocation. No
-additional destructor hook, process-lifetime object cache, second renderer or
-object-index-array replacement is introduced. A failed allocation leaves the old
+additional destructor hook, process-lifetime object cache or second renderer is
+introduced. The instance-owned index map grows from twelve to thirteen entries. A failed allocation leaves the old
 root/cache/index arrays valid and destroys unpublished storage.
 
 ## ARM and Forge boundaries
@@ -184,14 +184,14 @@ The compiled fixture uses unmodified twelve-object rows, native-shaped metadata,
 query/MT allocation and original-row factory/property doubles and the game's
 actual ARM animation and texture constructors, texture style/rectangle/color/
 visibility setters, cache allocator/free, child-link helpers, draw walker and
-root/container/texture destructors. It verifies object creation, direct-child links, unchanged index arrays,
+root/container/texture destructors. It verifies object creation, direct-child links, preserved original bindings in expanded index maps,
 expanded cache bounds with canaries, actual traversal of visible badges, repeated
 updates without additional allocation, native cleanup, failure rollback and every
 badge state. Protected quest/completion/progression records remain unchanged.
 Pixel rendering and the game's actual query results still require a manual trial.
 
 No emulator was launched, package installed, save modified or loader replaced by
-this implementation. r6 is active DEVELOPMENT, with manual acceptance pending on
+this implementation. r7 is active DEVELOPMENT, with manual acceptance pending on
 English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
@@ -258,3 +258,32 @@ r5 NRO fails this startup regression with the same error as the user’s log; r6
 passes. Forge/kernel allocation/query operations, original menu builders, native
 quest query results and GPU commands remain doubles. Live pixels/gameplay remain
 manual acceptance gates. No installed mod or emulator configuration was changed.
+
+## r6 freeze and r7 object-map lifetime correction
+
+The preserved Eden r6 log reports an unmapped Read32 and null instruction fetch.
+The return address maps to main+0x5457c8 in native GUI resource cleanup0x5456e4;
+r7 (the register) is 12, identifying the first slot beyond the original map.
+Native count getter0xa38ffc calls tree traversal0xa47d2c and adds the root. It
+therefore returns 13 after child insertion, while r6 kept only twelve pointers.
+The cleanup loop then dereferences map[12] as an object. The unchanged r6 NRO
+reproduces this fault at index12 in the compiled fixture.
+
+r7 allocates a thirteen-pointer map with cGUIInstance's MT allocator (alloc1 at
+vft+0x1c). The allocator class is verified from the shared GOT slot0x18422b4,
+used by original map construction0xa38bc0 and destruction0xa38b58/0xa38828.
+The first twelve pointers are copied without reordering; slot12 holds the new
+texture. Both instance+0xd8 and root+0xa0 are published before linking the child,
+then the old map is freed with the same allocator class. Native instance cleanup
+frees the replacement after destroying the root and its children. Unpublished
+map allocations use scoped rollback alongside the badge and cache allocations.
+The resource descriptor still names twelve original sequence-bound objects; no
+shared descriptor, ARC, sequence or original object binding is changed.
+
+The fixture executes the actual crashing cleanup function and the actual
+animation clear function, with distinct map and texture allocator doubles. It
+checks map allocation failure, preserved original bindings, repeated updates,
+both aliases, and destruction of all new allocations. The other three callers of
+the native tree count (0x546360,0x547a14,0x548438) likewise iterate the live map;
+none needs a new object's resource property descriptor. Live GPU pixels and
+progression queries still require manual acceptance.

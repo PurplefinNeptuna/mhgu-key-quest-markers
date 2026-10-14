@@ -1,6 +1,6 @@
 # Native Quest Badges (Rust)
 
-**Active DEVELOPMENT r6.** Adds native 24×24 quest badges by creating GUI children
+**Active DEVELOPMENT r7.** Adds native 24×24 quest badges by creating GUI children
 at runtime. Red means a key still needed for current progression, yellow means a
 currently offered available urgent, and grey means a completed/obsolete key or an
 inactive/old urgent. Ordinary and unresolved quests have no badge.
@@ -8,7 +8,7 @@ inactive/old urgent. Ordinary and unresolved quests have no badge.
 The badges reuse the already-loaded English HD lobby emblem. The package contains
 one NRO; no ARC, atlas or other game asset is replaced. The game owns rendering and
 object cleanup. There is no overlay, settings panel, configuration or progression
-write. Forge lists the plugin as **Native Quest Badges r6** and logs failures at
+write. Forge lists the plugin as **Native Quest Badges r7** and logs failures at
 ERROR level even with the default loader filter.
 
 See [DISTRIBUTION_README.md](DISTRIBUTION_README.md) for installing a clean package,

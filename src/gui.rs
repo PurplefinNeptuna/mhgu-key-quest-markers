@@ -1,5 +1,5 @@
 //! Native row children. The game owns their MT allocations and draw caches;
-//! no archive, object-index array, overlay, or pointer retained by this plugin.
+//! no archive replacement, overlay, or game pointer retained by this plugin.
 use crate::memory::{self, BASE};
 use core::sync::atomic::{AtomicU32, Ordering};
 use forge::mt::dti::MtDti;
@@ -7,6 +7,7 @@ use quest_badges_core::Badge;
 
 const ID: u32 = 0x4b514d33; // KQM3, outside the counter's existing object IDs.
 const TEXTURE_BYTES: usize = 304;
+const MAP_BYTES: usize = 13 * 4; // Original twelve bindings plus our native child.
 const CACHE_BYTES: usize = 10 * 16 + 8; // Ten drawable begin/end pairs plus terminator.
 static FAILURE: AtomicU32 = AtomicU32::new(0);
 pub fn take_failure() -> u32 {
@@ -44,6 +45,8 @@ fn integer(offset: u32, object: u32, value: u32) {
 #[derive(Clone, Copy)]
 struct Row {
     root: u32,
+    instance: u32,
+    objects: u32,
     owner: u32,
     parent: u32,
     tail: u32,
@@ -71,7 +74,8 @@ impl Row {
             stage = 3;
             let description = memory::word(root + 0x9c)?;
             // The unmodified counter row is animation 20 with 12 lookup objects,
-            // 15 sequences and 9 drawables. These tables stay exactly as the game built them.
+            // 15 sequences and 9 drawables. The resource descriptor and first twelve
+            // bindings stay unchanged; the runtime map may append our child.
             if memory::word(description)? != 20
                 || memory::half(description + 4)? != 12
                 || memory::half(description + 6)? != 15
@@ -149,8 +153,18 @@ impl Row {
                 }
                 let next = memory::word(tail + 0x6c)?;
                 if next == 0 {
+                    // Native resource cleanup counts the linked tree, not the
+                    // resource descriptor. A retained child needs its 13th binding.
+                    if badge != 0
+                        && (!memory::readable(objects, MAP_BYTES)
+                            || memory::word(objects + 48)? != badge)
+                    {
+                        return None;
+                    }
                     return Some(Self {
                         root,
+                        instance,
+                        objects,
                         owner,
                         parent,
                         tail,
@@ -177,6 +191,28 @@ struct Allocation {
     pointer: u32,
 }
 impl Allocation {
+    fn mapping() -> Option<Self> {
+        // Native map construction and destruction both use cGUIInstance's DTI
+        // (verified GOT slot main+0x18422b4), independently of the Texture allocator.
+        let dti = MtDti::find("cGUIInstance")?;
+        let getter: unsafe extern "C" fn(u32) -> u32 =
+            unsafe { core::mem::transmute((base() + 0x7aa47c) as usize) };
+        let allocator = unsafe { getter(dti as *const _ as u32) };
+        let allocate = method(allocator, 0x1c)?;
+        let free = method(allocator, 0x34)?;
+        let f: unsafe extern "C" fn(u32, u32, u32) -> u32 =
+            unsafe { core::mem::transmute(allocate as usize) };
+        let pointer = unsafe { f(allocator, MAP_BYTES as u32, 16) };
+        let result = Self {
+            allocator,
+            free,
+            pointer,
+        };
+        if !memory::writable(pointer, MAP_BYTES) || pointer & 15 != 0 {
+            return None;
+        }
+        Some(result)
+    }
     fn texture(dti: &MtDti) -> Option<Self> {
         let address = dti as *const _ as u32;
         let getter: unsafe extern "C" fn(u32) -> u32 =
@@ -289,6 +325,13 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
     unsafe { f(object, rect.as_ptr()) };
     set(object, Badge::Hidden);
 
+    let mut mapping = Allocation::mapping().ok_or(9u32)?;
+    // Preserve every resource/sequence binding at its original index. The native
+    // cleanup walker asks for the tree count (13), so slot 12 must hold the child.
+    unsafe {
+        core::ptr::copy_nonoverlapping(row.objects as *const u8, mapping.pointer as *mut u8, 48);
+        word(mapping.pointer + 48, object);
+    }
     let allocate = method(row.root, 0x58).ok_or(6u32)?;
     let release = method(row.root, 0x5c).ok_or(6u32)?;
     let f: unsafe extern "C" fn(u32, u32) -> u32 =
@@ -306,8 +349,11 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
     // Publish only after both allocations and complete initialization succeed.
     // The game's draw walker emits begin/end pairs for the new child, so its
     // original nine-drawable cache must grow by sixteen bytes. Root destruction
-    // frees the new cache; child destruction frees the badge. Index arrays stay 12.
+    // frees the new cache; child destruction frees the badge. Publish both map
+    // aliases before linking the child, so a 13-node tree always has 13 entries.
     unsafe {
+        word(row.instance + 0xd8, mapping.pointer);
+        word(row.root + 0xa0, mapping.pointer);
         word(row.root + 0xa4, cache);
         word(row.root + 0x80, cache);
         integer(0xa4844c, row.tail, object); // Native sibling link also supplies parent.
@@ -317,6 +363,10 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
         );
         word(row.root + 0x8c, memory::word(row.root + 0x8c).unwrap() | 3);
     }
+    let old_map_free: unsafe extern "C" fn(u32, u32) =
+        unsafe { core::mem::transmute(mapping.free as usize) };
+    mapping.pointer = 0; // The animation destructor now owns the expanded map.
+    unsafe { old_map_free(mapping.allocator, row.objects) };
     owned.pointer = 0; // Reachable from the row: native ownership takes over.
     unsafe { free(row.root, row.cache) };
     Ok(object)

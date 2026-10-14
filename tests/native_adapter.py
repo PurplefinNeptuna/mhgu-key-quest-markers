@@ -30,6 +30,7 @@ UI,HOLDER,CONTROLLER,INFO,PROFILE,QUEST,RESOURCE,RECORDS,PROGRESS,ROWS,DTI,VFT=(
     [0x1000,0x2000,0x3000,0x4000,0x10000,0x20000,0x21000,0x22000,0x23000,0x24000,0x25000,0x26000])
 ROOT_DTI,ALLOCATOR,ATLAS,GUI_RESOURCE=DATA+0x25100,DATA+0x25200,DATA+0x61000,DATA+0x62000
 GUI_OWNER,GUI_HEADER,OBJECT_TABLE=DATA+0x65000,DATA+0x66000,DATA+0x67000
+MAP_DTI,MAP_ALLOCATOR,ANIM_DTI,NULL_DTI=(DATA+x for x in [0x25300,0x25400,0x25500,0x25600])
 INSTANCE_ARRAY=DATA+0x27000
 REGS=[getattr(arm,'UC_ARM_REG_R'+str(i))for i in range(13)]
 BADGE_ID=0x4b514d33
@@ -38,7 +39,7 @@ CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
-              simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0):
+              simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False):
     global CASES
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
@@ -46,7 +47,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     # Real game code rebuilds/traverses the draw cache and destroys the owned tree.
     for first,last in [(0xa494a0,0xa4964c),(0xa48668,0xa486fc),(0xa475e0,0xa47648),
                        (0xa38828,0xa38944),(0xa38bc0,0xa38e50),(0xa49b28,0xa49bac),(0xa4844c,0xa48470),(0x540c08,0x540c64),
-                       (0xa4d0d8,0xa4d32c),(0xa4f60c,0xa4f840)]:
+                       (0xa4d0d8,0xa4d32c),(0xa4f60c,0xa4f840),
+                       (0xa38b58,0xa38bc0),(0xa38ffc,0xa39020),(0x5456e4,0x545930)]:
         u.mem_write(GAME+first,native_image[first:last])
     # Exercise the actual texture setters too, including their dirty propagation.
     u.mem_write(GAME+0xa47000,native_image[0xa47000:0xa57000])
@@ -93,6 +95,17 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
                        (0x1838eb8,DATA+0xf0200)]:word(GAME+got,target)
     u.mem_write(DATA+0xf0000,struct.pack('<16f',*[float(i%5==0)for i in range(16)]))
     word(DATA+0xf0100,0xffffffff);word(DATA+0xf0200,DATA+0xf0300)
+    # Cleanup recognizes animation instances and visits map entries up to the
+    # live tree count. Match its class/constant GOT inputs without replacing code.
+    word(ANIM_DTI+28,0x1daa79db);word(NULL_DTI+4,3);word(NULL_DTI+28,3)
+    for got,target in [(0x183ef78,ANIM_DTI),(0x183ef50,ANIM_DTI),
+                       (0x183f088,DATA+0xf0400),(0x183ef80,ROOT_DTI),
+                       (0x183f08c,ROOT_DTI),(0x183ef9c,DTI),(0x183f090,ROOT_DTI),
+                       (0x18422b4,MAP_DTI)]:word(GAME+got,target)
+    word(DATA+0xf0400,1)
+    word(MAP_ALLOCATOR,VFT+0x700);word(VFT+0x71c,GAME+0x1070);word(VFT+0x734,GAME+0x1074)
+    word(VFT+0x814,GAME+0x1080);word(VFT+0x404+4,GAME+0xa48668)
+    word(VFT+0x50,GAME+0xa4fc68)
     word(VFT+0x208,GAME+0x1064);word(VFT+0x31c,GAME+0x1038)
     word(VFT+0x404+0x54,GAME+0x1060)
     word(GUI_RESOURCE+0x64,GUI_HEADER);word(GUI_HEADER+0xac,OBJECT_TABLE)
@@ -102,7 +115,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     word(DTI,VFT+0x200);word(DTI+24,304//4);word(DTI+28,0x1b6313a3)
     word(ROOT_DTI+24,176//4)
     word(ALLOCATOR,VFT+0x300);word(VFT+0x320,GAME+0x1030);word(VFT+0x334,GAME+0x1034)
-    word(VFT+0x514,GAME+0x1000);word(VFT+0x14,GAME+0x1000);word(VFT+0x404+0x14,GAME+0x1014)
+    word(VFT+0x514,GAME+0x1084);word(VFT+0x14,GAME+0x1000);word(VFT+0x404+0x14,GAME+0x1014)
     word(VFT+0x404+0x58,GAME+0x540c08);word(VFT+0x404+0x5c,GAME+0x540c38)
     word(VFT+4,GAME+0x1040);word(VFT+0x504,GAME+0xa475e0)
     for offset,target in [(0x38,0x1050),(0x3c,0x1054),(0x40,0x1058)]:word(VFT+offset,GAME+target)
@@ -111,7 +124,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         instance=DATA+0x28000+i*0x200;objects=DATA+0x2a000+i*0x100
         root=DATA+0x2c000+i*0x200;parent=DATA+0x2e000+i*0x200;desc=DATA+0x60000+i*0x40;cache=DATA+0x40000+i*0x400
         index=16+i;entry=INSTANCE_ARRAY+index*4 if index<primary_count else INSTANCE_ARRAY+0x400+(index-primary_count)*4
-        word(entry,instance);word(instance+0x6c,GUI_OWNER);word(instance+0x70,GUI_RESOURCE)
+        word(entry,instance);word(instance,VFT+0x800);word(instance+0x6c,GUI_OWNER);word(instance+0x70,GUI_RESOURCE)
         word(instance+0xd0,0xffffffff);word(instance+0xd4,0xffffffff)
         word(objects,root);word(objects+4,parent);word(root,VFT+0x404);word(root+0x50,1)
         word(parent,VFT+0x500);word(parent+0x50,14);word(parent+0x54,1)
@@ -141,7 +154,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
     constructing=None;factory_index=0
     plugin_heap=DATA+0x120000;hook_count=0;startup_logs=[]
-    allocations={};freed=[];created=[];drawn=[];object_attempts=0
+    allocations={};freed=[];created=[];drawn=[];object_attempts=0;mapping_allocations=[]
     def allocate(size):
         nonlocal heap
         p=heap;heap=(p+size+31)&~15;allocations[p]=size;u.mem_write(p+size,b'\xa5'*16);return p
@@ -211,9 +224,11 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             sp=cpu.reg_read(arm.UC_ARM_REG_SP);assert r+list(struct.unpack('<3I',cpu.mem_read(sp,12)))==[UI,0,2,0,0,0,ROWS]
             calls.append('row-original');ret(cpu);return
         if address==GAME+0x546f28:assert r[0]==HOLDER;ret(cpu,gui_identity);return
-        if address==GAME+0x7aef68:ret(cpu,DTI if r[0]==0x1b6313a3 else ROOT_DTI);return
+        if address==GAME+0x7aef68:ret(cpu,MAP_DTI if r[0]==0x57fd7fb5 else DTI if r[0]==0x1b6313a3 else ROOT_DTI);return
         if address==GAME+0x1000:ret(cpu,DTI);return
         if address==GAME+0x1014:ret(cpu,ROOT_DTI);return
+        if address==GAME+0x1080:ret(cpu,ANIM_DTI);return
+        if address==GAME+0x1084:ret(cpu,NULL_DTI);return
         if address==GAME+0xb80f94:
             assert r[:2]==[GUI_RESOURCE,20];ret(cpu,DATA+0x60000+constructing*0x40);return
         if address==GAME+0x1038:
@@ -228,7 +243,18 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             pointer=read(objects+factory_index*4);factory_index+=1;ret(cpu,pointer);return
         if address in [GAME+0xa484c4,GAME+0xa49bac,GAME+0xa49bb8,GAME+0x1060]:ret(cpu);return
         if address==GAME+0xb80fd0:assert r[:2]==[GUI_RESOURCE,22];ret(cpu,ATLAS);return
-        if address==GAME+0x7aa47c:ret(cpu,ALLOCATOR);return
+        if address==GAME+0x7aa47c:ret(cpu,MAP_ALLOCATOR if r[0]==MAP_DTI else ALLOCATOR);return
+        if address==GAME+0x1070:
+            assert r[0]==MAP_ALLOCATOR and r[2]==16
+            if r[1]==48:ret(cpu,DATA+0x2a000+constructing*0x100)
+            else:
+                assert r[1]==52
+                pointer=0 if fail_mapping else allocate(52)
+                if pointer:mapping_allocations.append(pointer)
+                ret(cpu,pointer)
+            return
+        if address==GAME+0x1074:
+            assert r[0]==MAP_ALLOCATOR;release(r[1]);ret(cpu);return
         if address==GAME+0x1030:
             assert r==[ALLOCATOR,304,16,0x1b6313a3];object_attempts+=1
             ret(cpu,0 if fail_object or object_attempts==fail_at else allocate(304));return
@@ -257,7 +283,10 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     u.hook_add(unicorn.UC_HOOK_CODE,trace)
     def call(address,a=0,b=0):
         u.reg_write(arm.UC_ARM_REG_SP,STACK);u.reg_write(arm.UC_ARM_REG_LR,RETURN);u.reg_write(arm.UC_ARM_REG_R0,a);u.reg_write(arm.UC_ARM_REG_R1,b)
-        u.emu_start(address,RETURN+4,count=1000000);assert u.reg_read(arm.UC_ARM_REG_SP)==STACK,(hex(u.reg_read(arm.UC_ARM_REG_PC)),hex(u.reg_read(arm.UC_ARM_REG_SP)))
+        try:u.emu_start(address,RETURN+4,count=1000000)
+        except unicorn.UcError as error:
+            raise AssertionError((str(error),hex(u.reg_read(arm.UC_ARM_REG_PC)),hex(u.reg_read(arm.UC_ARM_REG_LR)),[hex(u.reg_read(r))for r in REGS[:8]])) from error
+        assert u.reg_read(arm.UC_ARM_REG_SP)==STACK,(hex(u.reg_read(arm.UC_ARM_REG_PC)),hex(u.reg_read(arm.UC_ARM_REG_SP)))
     # Exercise the actual lifecycle/installer before any row callback; no forced
     # ACTIVE flag can hide a startup regression. Forge/kernel calls remain doubles.
     assert read(MODULE+base_symbol)==0 and bytes(u.mem_read(MODULE+names['kqm_active'],1))==b'\0'
@@ -297,15 +326,18 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         assert tls_value==0 and calls==['parent','row-original']*2
     assert [bytes(u.mem_read(p,n))for p,n in protected]==immutable
     for i in range(8):assert bytes(u.mem_read(DATA+0x2a000+i*0x100,48))==arrays[i]
-    if invalid_object or invalid_owner or gui_identity!=5 or fail_object or fail_cache:
+    if invalid_object or invalid_owner or gui_identity!=5 or fail_object or fail_cache or fail_mapping:
         assert not states and not colors
         assert all(read(root+0xa4)==old for root,old in zip(roots,original_caches))
         assert all(p in freed for p in allocations) # Failed preparation releases all unpublished allocations.
     else:
-        assert len(created)==8 and len(allocations)==16
+        # Run the exact cleanup function seen in the crash. Its real count getter
+        # counts 13 linked nodes and therefore requires a 13-entry lookup array.
+        for i in range(8):call(GAME+0x5456e4,0,DATA+0x28000+i*0x200)
+        assert len(created)==8 and len(allocations)==24
         assert all(p in freed for p in original_caches)
         if repeat:
-            call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8 and len(allocations)==16
+            call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8 and len(allocations)==24
         if invalid_info or ordinary or bad_count:assert states==dict.fromkeys(range(8),0) and not colors
         else:
             assert states==dict(enumerate([1,1,1,1,1,0,0,0]))
@@ -326,7 +358,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         for p,size in allocations.items():assert bytes(u.mem_read(p+size,16))==b'\xa5'*16,('native draw-cache overflow',hex(p))
         # Run the actual root and base-container destructors; the mocked MT free
         # records ownership, while their real ARM loops destroy the new children.
-        for root in roots:call(GAME+0xa48668,root)
+        for i,root in enumerate(roots):
+            instance=DATA+0x28000+i*0x200;table=read(instance+0xd8)
+            assert table==read(root+0xa0) and bytes(u.mem_read(table,48))==arrays[i]
+            assert read(read(table+48)+0x50)==BADGE_ID
+            call(GAME+0xa38b58,instance)
+            assert read(instance+0xd8)==read(instance+0xdc)==0
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
 results=[test_case('first malformed trampoline rolls back',fail_hook=1),
@@ -338,10 +375,10 @@ results=[test_case('first malformed trampoline rolls back',fail_hook=1),
          test_case('ordinary rows',ordinary=True),test_case('invalid offer count',bad_count=True),test_case('different GUI',gui_identity=4),
          test_case('satisfied alternative',alternative_done=True),test_case('simultaneous urgents',simultaneous=True,offered=(303,206)),
          test_case('secondary table',primary_count=16),test_case('both tables',primary_count=20),test_case('primary table empty',primary_count=0),
-         test_case('object allocation failure',fail_object=True),test_case('cache allocation failure',fail_cache=True),
+         test_case('object allocation failure',fail_object=True),test_case('cache allocation failure',fail_cache=True),test_case('map allocation failure',fail_mapping=True),
          test_case('repeated row update reuses native children',repeat=True),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
-          'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
+          'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')
