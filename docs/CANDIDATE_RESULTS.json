@@ -1,9 +1,11 @@
 {
+  "version": "r2",
   "status": "DEVELOPMENT",
-  "runtime_active": false,
+  "runtime_active": true,
   "runtime_test": "NOT RUN",
-  "host_tests": 8,
+  "host_tests": 10,
   "typed_arm_cases": 16,
+  "compiled_active_adapter_cases": 14,
   "resource_checks": {
     "status": "PASSED",
     "source_sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
@@ -27,8 +29,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "d1af1fd0381fcd056d99577255324d33ca4740aa7023b5831cafc29fb06f5066",
-    "elf_sha256": "a3090092ac8a239d5ce0cf45d5a50b441954d3123f4335d3d36e751879a6e0d7",
+    "nro_sha256": "736f9eaff4f9bca4c840f81f54c9b41c1a8dc5675490f68c20015b6eb891e097",
+    "elf_sha256": "443ccf84327defe336ac0fa290bc2169a7361f63afaefcc7b38e7be58c0c140b",
     "exports": [
       "fini",
       "forge_onInit",
@@ -37,6 +39,7 @@
       "init"
     ],
     "strong_imports": [
+      "__aeabi_unwind_cpp_pr0",
       "forge_hook_create",
       "forge_log",
       "forge_log_getLevel",
@@ -45,10 +48,16 @@
       "forge_patch_destroy",
       "forge_patch_disable",
       "forge_patch_enable",
-      "forge_singleton_getInstanceByName"
+      "forge_singleton_getInstanceByName",
+      "free",
+      "malloc",
+      "nnosAllocateTlsSlot",
+      "nnosGetTlsValue",
+      "nnosSetTlsValue"
     ],
     "signature_windows": [
       "0x616cb0",
+      "0x54d030",
       "0x523da4",
       "0x3b1a18",
       "0x3b1d70",
@@ -60,39 +69,36 @@
       "0x545630",
       "0x54700c",
       "0xb7f380",
-      "0xb7f988"
+      "0xb7f988",
+      "0x3b2174",
+      "0x546f28",
+      "0x54af8c"
     ],
     "hook_abi_bytes": 24,
-    "ordinary_hook_slots": 1,
-    "forge_trampoline_bytes": 16,
+    "ordinary_hook_slots": 2,
+    "forge_trampoline_bytes": 32,
     "forge_pool_chunk_bytes": 16384,
     "compiled_status_writes": [],
-    "verified_contract": 0,
-    "runtime_active": false,
-    "gui_attachment": "NOT VERIFIED",
-    "progression_semantics": "NOT VERIFIED",
+    "runtime_active": true,
+    "gui_attachment": "Checked at each native callback",
+    "progression_semantics": "Native stages, alternatives and offered urgent IDs",
     "runtime_test": "NOT RUN"
   },
   "standalone": {
     "build_test_package": "PASSED",
-    "payload_sha256_matches_workspace": true,
     "inputs": "Externally supplied, copied into independent checkout",
-    "parent_source_dependencies": false
+    "parent_source_dependencies": false,
+    "payload_sha256_matches_workspace": true
   },
-  "payload_sha256": {
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "d1af1fd0381fcd056d99577255324d33ca4740aa7023b5831cafc29fb06f5066",
-    "romfs/nativeNX/eng/arc/village/common_eng.arc": "5fab7fc84c932f32038e1400dfffba203101509f614e0049e44fc269fb28ec74"
-  },
-  "coordinator_tests": {
-    "distribution": 32,
-    "forge_pc_distribution": 12
-  },
-  "full_distribution_check_mods": 14,
-  "unresolved_gates": [
-    "Native current-key relevance and active-urgent availability",
-    "Live GUI attachment, resource identity and initialization behavior"
+  "remaining_acceptance": [
+    "Live English HD GUI load, attachment, clipping and colors",
+    "Eden/Ryujinx Village/Hub/G progression and menu/quest transitions"
   ],
-  "gui_manual_acceptance": "NOT RUN",
-  "installed": false,
-  "published": false
+  "installed_by_this_implementation": false,
+  "published": false,
+  "payload_sha256": {
+    "romfs/nativeNX/eng/arc/village/common_eng.arc": "5fab7fc84c932f32038e1400dfffba203101509f614e0049e44fc269fb28ec74",
+    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "736f9eaff4f9bca4c840f81f54c9b41c1a8dc5675490f68c20015b6eb891e097"
+  },
+  "full_distribution_check_mods": 14
 }

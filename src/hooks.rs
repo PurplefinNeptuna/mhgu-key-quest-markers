@@ -1,21 +1,20 @@
-//! One Forge-owned ordinary trampoline; initialization runs before game execution.
-use crate::{memory, native, signatures::SIGNATURES};
+//! Two Forge-owned ordinary trampolines; initialization precedes game execution.
+use crate::{memory, native, offers, signatures::SIGNATURES};
+use alloc::vec::Vec;
 use core::{
     ffi::c_void,
     sync::atomic::{AtomicBool, AtomicU32, Ordering},
 };
 use forge::patch::Patch;
-// Internal detour/gate symbols are inspectable in the ELF, not loader callbacks.
+// Internal detour/state symbols are inspectable in the ELF, not loader callbacks.
 core::arch::global_asm!(
-    ".hidden kqm_row\n.hidden kqm_original\n.hidden kqm_active\n.hidden kqm_verified_contract"
+    ".hidden kqm_row\n.hidden kqm_original\n.hidden kqm_active\n.hidden kqm_parent_original\n.hidden kqm_parent"
 );
 
-// The immutable release gate deliberately stays zero until the research audit
-// establishes current-urgent availability and new GUI attachment. Volatile read
-// retains the candidate implementation for binary/ABI checks without activating it.
-#[used]
+// Two ordinary Forge trampolines: the parent supplies the native offered IDs,
+// and the existing row builder draws its eight rows before applying our badges.
 #[unsafe(no_mangle)]
-pub static kqm_verified_contract: u32 = 0;
+pub static kqm_parent_original: AtomicU32 = AtomicU32::new(0);
 #[unsafe(no_mangle)]
 pub static kqm_original: AtomicU32 = AtomicU32::new(0);
 #[unsafe(no_mangle)]
@@ -55,6 +54,28 @@ pub unsafe extern "C" fn kqm_row(
     }
 }
 
+/// Read only copied urgent IDs before the native controller runs. Scope restores
+/// its previous TLS frame on return, including nested menu updates on this thread.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kqm_parent(controller: u32, info: u32) {
+    let original = kqm_parent_original.load(Ordering::Acquire);
+    if original == 0 {
+        return;
+    }
+    let f: unsafe extern "C" fn(u32, u32) = unsafe { core::mem::transmute(original as usize) };
+    if !kqm_active.load(Ordering::Acquire) {
+        unsafe {
+            f(controller, info);
+        }
+        return;
+    }
+    let copied = offers::Offers::read(controller, info);
+    let _scope = offers::Scope::enter(&copied);
+    unsafe {
+        f(controller, info);
+    }
+}
+
 /// Restore only our branch words (or a partially installed original/branch pair).
 /// Foreign modifications retain their ownership; disabled snapshots never write
 /// on Drop. Forge keeps allocated continuations reachable for process lifetime.
@@ -80,11 +101,9 @@ pub(crate) fn rollback(patch: &mut Patch) -> bool {
         && memory::copy(patch.addr(), &mut current)
         && current == original
 }
-/// Keep the patch owner until process exit. There is no plugin unload operation.
-pub fn install() -> Result<Patch, &'static str> {
-    if unsafe { core::ptr::read_volatile(&kqm_verified_contract) } != 3 {
-        return Err("inactive r1: progression/GUI contract verification pending");
-    }
+/// Install both hooks transactionally before the game starts executing. The
+/// parent callback has two pointer/integer arguments; the row callback has seven.
+pub fn install() -> Result<Vec<Patch>, &'static str> {
     let base = forge::mem::text_addr();
     memory::BASE.store(base, Ordering::Relaxed);
     if base == 0 || base > 0xfe000000 || base & 3 != 0 || !memory::correct_program() {
@@ -99,49 +118,62 @@ pub fn install() -> Result<Patch, &'static str> {
             return Err("MHGU 1.4.0 code mismatch; disable the old prefix plugin");
         }
     }
-    let target = base + 0x616cb0;
-    let detour = kqm_row as *const () as u32;
-    // The exact displaced PUSH r4-r11,lr / SUB sp,sp,#4 use no PC-relative
-    // operands and neither read nor write GE or NZCVQ. Forge copies these eight bytes.
-    let mut branch = [0; 8];
-    branch[..4].copy_from_slice(&0xe51ff004u32.to_le_bytes());
-    branch[4..].copy_from_slice(&detour.to_le_bytes());
-    let mut patch = Patch::new(target, &branch, false);
-    let mut original = core::ptr::null();
-    let hook = unsafe {
-        forge::sys::hook::forge_hook_create(
-            target as *const c_void,
-            detour as *const c_void,
-            &mut original,
-        )
-    };
-    let continuation = original as u32;
-    let mut code = [0; 16];
-    let valid = continuation != 0
-        && continuation & 3 == 0
-        && memory::executable(continuation, 16)
-        && memory::copy(continuation, &mut code)
-        && code[..8] == SIGNATURES[0].1[..8]
-        && code[8..12] == 0xe51ff004u32.to_le_bytes()
-        && code[12..] == (target + 8).to_le_bytes();
-    if valid {
-        kqm_original.store(continuation, Ordering::Release);
+    if !offers::init() {
+        return Err("counter context TLS allocation failed");
     }
-    let mut actual = [0; 8];
-    if !valid
-        || hook.original != original
-        || hook.target as u32 != target
-        || hook.detour as u32 != detour
-        || !memory::copy(target, &mut actual)
-        || actual != branch
-        || !memory::sync_code(target, 8)
-    {
-        return Err(if rollback(&mut patch) {
-            "Forge hook failed; restored original"
-        } else {
-            "hook rollback failed; restart required"
-        });
+    let targets = [base + 0x616cb0, base + 0x54d030];
+    let detours = [kqm_row as *const () as u32, kqm_parent as *const () as u32];
+    let originals = [&kqm_original, &kqm_parent_original];
+    let mut patches = Vec::with_capacity(2);
+    for i in 0..2 {
+        // Exact PUSH/SUB stack prologues contain no PC-relative or status-register
+        // operations. Forge relocates their first eight bytes into its own pool.
+        let mut branch = [0; 8];
+        branch[..4].copy_from_slice(&0xe51ff004u32.to_le_bytes());
+        branch[4..].copy_from_slice(&detours[i].to_le_bytes());
+        patches.push(Patch::new(targets[i], &branch, false));
+    }
+    for i in 0..2 {
+        let mut original = core::ptr::null();
+        let hook = unsafe {
+            forge::sys::hook::forge_hook_create(
+                targets[i] as *const c_void,
+                detours[i] as *const c_void,
+                &mut original,
+            )
+        };
+        let continuation = original as u32;
+        let mut code = [0; 16];
+        let valid = continuation != 0
+            && continuation & 3 == 0
+            && memory::executable(continuation, 16)
+            && memory::copy(continuation, &mut code)
+            && code[..8] == SIGNATURES[i].1[..8]
+            && code[8..12] == 0xe51ff004u32.to_le_bytes()
+            && code[12..] == (targets[i] + 8).to_le_bytes();
+        if valid {
+            originals[i].store(continuation, Ordering::Release);
+        }
+        let mut actual = [0; 8];
+        if !valid
+            || hook.original != original
+            || hook.target as u32 != targets[i]
+            || hook.detour as u32 != detours[i]
+            || !memory::copy(targets[i], &mut actual)
+            || actual != patches[i].patch_bytes()
+            || !memory::sync_code(targets[i], 8)
+        {
+            let mut restored = true;
+            for patch in patches.iter_mut().rev() {
+                restored &= rollback(patch);
+            }
+            return Err(if restored {
+                "Forge hook failed; restored originals"
+            } else {
+                "hook rollback failed; restart required"
+            });
+        }
     }
     kqm_active.store(true, Ordering::Release);
-    Ok(patch)
+    Ok(patches)
 }

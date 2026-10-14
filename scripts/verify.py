@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the staged candidate's native imports, exact code signatures and inactive gate."""
+"""Check the staged candidate's native imports, exact code signatures and active callback path."""
 import ast,json,re,struct,subprocess
 from pathlib import Path
 from paths import MOD,CONFIG,BUILD_ROOT,CARGO_TARGET,input_path
@@ -31,9 +31,9 @@ def verify():
         offset=int(offset,16);expected=ast.literal_eval('['+raw+']')
         if image[offset:offset+32]!=bytes(expected):raise ValueError('Signature mismatch: '+hex(offset))
         windows.append(hex(offset))
-    if len(windows)!=13:raise ValueError('Supporting signature windows missing')
+    if len(windows)!=17:raise ValueError('Supporting signature windows missing')
     assert image[0x616cb0:0x616cb8]==bytes.fromhex('f04f2de904d04de2')
-    assert struct.unpack_from('<I',data,names['kqm_verified_contract'])[0]==0
+    if 'kqm_verified_contract' in names:raise ValueError('Inactive release gate remains in production')
     disasm=subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-objdump','-d',elf],text=True)
     writes=[line for line in disasm.splitlines() if '\tmsr\t' in line]
     if writes:raise ValueError('Unexpected processor status writes: '+str(writes))
@@ -47,8 +47,8 @@ def verify():
         raise ValueError('Resource receipt differs')
     record('verify.json',{'status':'PASSED','nro_sha256':digest(nro_path),'elf_sha256':digest(elf),
         'exports':sorted(exports),'strong_imports':sorted(imports),'signature_windows':windows,'hook_abi_bytes':24,
-        'ordinary_hook_slots':1,'forge_trampoline_bytes':16,'forge_pool_chunk_bytes':16384,
-        'compiled_status_writes':writes,'verified_contract':0,'runtime_active':False,
-        'gui_attachment':'NOT VERIFIED','progression_semantics':'NOT VERIFIED','runtime_test':'NOT RUN'})
-    print('PASS: native imports/signatures, Hook ABI compilation, inactive gate and payload inventory')
+        'ordinary_hook_slots':2,'forge_trampoline_bytes':32,'forge_pool_chunk_bytes':16384,
+        'compiled_status_writes':writes,'runtime_active':True,
+        'gui_attachment':'Checked at each native callback','progression_semantics':'Native stages, alternatives and offered urgent IDs','runtime_test':'NOT RUN'})
+    print('PASS: native imports/signatures, Hook ABI compilation, active callback path and payload inventory')
 if __name__=='__main__':verify()

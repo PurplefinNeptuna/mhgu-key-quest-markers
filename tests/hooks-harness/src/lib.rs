@@ -1,4 +1,5 @@
 //! Compile the production installer against a tiny byte-backed Forge fixture.
+extern crate alloc;
 extern crate self as forge;
 use std::sync::Mutex;
 static BYTES: Mutex<[u8; 8]> = Mutex::new([0; 8]);
@@ -23,6 +24,23 @@ pub mod memory {
 }
 pub mod native {
     pub fn update(_: u32, _: u32) {}
+}
+pub mod offers {
+    pub struct Offers;
+    impl Offers {
+        pub fn read(_: u32, _: u32) -> Self {
+            Self
+        }
+    }
+    pub struct Scope;
+    impl Scope {
+        pub fn enter(_: &Offers) -> Option<Self> {
+            Some(Self)
+        }
+    }
+    pub fn init() -> bool {
+        true
+    }
 }
 pub mod signatures {
     pub const SIGNATURES: &[(u32, [u8; 32])] = &[(0x616cb0, [0; 32])];
@@ -93,15 +111,17 @@ pub mod sys {
             detour: *const c_void,
             _: *mut *const c_void,
         ) -> Hook {
-            panic!("inactive fixture must not call Forge hook_create: {target:p}/{detour:p}");
+            panic!(
+                "unsupported-code fixture must not call Forge hook_create: {target:p}/{detour:p}"
+            );
         }
     }
 }
 #[path = "../../../src/hooks.rs"]
 mod hooks;
 #[test]
-fn inactive_gate_and_owned_rollback() {
-    assert!(hooks::install().is_err()); // Gate runs before any native lookup/write.
+fn rejected_code_and_owned_rollback() {
+    assert!(hooks::install().is_err()); // Unsupported code returns before creating hooks or writing.
     let original = [1, 2, 3, 4, 5, 6, 7, 8];
     let branch = [9, 10, 11, 12, 13, 14, 15, 16];
     for current in [

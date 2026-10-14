@@ -4,6 +4,7 @@ extern crate alloc;
 mod hooks;
 mod memory;
 mod native;
+mod offers;
 mod signatures;
 use core::sync::atomic::{AtomicU32, Ordering};
 static REPORTED: AtomicU32 = AtomicU32::new(0);
@@ -27,6 +28,7 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
         (1, "counter GUI attachment mismatch"),
         (2, "quest singleton missing"),
         (4, "quest/progression record unavailable or conflicting"),
+        (8, "counter urgent offer context unavailable"),
     ] {
         if errors & !old & bit != 0 {
             log::warn!("Native quest badges hidden: {message}");

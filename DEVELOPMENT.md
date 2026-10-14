@@ -28,7 +28,7 @@ Run from any directory:
 
 `prepare` verifies inputs and builds the resource only. All commands are offline;
 there is no download, install, game launch or settings command. Outputs use the
-workspace's `build/key-quest-markers-rs/candidates/r1/` and matching `work/` folder,
+workspace's `build/key-quest-markers-rs/candidates/r2/` and matching `work/` folder,
 or the independent checkout's own `build/` and `work/` folders after export.
 
 The workspace coordinator also supports
@@ -37,11 +37,15 @@ explicitly registered DEVELOPMENT candidate. It delegates to the owned builder,
 verifies ZIP/runtime/support/checksums, and does not grant release approval.
 Run the full coordinator `check` before committing distribution work.
 
-The immutable `kqm_verified_contract` is zero. Do not patch it to enable the mod.
-Resolve the progression and GUI gates in `docs/NATIVE_AUDIT.md`, update the native
-adapter's unresolved evidence, then rebuild and repeat validation. Initialization
-currently returns before singleton access, resource access or hook installation.
-Manual acceptance needs separate authorization; no automated game suite exists.
+r2 activates the parent and row hooks after checking the executable and matching
+Forge ABI. The parent copies the native counter's offered urgent IDs into a scoped
+Forge SDK TLS frame; the nested row callback reads native progression/completion
+and updates the added native GUI object. Runtime identity and memory checks hide
+badges only when their actual inputs cannot be established. There is no artificial
+enable gate or setting. See `docs/NATIVE_AUDIT.md` for the native data paths.
+
+The old inactive r1 candidate is preserved separately. Manual gameplay acceptance
+is still pending; no automated game suite exists.
 
 Owned code explains native offsets and resource/table ownership beside its use.
 Forge owns allocation, hooks, patches, logging and callbacks. Narrow SVC bindings

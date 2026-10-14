@@ -3,19 +3,19 @@
   "mod": "key-quest-markers-rs",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "Inactive r1: native current-progression availability and GUI attachment are not established. Host/resource/ARM build checks do not grant gameplay acceptance.",
+  "reason": "Active native implementation. Source, resource and compiled ARM fixtures are validated; Eden/Ryujinx rendering and gameplay acceptance remain untested.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r1",
+  "version": "r2",
   "package_name": "key-quest-markers-rs",
-  "archive": "key-quest-markers-rs-r1-candidate.zip",
-  "candidate": "build/key-quest-markers-rs/candidates/r1/delivery/",
+  "archive": "key-quest-markers-rs-r2-candidate.zip",
+  "candidate": "build/key-quest-markers-rs/candidates/r2/delivery/",
   "candidate_builder": "scripts/build.py",
   "runtime_test": "NOT RUN",
-  "runtime_active": false,
+  "runtime_active": true,
   "gamebanana": {
     "ai_code": {
       "used": true,
@@ -25,7 +25,7 @@
           "url": "https://openai.com/codex/"
         }
       ],
-      "scope": "Implementing Rust plugin scaffolding, native resource recipe, tests, build/package tooling and explanatory comments."
+      "scope": "Implementing the Rust native callbacks, progression classification, GUI resource recipe, tests, standalone build/package tooling and explanatory comments."
     },
     "ai_assets": [
       {

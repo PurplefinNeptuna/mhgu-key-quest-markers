@@ -84,7 +84,7 @@ def build():
     dest=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'
     dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(CARGO_TARGET/output.name,dest)
     record('build.json',{'status':'BUILT','nro_sha256':digest(dest),'forge_rs_revision':
-        'd1865b68e9b194eb3eacc8bd71bbf601a5fac63e','verified_contract':0,'source_sha256':source_hashes(),'runtime_test':'NOT RUN'})
+        'd1865b68e9b194eb3eacc8bd71bbf601a5fac63e','runtime_active':True,'source_sha256':source_hashes(),'runtime_test':'NOT RUN'})
 
 def test():
     env,rust=environment()
@@ -92,7 +92,9 @@ def test():
         run([rust/'cargo','test','--locked','--config',MOD/'.cargo/vendor.toml','--manifest-path',MOD/manifest,
              '--target','x86_64-unknown-linux-gnu'],cwd=MOD.parent,env=env)
     run([PYTHON,MOD/'tests/resource.py'])
-    run([CONFIG.get('arm_python',ROOT/'tools/mwc-analysis-venv/bin/python'),MOD/'tests/arm.py'])
+    arm_python=CONFIG.get('arm_python',ROOT/'tools/mwc-analysis-venv/bin/python')
+    run([arm_python,MOD/'tests/arm.py'])
+    run([arm_python,MOD/'tests/native_adapter.py'])
     verify();record('tests.json',{'status':'PASSED','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'),
                      'resource_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/eng/arc/village/common_eng.arc'),
                      'host':True,'resource':True,'arm':True,'runtime_test':'NOT RUN'})
@@ -108,7 +110,7 @@ def package():
     if previous-payloads.keys(): raise ValueError('Preserving unexpected previous candidate files')
     shutil.copytree(source,named,dirs_exist_ok=True)
     guide=(MOD/'DISTRIBUTION_README.md').read_bytes();(dest/'README.md').write_bytes(guide)
-    archive=dest/'key-quest-markers-rs-r1-candidate.zip'
+    archive=dest/'key-quest-markers-rs-r2-candidate.zip'
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
         z.writestr('README.md',guide)
         for n in sorted(payloads): z.write(source/n,'key-quest-markers-rs/'+n)
@@ -119,10 +121,10 @@ def package():
     notices='\n\n'.join((MOD/n).read_text() for n in ['DISTRIBUTION_NOTICES.md','LICENSE','vendor/forge-rs/LICENSE',
         'vendor/libnx/LICENSE-MIT','licenses/FORGE-MIT.txt','vendor/crates/log-0.4.34/LICENSE-MIT','licenses/RUST-MIT.txt','licenses/COMPILER_BUILTINS.txt'])
     (dest/'NOTICES.txt').write_text(notices);(dest/'NOTICES.html').write_text('<pre>'+escape(notices)+'</pre>\n')
-    evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','verify','tests']}
+    evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','native-adapter','verify','tests']}
     (dest/'VALIDATION.json').write_text(json.dumps(evidence,indent=2)+'\n')
-    manifest={'mod':'key-quest-markers-rs','version':'r1','status':'DEVELOPMENT','runtime_test':'NOT RUN',
-              'runtime_active':False,'package_name':'key-quest-markers-rs','payloads':payloads,'archive_sha256':digest(archive)}
+    manifest={'mod':'key-quest-markers-rs','version':'r2','status':'DEVELOPMENT','runtime_test':'NOT RUN',
+              'runtime_active':True,'package_name':'key-quest-markers-rs','payloads':payloads,'archive_sha256':digest(archive)}
     (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (dest/'SHA256SUMS').write_text(''.join(digest(p)+'  '+str(p.relative_to(dest))+'\n'
                  for p in sorted(dest.rglob('*')) if p.is_file() and p.name!='SHA256SUMS'))
@@ -132,7 +134,7 @@ def package():
         for n,h in payloads.items(): assert hashlib.sha256(z.read('key-quest-markers-rs/'+n)).hexdigest()==h==digest(named/n)
     for line in (dest/'SHA256SUMS').read_text().splitlines():
         h,n=line.split('  ',1);assert digest(dest/n)==h
-    print('Verified inactive DEVELOPMENT candidate:',archive)
+    print('Verified active DEVELOPMENT candidate:',archive)
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['doctor','prepare','build','test','verify','package','export'])

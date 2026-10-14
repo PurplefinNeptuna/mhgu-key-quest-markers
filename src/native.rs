@@ -1,6 +1,9 @@
 //! The game's GUI-holder API is not wrapped by Forge. Every pointer stays local
 //! to the synchronous row callback; native calls are made only on the pinned build.
-use crate::memory::{self, BASE};
+use crate::{
+    memory::{self, BASE},
+    offers,
+};
 use core::{
     ffi::CStr,
     sync::atomic::{AtomicU32, Ordering},
@@ -91,25 +94,12 @@ fn prerequisites(quest: u32, group: Group, stage: u16) -> bool {
         total <= 4096 && done == total
     }
 }
-fn listed(selector: u32, id: u32) -> Option<bool> {
-    // These are incomplete-urgent pools, not proof of current progression. The
-    // policy additionally requires proven current availability and prerequisites.
-    if !memory::readable(selector, 0x1b4) {
-        return None;
-    }
-    let mut found = false;
-    for category in 0..5u32 {
-        let n = memory::half(selector + 0x1a8 + category * 2)? as u32;
-        if n > 16 {
-            return None;
-        }
-        for i in 0..n {
-            if memory::word(selector + 0x68 + category * 0x40 + i * 4)? == id {
-                found = true;
-            }
-        }
-    }
-    Some(found)
+fn available(quest: u32, id: u32) -> bool {
+    // This is the same scene/quest-flag query used by the native counter's
+    // availability predicate. It returns a bool and does not complete a quest.
+    let f: unsafe extern "C" fn(u32, u32) -> u8 =
+        unsafe { core::mem::transmute((base() + 0x3b2174) as usize) };
+    unsafe { f(quest, id) != 0 }
 }
 fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
     if g.category > 10 || !(1..=11).contains(&g.alternative) {
@@ -124,6 +114,21 @@ fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
 }
 fn badge_objects(ui: u32) -> Option<[u32; 8]> {
     let holder = memory::word(ui.checked_add(0x24)?)?;
+    if !memory::readable(holder, 0x29c) {
+        return None;
+    }
+    let holder_vft = memory::word(holder)?;
+    let descriptor_getter = memory::word(holder_vft.checked_add(0xac)?)?;
+    if !memory::executable(descriptor_getter, 4) {
+        return None;
+    }
+    // The normal builder selects GUI set 5 (English counter) before returning.
+    // Checking that native identity plus every new object rejects other menus.
+    let identity: unsafe extern "C" fn(u32) -> u32 =
+        unsafe { core::mem::transmute((base() + 0x546f28) as usize) };
+    if unsafe { identity(holder) } != 5 {
+        return None;
+    }
     let count = memory::word(holder.checked_add(0x298)?)?;
     let array = memory::word(holder.checked_add(0xf8)?)?;
     if !(24..=512).contains(&count) || !memory::readable(array, count as usize * 4) {
@@ -187,8 +192,8 @@ pub fn update(ui: u32, quests: u32) {
         error(2);
         return;
     };
-    let Some(selector) = singleton(c"sQuestSelector") else {
-        error(2);
+    let Some(offered) = offers::current(ui) else {
+        error(8);
         return;
     };
     // The native urgent-completion processor's first argument comes from this
@@ -242,19 +247,15 @@ pub fn update(ui: u32, quests: u32) {
         let is_urgent = quest_badges_core::urgent(g.category);
         let stage = if g.category <= 33 { village } else { hub };
         let prereq = !is_urgent || prerequisites(quest, g, stage);
-        let Some(in_list) = listed(selector, id) else {
-            error(4);
-            return;
-        };
+        let in_list = offered.contains(id);
+        let active = is_urgent && in_list && available(quest, id);
         *badge = quest_badges_core::decide(
             g,
             flags & 1 != 0,
             Evidence {
                 completed: done,
-                // Availability/current requirement semantics remain unproved. In r1
-                // these facts stay unresolved; stage/rank alone must never color a quest.
-                needed_key: None,
-                active_urgent: None,
+                needed_key: quest_badges_core::needed_key(g, village, hub),
+                active_urgent: Some(active),
                 prerequisites_done: prereq,
                 alternative_done: alternative(&groups, profile, g),
                 urgent_listed: in_list,

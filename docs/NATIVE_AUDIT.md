@@ -1,54 +1,54 @@
-# Native implementation audit — r1
+# Native implementation audit — active r2
 
-## Candidate gate
+## Native classification and attachment
 
-**Inactive.** `kqm_verified_contract == 0` makes initialization stop before native
-lookups or hook creation. No config or UI setting bypasses this gate. Two missing
-contracts prevent activation: complete native progression/urgent availability
-semantics, and the new object's attachment/identity in the live GUI holder.
-The delivered GUI object is hidden by default. Loading the extended GUI itself
-still needs a separately authorized runtime trial; inactivity of the plugin is
-not evidence of resource-load safety.
-
-The portable policy is implemented and fixture-tested. The native adapter reads
-completion, groups, urgency flags, stages, prerequisites and incomplete-urgent
-pools, but supplies `None` for current-key relevance and active-urgent availability.
-It must not be activated merely by changing the gate. Resolve those facts first.
-Host fixtures use explicit verified facts; they do not prove native availability.
-
-## Verified code/data paths
+The blanket r1 disable gate and unresolved-state placeholders are removed. r2
+installs the parent and row hooks after executable/Forge validation and updates
+native badge objects synchronously. Ordinary runtime validation rejects actual
+mismatched resources or unavailable records. There is no configuration bypass.
 
 Original main NSO SHA-256:
 `b3935415499549adaf4c0e89822831daa175cfd456a7990791c79be3997645ef`.
 Build ID: `FB08F1D20FD1204FE7070672777F869B`. Offsets below are main-relative.
-Saved Ghidra addresses use image base `0x009c9000`; original NSO bytes supply
-signatures because the imported database contains one changed text byte.
+Saved Ghidra addresses use image base `0x009c9000`; signatures come from the
+original NSO because the imported database contains one changed text byte.
 
-| Path | Evidence |
+| Path | Verified behavior |
 | --- | --- |
-| Normal row builder `0x616cb0` | Seven integer/pointer args: UI, selection, page, new flags, other flags, cursor, eight quest pointers. Calls original before updates. |
-| Completion reader `0x523da4` | Reads the quest group index bit in the completion record at `sUserInfo + 0x42c`. |
-| New/acknowledgement reader `0x523d00` | Separate bitfield at `sUserInfo + 0x100`; never used as completion. |
-| Native Village prerequisite reader `0x3b1a18` | Bit zero indicates required groups satisfied; category 1..10 and alternative group byte 1..11. |
-| Native Hub/G prerequisite counter `0x3b1d70` | Counts total/completed category `tier + 10`; accepts tiers 1..13. |
-| Native progression processor `0x50cbd0` | Reads completions, then writes separate Village/Hub stage fields. Validation only; the plugin never calls this writer. |
-| Progression storage `0x18979f0` | Its loaded record supplies u16 fields at `+0x3e0`, `+0x3e2`; this is separate from sUserInfo's completion bits. |
-| Group resource | `sQuest + 0xb4`, count `+0x64`, records `+0x6c`, 12-byte records. ID at +4, category/alternative bytes +8/+9. |
-| Urgent identity | `cQuestData + 0x10c`, bit zero. The loader `0x37539c` reads the compact resource's final u16. Resource correlation matches all 28 historical urgents among 1,302 records. |
-| Incomplete urgent pools | `sQuestSelector + 0x68`, five pools with 16 IDs each, u16 counts at `+0x1a8`. Membership does not prove current availability. |
-| Native visibility/color | UI wrappers `0x56e530`, `0x56e6fc`; four integer args. No scalar float ABI crossing. |
+| Normal row builder `0x616cb0` | Seven integer/pointer args: UI, selection, page, new flags, other flags, cursor, eight quest pointers. Original runs first. |
+| Parent controller `0x54d030` | Two pointers: cQuestList and QuestInfoList. UI at controller +0x54. Its nested calls reach the row builder. |
+| Offered urgent IDs | QuestInfoList +0x1104 contains sixteen IDs; +0x1144 is their count. The native counter counts this array for its Urgent category. |
+| Native menu construction `0x781e60` | Clears IDs/count, filters selector IDs through availability and actual completion, fills at most sixteen IDs, and clears IDs/count together on removal. Its info base is parent state +0x3c; array/count are parent state +0x1140/+0x1180. |
+| Availability `0x54af8c` / `0x3b2174` | The offered set already passed the full availability predicate including rotating flags. The adapter rechecks its scene/quest-flag query at 0x3b2174; neither query completes quests. |
+| Completion `0x523da4` | Reads the group-index completion bit in sUserInfo +0x42c. Used for every badge and alternative requirement. |
+| New/acknowledgement `0x523d00` | Separate bitfield at sUserInfo +0x100; never treated as completion. |
+| Progression storage `0x18979f0` | Pointer to a separate record: u16 Village +0x3e0, Hub/G +0x3e2. |
+| Script stage evaluator `0x3d17f8` | Opcodes 0x79..0x7c expose Village tiers 1..10; 0x7d..0x80 expose Hub/G tiers 1..13. The adapter reads these fields and never calls progression writers. |
+| Village prerequisite counter `0x3b1a18` | Bit zero means required groups satisfied. Alternative byte 1..11 groups quests into interchangeable requirements. |
+| Hub/G prerequisite counter `0x3b1d70` | Total/completed category tier +10, tiers 1..13. Empty key-free G-entry tier 8 has total zero. |
+| Group records | sQuest +0xb4 resource, count +0x64, records +0x6c, stride12. ID +4, category/alternative bytes +8/+9. |
+| Historical urgent identity | cQuestData +0x10c bit zero agrees with group categories 24..46. Loader 0x37539c reads this u16; resource correlation matches 28 historical urgents among 1,302 records. |
+| Native GUI identity/visibility/color | 0x546f28 / 0x56e530 / 0x56e6fc. The setters take four integer arguments and change native visibility/all four vertex colors. |
 
-The progression processor counts Village categories 24..33 and Hub categories
-34..46. It has special handling for Village quest IDs 601 and 1005 when stages
-are 5 and 9. A simple `urgentCategory = base + stage` assumption would mislabel
-other urgents in those groups. The first stage can be zero; zero is not blanket
-proof of corrupt state. The static range classifier `0x3bc5f0` and incomplete
-urgent pools alone also fail to establish an urgent's availability.
+Key relevance compares the actual progression tier with the quest's native group
+category: Village 1..10 and Hub/G tier +10. Category18 is a key-free transition;
+category23 is final-stage/no-key. An unfinished old key becomes grey; completion
+or a satisfied Village alternative group also makes it grey. Only the quest's
+own progression domain must be known; an unknown tier hides an unfinished key.
 
-Required follow-up: trace the quest counter's actual urgent offer/unlock checks,
-including NPC/prerequisite routing, special Village branches, alternatives and
-simultaneous urgents. Establish exact current-key relevance for Village, Hub and
-G-rank separately. Do not use the viewed rank, new flags, or static rank ranges.
+Yellow requires historical urgent identity, membership in the actual counter's
+offered set, current availability and the native prerequisite counter. Completed
+urgents are grey. Inactive/old urgents are grey even if unfinished. Multiple offered
+IDs are evaluated independently. This handles special Village phases involving
+601 and 1005 without guessing a category from stage. Incomplete selector pools,
+static rank ranges and the separate +0x200 UI bitfield are not used as availability.
+
+The parent copies only UI identity and sixteen IDs into its local stack. Forge's
+SDK TLS token connects that frame to nested row calls on the same native thread.
+A borrowed guard restores the previous TLS value on return, including nested calls.
+No resource pointer or offers frame survives a menu update. The checked raw SDK
+allocation reports failure; Forge's higher-level ThreadLocal::new would panic on
+that failure and allocate per-thread heap. This is a narrow verified wrapper gap.
 
 ## Resource recipe
 
@@ -90,58 +90,71 @@ object has no cached TextureSet extension; arbitrary buffer enlargement would
 copy out of bounds. All 114 unrelated resources retain decompressed bytes and
 compressed blocks after ARC readback.
 
-Candidate object access expects holder UI+0x24, instance count +0x298,
+Native object access validates holder UI+0x24, instance count +0x298,
 instance-pointer table +0xf8, row instances 16..23, object array +0xd8 and slot12.
-It validates object ID21 and cGUIObjTexture DTI before writes. Establish the live
-resource identity/array ordering and sequence initialization behavior before
-activation. Kernel readability checks cannot establish object ownership/lifetime.
+It checks the native GUI identity query `0x546f28` returns set 5 (selected by the
+normal row builder), then validates all eight object IDs and cGUIObjTexture DTI
+before any setter. Compiled fixtures exercise this access path. Live sequence
+initialization and clipping remain manual acceptance checks; memory readability
+alone does not establish ownership.
 
 ## ARM and Forge boundaries
 
 forge-rs 1.5.0 is pinned at `d1865b68e9b194eb3eacc8bd71bbf601a5fac63e`.
-The loader handshake requests 1.5.0. Native and Rust compile-time checks agree on
-Hook size24, alignment4, context offset12, ctx_cell offset16 and has_ctx offset20
-(native). Older incompatible loaders are rejected; no loader is bundled/replaced.
+The loader handshake requests 1.5.0. Native and Rust checks agree on Hook size24,
+alignment4, context offset12, ctx_cell offset16 and has_ctx offset20 (native).
+Older incompatible loaders are rejected; no loader is bundled or replaced.
 
-The two displaced ARM words are `e92d4ff0` (PUSH r4-r11,lr) and `e24dd004`
-(SUB sp,sp,#4). They have no PC-relative operands or GE/NZCVQ operations.
-Forge's 16-byte trampoline must contain those words, `e51ff004` (literal LDR pc),
-and target+8. Installation compares exact support windows first, verifies the
-trampoline and published branch, and flushes code caches. One ordinary hook uses
-one pooled 16-byte slot; Forge owns the pool's 16 KiB CodeMemory chunk. This is a
-capacity description, not proof of runtime headroom with a particular mod set.
+The row prologue displaces `e92d4ff0` (PUSH r4-r11,lr), `e24dd004` (SUB sp,sp,#4).
+The parent uses the same PUSH followed by `e24dd06c` (SUB sp,sp,#108). Both are
+position independent and contain no GE/NZCVQ operations. Each Forge trampoline
+must contain its original eight bytes, `e51ff004` literal LDR pc, and target+8.
+All seventeen support windows are checked against original executable bytes.
+Installation validates both trampolines and redirects, flushes code caches and
+publishes active state only after both hooks succeed. The hooks use two 16-byte
+slots in Forge's shared 16 KiB CodeMemory pool. No additional hook engine exists.
 
-The typed function-entry detour preserves AAPCS callee-saved integer/VFP state
-and forwards r0..r3 plus three stack arguments. Unicorn executes the compiled
-NRO with a deliberately clobbering original double in all 16 GE patterns.
-Incoming GE reaches the original unchanged. Direct caller sites 0x616bfc,
-0x618bbc and 0x618cb8 use no GE-dependent SEL before their next call. The first
-two set their own condition flags before conditional use; the third makes an
-unconditional next call. Flags are not an additional return value here. No MSR
-status writes occur in the compiled plugin. These checks do not validate a live
-Forge installation or the new native GUI writes.
+The row typed callback forwards r0..r3 and three stack arguments. Unicorn runs
+the compiled NRO with clobbering original doubles for all sixteen incoming GE
+patterns, checks original forwarding and AAPCS callee-saved integer/VFP state.
+Direct row callers 0x616bfc/0x618bbc set their own condition flags before use;
+0x618cb8 proceeds to an unconditional call. Parent callers 0x782bb0/0x6e3f64
+likewise branch/call unconditionally or replace flags with CMP before conditional
+use. Their continuations contain no GE-dependent SEL before the next call. No
+MSR status writes occur in the compiled plugin; APSR_g is not a prerequisite.
 
-Rollback accepts only original/owned branch words, including partial publication.
-Foreign words are not overwritten. Disabled Patch snapshots cannot restore on
-Drop; verified original continuations remain process-owned/reachable on failure.
-The fixture exercises the production rollback against whole/partial owned writes
-and foreign modification. A failure retaining a redirect requires a restart;
-there is no unloading or hot-reload path.
+Rollback checks original/owned branch words, including partial publication, and
+restores patches in reverse order. Foreign modifications retain ownership.
+Disabled Patch snapshots do not write on Drop. Valid original continuations are
+published before later checks and remain Forge-owned for process lifetime even
+on failure. A failed rollback reports that restart is required. There is no
+unloading or hot reload path.
 
-Forge owns lifecycle, logging, allocation, singleton lookup, main text address,
-ordinary hooks and patches. Immutable DTI lookup fits its high-level wrapper.
-Game-owned mutable objects use scoped raw access; no resource pointer is retained
-across menu transitions. Pinned Forge exports lack memory-query/program-ID/cache
-flush helpers and native GUI-holder operations, so narrow SVC/native calls cover
-those gaps. There is no duplicate allocator, hook engine or renderer.
+Forge owns lifecycle, logging, allocation, singleton lookup, main-address helpers,
+ordinary hooks, patch snapshots and SDK TLS. Immutable DTI lookup fits its wrapper.
+Game objects use checked scoped raw reads to avoid long-lived mutable aliases.
+The pinned exports lack memory-query/program-ID/cache-flush helpers and native
+GUI-holder operations; narrow SVC/native calls fill those gaps. No second renderer
+or allocator is introduced. Diagnostics are deduplicated outside hot hooks.
 
-## Remaining acceptance
+## Automated evidence and manual acceptance
 
-No game was launched and no package was installed. Resolve the two native gates
-first, then rebuild and repeat static validation before a separately authorized
-English HD trial on Eden and Ryujinx: Village/Hub/G progression, obsolete keys,
-alternative groups, simultaneous urgents, viewing without completing, scrolling,
-selection, confirmation, reopening, quest return and progression advancement.
-Check badge size, four-pixel gap, clipping, colors and resource transitions.
-Disable the old prefix plugin during that future trial; preserve its accepted
-payloads/releases. GUI load safety, attachment and gameplay remain untested.
+Policy fixtures cover all states, obsolete unfinished keys, alternative groups,
+simultaneous urgents, viewing versus completing, missing/conflicting records and
+row transitions. Resource checks retain all fifteen original sequences/bindings,
+all unrelated resource bytes, atlas references and original cached geometry.
+
+The compiled active parent/row fixture uses native-shaped memory and query/setter
+doubles. It verifies actual visibility and packed state colors, original-call
+ordering, urgent offer/flag/prerequisite failures, actual completion versus new
+indicators, bad GUI identity, invalid context, row reuse, balanced stack/TLS and
+unchanged game input records. These checks validate the adapter's execution, not
+live rendering or the native game's query results.
+
+No emulator was launched, package installed, save modified or loader replaced by
+this implementation. r2 is active DEVELOPMENT, with manual acceptance pending on
+English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
+simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
+and progression advancement. Check size, four-pixel gap, clipping and colors.
+Disable the old prefix plugin during a trial; preserve accepted releases and
+installed rollback payloads. Live resource load and gameplay remain untested.

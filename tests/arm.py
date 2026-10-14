@@ -83,13 +83,13 @@ subprocess.run([compiler/'arm-none-eabi-g++','-std=c++17','-marm','-mfloat-abi=s
 # GE-dependent SEL before its next call/return. Retain windows for review.
 image,_=main_image(input_path('main').read_bytes());binary=WORK_ROOT/'main-image.bin';binary.write_bytes(image)
 windows={}
-for at,size in [(0x616c00,48),(0x618bc0,40),(0x618cbc,28)]:
+for at,size in [(0x616c00,48),(0x618bc0,40),(0x618cbc,28),(0x782bb4,4),(0x782e04,32),(0x6e3f68,28)]:
     text=subprocess.check_output([compiler/'arm-none-eabi-objdump','-D','-b','binary','-m','arm',
         '--start-address='+str(at),'--stop-address='+str(at+size),binary],text=True)
     assert '\tsel\t' not in text;windows[hex(at)]=text.split('Disassembly of section .data:')[-1].strip()
 record('arm.json',{'status':'PASSED','typed_detour_cases':checks,'forwarded_integer_arguments':7,
         'hook_abi_bytes':24,'minimum_forge_version':'1.5.0','GE':'unchanged before original in all 16 patterns; no restoration required at audited direct continuations',
         'preserved':['r4-r11','d8-d15','sp','incoming stack words'],'direct_caller_windows':windows,
-        'live_flags':'caller replaces NZCVQ before conditional use; original incoming GE preserved',
+        'live_flags':'Row and parent direct callers replace NZCVQ before conditional use or make an unconditional next call; no incoming GE consumer',
         'runtime_test':'NOT RUN','resource_attachment':'NOT VERIFIED'})
 print('PASS: compiled seven-argument forwarding, callee-saved state, version handshake and native Hook ABI')

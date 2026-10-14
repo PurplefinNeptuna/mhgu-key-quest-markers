@@ -55,6 +55,23 @@ pub fn resolve_group(records: impl Iterator<Item = Group>, id: u32) -> Option<Gr
     }
     found
 }
+/// Native script progression exposes Village tiers 1..10 and Hub/G tiers 1..13.
+/// Key group categories are Village tier and Hub/G tier + 10; category 18 is
+/// the key-free G-entry transition. Only the quest's own domain must be known.
+pub fn needed_key(group: Group, village: u16, hub: u16) -> Option<bool> {
+    if !key(group.category) {
+        return None;
+    }
+    let (tier, limit, category) = if group.category <= 10 {
+        (village, 10, group.category as u16)
+    } else {
+        (hub, 13, group.category as u16 - 10)
+    };
+    if tier == 0 || tier > limit {
+        return None;
+    }
+    Some(category == tier)
+}
 /// Identity requires agreement between the native group and urgency flag.
 /// Completion and satisfied alternatives cannot turn red/yellow. An unresolved
 /// unfinished quest stays hidden instead of assuming that its rank is current.
@@ -246,6 +263,49 @@ mod tests {
             ),
             None
         );
+    }
+    #[test]
+    fn native_progression_domains_and_g_entry() {
+        assert_eq!(needed_key(group(2), 2, 1), Some(true));
+        assert_eq!(needed_key(group(1), 2, 1), Some(false));
+        assert_eq!(needed_key(group(19), 2, 9), Some(true));
+        assert_eq!(needed_key(group(17), 2, 9), Some(false));
+        assert_eq!(needed_key(group(10), 10, 13), Some(true));
+        assert_eq!(needed_key(group(22), 10, 13), Some(false));
+        assert_eq!(needed_key(group(18), 2, 8), None);
+        assert_eq!(needed_key(group(1), 0, 1), None);
+        assert_eq!(needed_key(group(11), 0, 1), Some(true));
+    }
+    #[test]
+    fn unused_rows_and_menu_transition_do_not_retain_badges() {
+        let page = [
+            Some(group(1)),
+            Some(group(25)),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ];
+        let draw = |page: [Option<Group>; 8]| {
+            page.map(|g| g.map_or(Badge::Hidden, |g| decide(g, urgent(g.category), state())))
+        };
+        assert_eq!(
+            draw(page),
+            [
+                Badge::Red,
+                Badge::Yellow,
+                Badge::Hidden,
+                Badge::Hidden,
+                Badge::Hidden,
+                Badge::Hidden,
+                Badge::Hidden,
+                Badge::Hidden
+            ]
+        );
+        assert_eq!(draw([None; 8]), [Badge::Hidden; 8]);
+        assert_eq!(draw(page)[0], Badge::Red);
     }
     #[test]
     fn exact_opaque_colors() {
