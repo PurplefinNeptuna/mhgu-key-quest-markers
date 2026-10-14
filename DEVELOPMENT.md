@@ -28,7 +28,7 @@ Run from any directory:
 
 `prepare` verifies inputs and the read-only native GUI layout fixture. All commands are offline;
 there is no download, install, game launch or settings command. Outputs use the
-workspace's `build/key-quest-markers-rs/candidates/r3/` and matching `work/` folder,
+workspace's `build/key-quest-markers-rs/candidates/r4/` and matching `work/` folder,
 or the independent checkout's own `build/` and `work/` folders after export.
 
 The workspace coordinator also supports
@@ -37,7 +37,7 @@ explicitly registered DEVELOPMENT candidate. It delegates to the owned builder,
 verifies ZIP/runtime/support/checksums, and does not grant release approval.
 Run the full coordinator `check` before committing distribution work.
 
-r3 activates the parent and row hooks after executable/Forge validation. The
+r4 activates the parent and row hooks after executable/Forge validation. The
 parent copies offered urgent IDs into scoped Forge SDK TLS; the row callback reads
 native progression/completion and creates missing cGUIObjTexture children. They
 are attached to each row's main Null, using the game's MT allocation/constructor
@@ -46,8 +46,8 @@ Original object-index arrays and resource descriptors remain untouched. See the
 native audit for exact ownership and the source of these sizes.
 
 The build only reads the copied HD common archive as a layout fixture; it does
-not stage any ARC. r1/r2 and the original C++/PC releases remain preserved. r3
-supplies the missing 70-byte named plugin metadata and reports failures at ERROR.
+not stage any ARC. r1/r2/r3 and the original C++/PC releases remain preserved. r4
+retains the 70-byte named plugin metadata and reports failures at ERROR.
 No command installs, launches, edits saves or changes emulator settings.
 
 Forge owns lifecycle/logging, allocation for plugin data, hooks, patches, singleton

@@ -11,11 +11,16 @@ from paths import BUILD_ROOT,CONFIG,input_path
 from verify import symbols
 from mhgu_binary import Nro,main_image
 from build import record,digest
+from gui_layout import Gui
+from mhgu_assets import read_arc
 import unicorn
 from unicorn import arm_const as arm
 MODULE,ENGINE,RETURN,STACK,GAME,DATA=0x31000000,0x32000000,0x32000100,0x41010000,0x33000000,0x34000000
 elf,names=symbols();data=(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro').read_bytes();nro=Nro(data)
 native_image,_=main_image(input_path('main').read_bytes())
+_,arc=read_arc(input_path('common_eng.arc'))
+gui=Gui(next(v['data'] for k,v in arc.items() if k[0].endswith('count\\counter')))
+row_objects=gui.table(48,172,36)[30:42]
 base_symbol=None
 for line in subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-nm','-C','-n',elf],text=True).splitlines():
     fields=line.split(maxsplit=2)
@@ -24,6 +29,7 @@ assert base_symbol is not None
 UI,HOLDER,CONTROLLER,INFO,PROFILE,QUEST,RESOURCE,RECORDS,PROGRESS,ROWS,DTI,VFT=(DATA+x for x in
     [0x1000,0x2000,0x3000,0x4000,0x10000,0x20000,0x21000,0x22000,0x23000,0x24000,0x25000,0x26000])
 ROOT_DTI,ALLOCATOR,ATLAS,GUI_RESOURCE=DATA+0x25100,DATA+0x25200,DATA+0x61000,DATA+0x62000
+GUI_OWNER,GUI_HEADER,OBJECT_TABLE=DATA+0x65000,DATA+0x66000,DATA+0x67000
 INSTANCE_ARRAY=DATA+0x27000
 REGS=[getattr(arm,'UC_ARM_REG_R'+str(i))for i in range(13)]
 BADGE_ID=0x4b514d33
@@ -31,14 +37,15 @@ STYLE=[0xa4dc24,0xa4a9f4,0xa47a94,0xa4dca0,0xa47a04,0xa4aa24,0xa4aa5c,0xa4aa94,0
 CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
-              invalid_info=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
+              invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
               simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0):
     global CASES
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
     u.mem_map(ENGINE,4096);u.mem_map(0x41000000,0x20000);u.mem_map(GAME,0x2000000)
     # Real game code rebuilds/traverses the draw cache and destroys the owned tree.
-    for first,last in [(0xa494a0,0xa4964c),(0xa48668,0xa486fc),(0xa475e0,0xa47648)]:
+    for first,last in [(0xa494a0,0xa4964c),(0xa48668,0xa486fc),(0xa475e0,0xa47648),
+                       (0xa38828,0xa38944),(0xa38bc0,0xa38e50),(0xa49b28,0xa49bac),(0xa4844c,0xa48470)]:
         u.mem_write(GAME+first,native_image[first:last])
     imports={};next_import=ENGINE+0x300
     for name,e,*_ in nro.symbols:
@@ -63,6 +70,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     word(MODULE+names['kqm_tls_slot'],1);u.mem_write(MODULE+names['kqm_active'],b'\x01')
     word(CONTROLLER+0x54,UI);word(UI+0x24,HOLDER);word(HOLDER,VFT+0x100);word(VFT+0x1ac,GAME+0x1010)
     word(HOLDER+0x298,primary_count);word(HOLDER+0xf8,INSTANCE_ARRAY);word(HOLDER+0x294,INSTANCE_ARRAY+0x400)
+    word(VFT+0x208,GAME+0x1064);word(VFT+0x31c,GAME+0x1038)
+    word(VFT+0x404+0x54,GAME+0x1060)
+    word(GUI_RESOURCE+0x64,GUI_HEADER);word(GUI_HEADER+0xac,OBJECT_TABLE)
+    for j,record_bytes in enumerate(row_objects):
+        u.mem_write(OBJECT_TABLE+(30+j)*36,record_bytes)
+        word(OBJECT_TABLE+(30+j)*36+0x14,DTI);word(OBJECT_TABLE+(30+j)*36+0x20,0)
     word(DTI,VFT+0x200);word(DTI+24,304//4);word(DTI+28,0x1b6313a3)
     word(ROOT_DTI+24,176//4)
     word(VFT+0x20c,GAME+0x1020);word(ALLOCATOR,VFT+0x300);word(VFT+0x320,GAME+0x1030);word(VFT+0x334,GAME+0x1034)
@@ -75,18 +88,18 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         instance=DATA+0x28000+i*0x200;objects=DATA+0x2a000+i*0x100
         root=DATA+0x2c000+i*0x200;parent=DATA+0x2e000+i*0x200;desc=DATA+0x60000+i*0x40;cache=DATA+0x40000+i*0x400
         index=16+i;entry=INSTANCE_ARRAY+index*4 if index<primary_count else INSTANCE_ARRAY+0x400+(index-primary_count)*4
-        word(entry,instance);word(instance+0xd8,objects);word(instance+0xdc,root)
-        word(objects,root);word(objects+4,parent);word(root,VFT+0x404);word(root+0x50,1);word(root+0x68,parent)
-        word(parent,VFT+0x500);word(parent+0x50,14);word(parent+0x54,1);word(parent+0x70,root)
-        word(desc,20);half(desc+4,12);half(desc+6,15);word(desc+8,9)
+        word(entry,instance);word(instance+0x6c,GUI_OWNER);word(instance+0x70,GUI_RESOURCE)
+        word(instance+0xd0,0xffffffff);word(instance+0xd4,0xffffffff)
+        word(objects,root);word(objects+4,parent);word(root,VFT+0x404);word(root+0x50,1)
+        word(parent,VFT+0x500);word(parent+0x50,14);word(parent+0x54,1)
+        word(desc,20);half(desc+4,12);half(desc+6,15);word(desc+8,9);word(desc+12,30)
         word(root+0x9c,desc);word(root+0xa0,objects);word(root+0xa4,cache);word(root+0x80,cache)
         leaves=[DATA+0x70000+i*0x2000+j*0x140 for j in range(10)]
-        word(parent+0x68,leaves[0])
         for j,leaf in enumerate(leaves):
-            word(objects+(j+2)*4,leaf);word(leaf,VFT);word(leaf+0x50,99 if invalid_object and i==7 and j==0 else 12+j)
+            word(objects+(j+2)*4,leaf);word(leaf,VFT)
             # Nine original drawable leaves and one non-drawing ticket container.
-            word(leaf+0x54,0x2000001 if j<9 else 1);word(leaf+0x70,parent);word(leaf+0x74,instance);word(leaf+0x78,GUI_RESOURCE)
-            word(leaf+0x6c,leaves[j+1] if j+1<len(leaves) else 0)
+            word(leaf+0x54,1 if j==7 else 0x2000001)
+            word(leaf+0x6c,0)
         roots.append(root);parents.append(parent);arrays.append(bytes(u.mem_read(objects,48)));original_caches.append(cache)
     word(ATLAS,22);word(ATLAS+12,0x02000200);word(ATLAS+0x28,DATA+0x64000)
     word(QUEST+0xb4,RESOURCE);word(RESOURCE+0x64,8);word(RESOURCE+0x6c,RECORDS)
@@ -103,6 +116,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     immutable=[bytes(u.mem_read(p,n))for p,n in protected]
     u.reg_write(arm.UC_ARM_REG_C1_C0_2,0xf00000);u.reg_write(arm.UC_ARM_REG_FPEXC,0x40000000)
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
+    constructing=None;factory_index=0
     allocations={};freed=[];created=[];drawn=[];object_attempts=0
     def allocate(size):
         nonlocal heap
@@ -119,7 +133,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             out+=c
         raise AssertionError('unterminated string')
     def trace(cpu,address,size,_):
-        nonlocal tls_value,parent_return,parent_sp,object_attempts
+        nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index
         r=[cpu.reg_read(x)for x in REGS[:4]]
         if address==RETURN:cpu.emu_stop();return
         if address==MODULE+names['mwc_svc_query']:
@@ -142,6 +156,14 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==GAME+0x7aef68:ret(cpu,DTI if r[0]==0x1b6313a3 else ROOT_DTI);return
         if address==GAME+0x1000:ret(cpu,DTI);return
         if address==GAME+0x1014:ret(cpu,ROOT_DTI);return
+        if address==GAME+0xb80f94:
+            assert r[:2]==[GUI_RESOURCE,20];ret(cpu,DATA+0x60000+constructing*0x40);return
+        if address==GAME+0x1038:
+            assert r[:3]==[ALLOCATOR,48,16];ret(cpu,DATA+0x2a000+constructing*0x100);return
+        if address==GAME+0x1064:
+            objects=DATA+0x2a000+constructing*0x100
+            pointer=read(objects+factory_index*4);factory_index+=1;ret(cpu,pointer);return
+        if address in [GAME+0xa484c4,GAME+0xa49bac,GAME+0xa49bb8,GAME+0x1060]:ret(cpu);return
         if address==GAME+0xb80fd0:assert r[:2]==[GUI_RESOURCE,22];ret(cpu,ATLAS);return
         if address==GAME+0x7aa47c:ret(cpu,ALLOCATOR);return
         if address==GAME+0x1030:
@@ -151,10 +173,10 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==GAME+0x1020:
             assert r[0]==DTI and r[1]in allocations;word(r[1],VFT);word(r[1]+0x54,0x2020001);created.append(r[1]);ret(cpu,r[1]);return
         if address==GAME+0x1040:release(r[0]);ret(cpu);return
-        if address==GAME+0x540c08:assert r[0]in roots and r[1]==168;ret(cpu,0 if fail_cache else allocate(168));return
+        if address==GAME+0x540c08:
+            assert r[0]in roots and r[1]in [152,168]
+            ret(cpu,original_caches[constructing] if r[1]==152 else 0 if fail_cache else allocate(168));return
         if address==GAME+0x540c38:release(r[1]);ret(cpu);return
-        if address==GAME+0xa4844c:
-            word(r[0]+0x6c,r[1]);word(r[1]+0x70,read(r[0]+0x70));ret(cpu);return
         if address-GAME in STYLE:ret(cpu);return
         if address==GAME+0xa4faf0:assert r[1]==22;word(r[0]+0x104,ATLAS);ret(cpu);return
         if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==(136.,344.,198.,406.);ret(cpu);return
@@ -176,7 +198,23 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     u.hook_add(unicorn.UC_HOOK_CODE,trace)
     def call(address,a=0,b=0):
         u.reg_write(arm.UC_ARM_REG_SP,STACK);u.reg_write(arm.UC_ARM_REG_LR,RETURN);u.reg_write(arm.UC_ARM_REG_R0,a);u.reg_write(arm.UC_ARM_REG_R1,b)
-        u.emu_start(address,RETURN+4,count=1000000);assert u.reg_read(arm.UC_ARM_REG_SP)==STACK
+        u.emu_start(address,RETURN+4,count=1000000);assert u.reg_read(arm.UC_ARM_REG_SP)==STACK,(hex(u.reg_read(arm.UC_ARM_REG_PC)),hex(u.reg_read(arm.UC_ARM_REG_SP)))
+    # Run both real ARM constructor functions. a38828 supplies the GUI owner;
+    # a38bc0 writes each object's owner/resource and links the original ARC tree.
+    # Factories and property initialization are doubles, not the ownership path.
+    for i in range(8):
+        constructing=i;factory_index=0
+        instance=DATA+0x28000+i*0x200
+        call(GAME+0xa38828,instance,20)
+        assert factory_index==12 and read(instance+0xdc)==roots[i]
+        for j in range(12):
+            pointer=read(DATA+0x2a000+i*0x100+j*4)
+            assert read(pointer+0x74)==GUI_OWNER and read(pointer+0x78)==GUI_RESOURCE
+            assert read(pointer+0x50)==struct.unpack_from('<I',row_objects[j])[0]
+        assert GUI_OWNER!=instance
+    constructing=None
+    if invalid_owner:word(read(DATA+0x2a000+8)+0x74,DATA+0x28000)
+    if invalid_object:word(read(DATA+0x2a000+7*0x100+8)+0x50,99)
     call(MODULE+names['kqm_parent'],CONTROLLER,0 if invalid_info else INFO)
     assert tls_value==0 and calls==['parent','row-original']
     if fail_at:
@@ -185,7 +223,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         assert tls_value==0 and calls==['parent','row-original']*2
     assert [bytes(u.mem_read(p,n))for p,n in protected]==immutable
     for i in range(8):assert bytes(u.mem_read(DATA+0x2a000+i*0x100,48))==arrays[i]
-    if invalid_object or gui_identity!=5 or fail_object or fail_cache:
+    if invalid_object or invalid_owner or gui_identity!=5 or fail_object or fail_cache:
         assert not states and not colors
         assert all(read(root+0xa4)==old for root,old in zip(roots,original_caches))
         assert all(p in freed for p in allocations) # Failed preparation releases all unpublished allocations.
@@ -201,6 +239,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert colors=={0:0xff808080 if 207 in completed or alternative_done else 0xff2547e7,1:0xff808080,
                            2:0xff808080 if 303 in completed else urgency,3:0xff39d2ff if simultaneous and 206 in offered else 0xff808080,4:0xff808080}
         for p in created:
+            assert read(p+0x74)==GUI_OWNER
             assert struct.unpack('<2f',u.mem_read(p+0x80,8))==(-28.,8.)
             assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(24.,24.)
         for root in roots:call(GAME+0xa494a0,root,0x12345678)
@@ -214,7 +253,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
 results=[test_case('all badge states and native draw traversal'),test_case('urgent inactive',offered=()),
          test_case('urgent unavailable',available=False),test_case('urgent prerequisites incomplete',prerequisites=False),
          test_case('viewing still red'),test_case('key completion',completed=(207,213)),test_case('urgent completion',completed=(303,213)),
-         test_case('resource object mismatch',invalid_object=True),test_case('no offer context',invalid_info=True),
+         test_case('resource object mismatch',invalid_object=True),test_case('animation address is not the GUI owner',invalid_owner=True),test_case('no offer context',invalid_info=True),
          test_case('ordinary rows',ordinary=True),test_case('invalid offer count',bad_count=True),test_case('different GUI',gui_identity=4),
          test_case('satisfied alternative',alternative_done=True),test_case('simultaneous urgents',simultaneous=True,offered=(303,206)),
          test_case('secondary table',primary_count=16),test_case('both tables',primary_count=20),test_case('primary table empty',primary_count=0),
@@ -222,6 +261,6 @@ results=[test_case('all badge states and native draw traversal'),test_case('urge
          test_case('repeated row update reuses native children',repeat=True),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
-          'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
+          'native_animation_constructor':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')

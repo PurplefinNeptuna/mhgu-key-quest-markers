@@ -26,7 +26,7 @@ pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
         return;
     }
     let mut name = [0; 64];
-    let label = b"Native Quest Badges r3";
+    let label = b"Native Quest Badges r4";
     name[..label.len()].copy_from_slice(label);
     // The pinned Forge loader provides the complete writable 70-byte record.
     // This narrow ABI extension leaves vendored bindings and their pins intact.
@@ -66,13 +66,16 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
             16,
             "native badge object/cache allocation or initialization failed",
         ),
-        (
-            64,
-            "native row/HD atlas mismatch; remove old candidate ARC files",
-        ),
+        (64, "native row/HD atlas validation failed"),
     ] {
         if errors & !old & bit != 0 {
             log::error!("Native quest badges hidden: {message}");
+            if bit == 64 {
+                let stage = gui::take_failure();
+                log::error!(
+                    "Native quest badge validation stage {stage}: 1=instance, 2=root/type, 3=animation, 4=cache, 5=parent/icon, 6=GUI owner, 7=HD atlas, 8=child chain"
+                );
+            }
         }
     }
 }

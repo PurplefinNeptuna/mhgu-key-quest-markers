@@ -1,8 +1,8 @@
-# Native implementation audit — active r3
+# Native implementation audit — active r4
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r3
+The blanket r1 disable gate and unresolved-state placeholders are removed. r4
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -71,7 +71,7 @@ Native root/array/descriptor fields are:
 | Field | Role |
 | --- | --- |
 | Object +0x68/+0x6c/+0x70 | First child, next sibling, parent |
-| Object +0x74/+0x78 | Borrowed instance and rGUI context |
+| Object +0x74/+0x78 | Borrowed cGUI owner and rGUI context |
 | Object +0x50 | Object ID |
 | Root +0x9c/+0xa0 | Original animation descriptor and object-index array; unchanged |
 | Root +0xa4/+0x80 | Owned draw-cache allocation and command-list start |
@@ -132,7 +132,7 @@ Installation validates both trampolines and redirects, flushes code caches and
 publishes active state only after both hooks succeed. The hooks use two 16-byte
 slots in Forge's shared 16 KiB CodeMemory pool. No additional hook engine exists.
 
-The row typed callback forwards r0..r3 and three stack arguments. Unicorn runs
+The row typed callback forwards r0..r4 and three stack arguments. Unicorn runs
 the compiled NRO with clobbering original doubles for all sixteen incoming GE
 patterns, checks original forwarding and AAPCS callee-saved integer/VFP state.
 Direct row callers 0x616bfc/0x618bbc set their own condition flags before use;
@@ -161,14 +161,14 @@ The user reported Rust Damage Numbers in Plugin UI but absent from Loaded Plugin
 and no quest badges. The installed badge NRO/archive matched r2. The checked Eden
 logs show Forge1.5.0; its config filters at ERROR, hiding r2's INFO/WARN messages.
 forge-rs's entry macro writes only the version prefix; Forge's list skips empty
-names. r3 supplies the full 70-byte metadata record (name at offset6) and retains
+names. r4 supplies the full 70-byte metadata record (name at offset6) and retains
 Forge logging with failures at ERROR. Vendored pins are unchanged.
 
 The installed HD Project and r2 badge package both replace common_eng.arc. The
 inspected Eden source selects the alphabetically first file, letting HD Project's
 unmodified counter win. Individual live file ownership was not logged. The user
 then explicitly chose native runtime insertion with all ARC files untouched.
-r3 implements that choice and contains only the NRO. Remove/disable the old Rust
+r4 implements that choice and contains only the NRO. Remove/disable the old Rust
 candidate as a whole so its old ARC cannot remain as a leftover installation file.
 Installed packages/settings/saves were read only; no installation or launch occurred.
 
@@ -180,17 +180,34 @@ row transitions. The resource fixture checks the unmodified fifteen-sequence,
 twelve-object row and existing HD atlas; the package check rejects any ARC payload.
 
 The compiled fixture uses unmodified twelve-object rows, native-shaped metadata,
-query/MT constructor doubles and the game's actual ARM draw walker/root/container
-destructors. It verifies object creation, direct-child links, unchanged index arrays,
+query/MT factory and property doubles and the game's actual ARM animation
+constructors, child-link helpers, draw walker and root/container destructors. It verifies object creation, direct-child links, unchanged index arrays,
 expanded cache bounds with canaries, actual traversal of visible badges, repeated
 updates without additional allocation, native cleanup, failure rollback and every
 badge state. Protected quest/completion/progression records remain unchanged.
 Pixel rendering and the game's actual query results still require a manual trial.
 
 No emulator was launched, package installed, save modified or loader replaced by
-this implementation. r3 is active DEVELOPMENT, with manual acceptance pending on
+this implementation. r4 is active DEVELOPMENT, with manual acceptance pending on
 English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
 Disable the old prefix plugin during a trial; preserve accepted releases and
 installed rollback payloads. Live resource load and gameplay remain untested.
+
+## r3 runtime failure and r4 correction
+
+The reported Eden r3 trial reached the row callback but returned GUI validation
+error64 before creating a badge. The installed NRO matched r3, its folder contained
+no ARC, and the installed HD common archive matched the copied input.
+
+The wrong check compared object+0x74 with the animation instance. Native function
+0xa38828 instead passes instance+0x6c as the first argument to 0xa38bc0; the latter
+writes that cGUI owner to every child+0x74. r4 compares and copies this owner.
+The regression fixture executes both original ARM functions with distinct GUI and
+animation addresses, using the original counter object records for hierarchy/IDs.
+Factories, property initialization and GPU calls remain doubles.
+
+Future row validation failures log their precise guard stage outside the hot hook.
+This correction has source and executable-fixture evidence; live r4 acceptance
+is still pending. r3 failed gameplay and must not be treated as accepted.

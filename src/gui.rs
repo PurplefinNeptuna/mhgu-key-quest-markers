@@ -1,13 +1,17 @@
 //! Native row children. The game owns their MT allocations and draw caches;
 //! no archive, object-index array, overlay, or pointer retained by this plugin.
 use crate::memory::{self, BASE};
-use core::sync::atomic::Ordering;
+use core::sync::atomic::{AtomicU32, Ordering};
 use forge::mt::dti::MtDti;
 use quest_badges_core::Badge;
 
 const ID: u32 = 0x4b514d33; // KQM3, outside the counter's existing object IDs.
 const TEXTURE_BYTES: usize = 304;
 const CACHE_BYTES: usize = 10 * 16 + 8; // Ten drawable begin/end pairs plus terminator.
+static FAILURE: AtomicU32 = AtomicU32::new(0);
+pub fn take_failure() -> u32 {
+    FAILURE.swap(0, Ordering::Relaxed)
+}
 fn base() -> u32 {
     BASE.load(Ordering::Relaxed)
 }
@@ -40,7 +44,7 @@ fn integer(offset: u32, object: u32, value: u32) {
 #[derive(Clone, Copy)]
 struct Row {
     root: u32,
-    instance: u32,
+    owner: u32,
     parent: u32,
     tail: u32,
     resource: u32,
@@ -49,100 +53,121 @@ struct Row {
 }
 impl Row {
     fn read(instance: u32, root_dti: u32, texture_dti: u32) -> Option<Self> {
-        if !memory::writable(instance, 224) {
-            return None;
-        }
-        let objects = memory::word(instance + 0xd8)?;
-        let root = memory::word(instance + 0xdc)?;
-        if !memory::readable(objects, 12 * 4)
-            || !memory::writable(root, 176)
-            || memory::word(objects)? != root
-            || !is_type(root, root_dti)
-        {
-            return None;
-        }
-        let description = memory::word(root + 0x9c)?;
-        // The unmodified counter row is animation 20 with 12 lookup objects,
-        // 15 sequences and 9 drawables. These tables stay exactly as the game built them.
-        if memory::word(description)? != 20
-            || memory::half(description + 4)? != 12
-            || memory::half(description + 6)? != 15
-            || memory::word(description + 8)? != 9
-            || memory::word(root + 0xa0)? != objects
-            || memory::word(root + 0x50)? != 1
-        {
-            return None;
-        }
-        let cache = memory::word(root + 0xa4)?;
-        if cache == 0 || memory::word(root + 0x80)? != cache || !memory::readable(cache, 9 * 16 + 8)
-        {
-            return None;
-        }
-        let parent = memory::word(objects + 4)?;
-        let source = memory::word(objects + 8)?;
-        if !memory::writable(parent, 192)
-            || memory::word(parent + 0x50)? != 14
-            || !memory::readable(source, TEXTURE_BYTES)
-            || memory::word(source + 0x50)? != 12
-            || memory::word(source + 0x70)? != parent
-            || !is_type(source, texture_dti)
-        {
-            return None;
-        }
-        let resource = memory::word(source + 0x78)?;
-        if resource == 0 || memory::word(source + 0x74)? != instance {
-            return None;
-        }
-        let lookup: unsafe extern "C" fn(u32, u32) -> u32 =
-            unsafe { core::mem::transmute((base() + 0xb80fd0) as usize) };
-        let atlas = unsafe { lookup(resource, 22) };
-        if !memory::readable(atlas, 64)
-            || memory::word(atlas)? != 22
-            || memory::word(atlas + 12)? != 0x02000200
-            || memory::word(atlas + 0x28)? == 0
-        {
-            return None;
-        }
-        let mut tail = memory::word(parent + 0x68)?;
-        let mut badge = 0;
-        let mut seen = [0; 64];
-        // Check a bounded sibling chain, including cycles and foreign ID collisions.
-        // Only this direct parent is searched; the ticket subtree remains separate.
-        for i in 0..seen.len() {
-            if tail == 0
-                || seen[..i].contains(&tail)
-                || !memory::writable(tail, 0x94)
-                || memory::word(tail + 0x70)? != parent
+        let mut stage = 1;
+        let result = (|| {
+            if !memory::writable(instance, 224) {
+                return None;
+            }
+            stage = 2;
+            let objects = memory::word(instance + 0xd8)?;
+            let root = memory::word(instance + 0xdc)?;
+            if !memory::readable(objects, 12 * 4)
+                || !memory::writable(root, 176)
+                || memory::word(objects)? != root
+                || !is_type(root, root_dti)
             {
                 return None;
             }
-            seen[i] = tail;
-            if memory::word(tail + 0x50)? == ID {
-                if badge != 0
-                    || !memory::writable(tail, TEXTURE_BYTES)
-                    || !is_type(tail, texture_dti)
-                    || memory::word(tail + 0x74)? != instance
-                    || memory::word(tail + 0x78)? != resource
+            stage = 3;
+            let description = memory::word(root + 0x9c)?;
+            // The unmodified counter row is animation 20 with 12 lookup objects,
+            // 15 sequences and 9 drawables. These tables stay exactly as the game built them.
+            if memory::word(description)? != 20
+                || memory::half(description + 4)? != 12
+                || memory::half(description + 6)? != 15
+                || memory::word(description + 8)? != 9
+                || memory::word(root + 0xa0)? != objects
+                || memory::word(root + 0x50)? != 1
+            {
+                return None;
+            }
+            stage = 4;
+            let cache = memory::word(root + 0xa4)?;
+            if cache == 0
+                || memory::word(root + 0x80)? != cache
+                || !memory::readable(cache, 9 * 16 + 8)
+            {
+                return None;
+            }
+            stage = 5;
+            let parent = memory::word(objects + 4)?;
+            let source = memory::word(objects + 8)?;
+            if !memory::writable(parent, 192)
+                || memory::word(parent + 0x50)? != 14
+                || !memory::readable(source, TEXTURE_BYTES)
+                || memory::word(source + 0x50)? != 12
+                || memory::word(source + 0x70)? != parent
+                || !is_type(source, texture_dti)
+            {
+                return None;
+            }
+            stage = 6;
+            // a38828 passes instance+0x6c to a38bc0, which assigns it to each
+            // object's +0x74. This is the owning cGUI, not the animation instance.
+            let owner = memory::word(instance + 0x6c)?;
+            let resource = memory::word(source + 0x78)?;
+            if !memory::readable(owner, 4) || resource == 0 || memory::word(source + 0x74)? != owner
+            {
+                return None;
+            }
+            stage = 7;
+            let lookup: unsafe extern "C" fn(u32, u32) -> u32 =
+                unsafe { core::mem::transmute((base() + 0xb80fd0) as usize) };
+            let atlas = unsafe { lookup(resource, 22) };
+            if !memory::readable(atlas, 64)
+                || memory::word(atlas)? != 22
+                || memory::word(atlas + 12)? != 0x02000200
+                || memory::word(atlas + 0x28)? == 0
+            {
+                return None;
+            }
+            stage = 8;
+            let mut tail = memory::word(parent + 0x68)?;
+            let mut badge = 0;
+            let mut seen = [0; 64];
+            // Check a bounded sibling chain, including cycles and foreign ID collisions.
+            // Only this direct parent is searched; the ticket subtree remains separate.
+            for i in 0..seen.len() {
+                if tail == 0
+                    || seen[..i].contains(&tail)
+                    || !memory::writable(tail, 0x94)
+                    || memory::word(tail + 0x70)? != parent
                 {
                     return None;
                 }
-                badge = tail;
+                seen[i] = tail;
+                if memory::word(tail + 0x50)? == ID {
+                    if badge != 0
+                        || !memory::writable(tail, TEXTURE_BYTES)
+                        || !is_type(tail, texture_dti)
+                        || memory::word(tail + 0x74)? != owner
+                        || memory::word(tail + 0x78)? != resource
+                    {
+                        return None;
+                    }
+                    badge = tail;
+                }
+                let next = memory::word(tail + 0x6c)?;
+                if next == 0 {
+                    return Some(Self {
+                        root,
+                        owner,
+                        parent,
+                        tail,
+                        resource,
+                        cache,
+                        badge,
+                    });
+                }
+                tail = next;
             }
-            let next = memory::word(tail + 0x6c)?;
-            if next == 0 {
-                return Some(Self {
-                    root,
-                    instance,
-                    parent,
-                    tail,
-                    resource,
-                    cache,
-                    badge,
-                });
-            }
-            tail = next;
+            None
+        })();
+        if result.is_none() {
+            // Store only a small stage number; game pointers never escape the callback.
+            let _ = FAILURE.compare_exchange(0, stage, Ordering::Relaxed, Ordering::Relaxed);
         }
-        None
+        result
     }
 }
 
@@ -222,7 +247,7 @@ fn create(row: Row, dti: &MtDti) -> Option<u32> {
     }
     unsafe {
         word(object + 0x50, ID);
-        word(object + 0x74, row.instance);
+        word(object + 0x74, row.owner);
         word(object + 0x78, row.resource);
         // PosX/PosY setters use the game's VFP scalar ABI. Their verified scalar
         // fields plus dirty bit give the same result without a float-call shim.

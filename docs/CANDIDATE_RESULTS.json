@@ -1,11 +1,11 @@
 {
-  "version": "r3",
+  "version": "r4",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
   "host_tests": 10,
   "typed_arm_cases": 16,
-  "compiled_active_adapter_cases": 21,
+  "compiled_active_adapter_cases": 22,
   "archive_replacements": 0,
   "runtime_gui": "Native children and game-owned expanded draw caches",
   "resource_checks": {
@@ -24,8 +24,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889",
-    "elf_sha256": "b1654c7ed52a068516db3c79a1b2f6d38da6d107e8127f2ba0330ce96b436b81",
+    "nro_sha256": "e29fe7711acde87e77dac19bc51f4d0c686d6cbf0e7cee0e53294ba5de762087",
+    "elf_sha256": "f151ce630ed140039afe107a8ccf42f37b2e354efeca20823763881e2794af10",
     "exports": [
       "fini",
       "forge_onInit",
@@ -99,7 +99,7 @@
     "runtime_test": "NOT RUN"
   },
   "gui_registration": {
-    "name": "Native Quest Badges r3",
+    "name": "Native Quest Badges r4",
     "metadata_bytes": 70,
     "canaries": "PASSED"
   },
@@ -107,7 +107,8 @@
     "build_test_package": "PASSED",
     "inputs": "Externally supplied, copied into independent checkout",
     "parent_source_dependencies": false,
-    "payload_sha256_matches_workspace": true
+    "payload_sha256_matches_workspace": true,
+    "native_constructor_cases": 22
   },
   "remaining_acceptance": [
     "Live English HD pixels, clipping, size and native cleanup",
@@ -117,7 +118,26 @@
   "published": false,
   "reported_r2_runtime": "No badges; Damage Numbers callbacks run but its metadata name is blank",
   "payload_sha256": {
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889"
+    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "e29fe7711acde87e77dac19bc51f4d0c686d6cbf0e7cee0e53294ba5de762087"
   },
-  "full_distribution_check_mods": 14
+  "full_distribution_check_mods": 14,
+  "native_constructor_regression": {
+    "old_r3": "FAILED as expected with native constructor-built rows",
+    "new_r4": "PASSED",
+    "owner": "instance+0x6c cGUI, distinct from animation instance",
+    "original_arm_functions": [
+      "0xa38828",
+      "0xa38bc0",
+      "0xa49b28",
+      "0xa4844c",
+      "0xa48460"
+    ]
+  },
+  "reported_r3_runtime": {
+    "result": "FAILED: no badges",
+    "eden_error": "Native quest badges hidden: native row/HD atlas mismatch; remove old candidate ARC files",
+    "installed_nro_sha256": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889",
+    "badge_package_contains_arc": false,
+    "hd_archive_matches_copied_input": true
+  }
 }
