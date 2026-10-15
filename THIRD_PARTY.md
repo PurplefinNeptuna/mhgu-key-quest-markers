@@ -26,3 +26,21 @@
 
 Game archives and native binaries are external, copied inputs and excluded from
 source exports. Release notices separately cover the current runtime contents.
+
+Rust `core` and `alloc` are compiled into the ARM plugin by `.cargo/config.toml`
+with `compiler_builtins` memory support. The pinned toolchain is
+`c36f1457196e315bc204b9564a6a5a7fe7f5a51f`. `licenses/RUST-MIT.txt` is copied
+unchanged from
+https://github.com/rust-lang/rust/blob/c36f1457196e315bc204b9564a6a5a7fe7f5a51f/LICENSE-MIT
+(SHA-256 `b71bd43a069ca0641a9ecfe585ca7b3c53b5cc1608f8b68321168698e28b5ea1`).
+These notices cover the linked libraries. The compiler and host-only dependencies
+are build tools and are excluded from release notices.
+
+The linked ARM ELF contains
+`core::unicode::unicode_data::white_space::WHITESPACE_MAP` as well as
+`core`, `alloc` and `compiler_builtins` symbols (`nm -C --defined-only`).
+The pinned toolchain's `COPYRIGHT-library.html` identifies
+`library/core/src/unicode` as Unicode-3.0, copyright 1991-2024 Unicode, Inc.
+`licenses/UNICODE-3.0.txt` is copied unchanged from that toolchain's
+`share/doc/rust/licenses/Unicode-3.0.txt`
+(SHA-256 `f5062c9a188d81dfe66b56db4182dcf9e4b17c0d9b0d311a8e20b3a1b075c443`).

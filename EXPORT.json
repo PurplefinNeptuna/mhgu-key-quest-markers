@@ -26,6 +26,7 @@
     "licenses/COMPILER_BUILTINS.txt",
     "licenses/FORGE-MIT.txt",
     "licenses/RUST-MIT.txt",
+    "licenses/UNICODE-3.0.txt",
     "link/exported.txt",
     "link/switch32.ld",
     "mod.json",

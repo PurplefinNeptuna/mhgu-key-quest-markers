@@ -113,7 +113,7 @@ def package():
     (dest/'README.html').write_bytes(distribution.readme_html(guide))
     (dest/'GAMEBANANA_README.html').write_bytes(distribution.gamebanana_readme_html(guide,spec['gamebanana']))
     notices='\n\n'.join((MOD/n).read_text() for n in ['DISTRIBUTION_NOTICES.md','LICENSE','vendor/forge-rs/LICENSE',
-        'vendor/libnx/LICENSE-MIT','licenses/FORGE-MIT.txt','vendor/crates/log-0.4.34/LICENSE-MIT','licenses/RUST-MIT.txt','licenses/COMPILER_BUILTINS.txt'])
+        'vendor/libnx/LICENSE-MIT','licenses/FORGE-MIT.txt','vendor/crates/log-0.4.34/LICENSE-MIT','licenses/RUST-MIT.txt','licenses/UNICODE-3.0.txt','licenses/COMPILER_BUILTINS.txt'])
     (dest/'NOTICES.txt').write_text(notices);(dest/'NOTICES.html').write_text('<pre>'+escape(notices)+'</pre>\n')
     evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','native-adapter','verify','tests']}
     (dest/'VALIDATION.json').write_text(json.dumps(evidence,indent=2)+'\n')

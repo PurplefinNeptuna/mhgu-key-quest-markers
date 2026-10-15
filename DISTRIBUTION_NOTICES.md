@@ -10,6 +10,7 @@ The compiled plugin also includes log and Rust core/alloc/compiler-builtins
 support. Applicable license texts follow in the combined notices.
 
 The emblem is loaded at runtime from the user's game. Original game graphics
-are by Capcom. The optional MHGU HD Project is by Monkbreh / Monke:
-https://github.com/Monkbreh/MHGU-HD-Project. This package contains no game or HD asset
-files, generated artwork, extracted emblem or replacement texture atlas.
+are by Capcom. This package contains no game or HD asset files.
+
+Unicode whitespace data by Unicode, Inc. is included through Rust core, under
+Unicode License V3. The copyright notice and terms follow.

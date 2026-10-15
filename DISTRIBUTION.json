@@ -52,12 +52,6 @@
         "scope": "MIT-licensed ARM32 syscall wrappers."
       },
       {
-        "name": "MHGU HD Project",
-        "author": "Monkbreh / Monke",
-        "url": "https://github.com/Monkbreh/MHGU-HD-Project",
-        "scope": "Optional HD replacement for game UI resources. No HD assets are included in this plugin."
-      },
-      {
         "name": "Monster Hunter Generations Ultimate",
         "author": "Capcom",
         "url": "https://www.monsterhunter.com/",
@@ -79,6 +73,7 @@
     "mods/key-quest-markers/licenses/FORGE-MIT.txt",
     "mods/key-quest-markers/vendor/crates/log-0.4.34/LICENSE-MIT",
     "mods/key-quest-markers/licenses/RUST-MIT.txt",
+    "mods/key-quest-markers/licenses/UNICODE-3.0.txt",
     "mods/key-quest-markers/licenses/COMPILER_BUILTINS.txt"
   ],
   "evidence": {
