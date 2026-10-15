@@ -23,9 +23,9 @@ Badges appear automatically when you open the quest counter.
 
 | Quest state | Badge |
 | --- | --- |
-| Needed key | Green |
-| Active urgent | Red |
-| Completed or inactive key/urgent | Grey |
+| Key quest you still need to clear | Green |
+| Current urgent quest | Red |
+| Completed or inactive key/urgent quest | Grey |
 | Other quest | No badge |
 
 The badge appears in the quest row's request bubble slot. When a quest also
@@ -39,9 +39,9 @@ swatch to open its picker, or enter a hexadecimal RGB value.
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| Key | `006305` | Needed keys. |
-| Urgent | `A30000` | Active urgents. |
-| Completed | `808080` | Completed or inactive keys/urgents. |
+| Key | `006305` | Key quest badge colour. |
+| Urgent | `A30000` | Urgent quest badge colour. |
+| Completed | `808080` | Badge colour for completed or inactive quests. |
 
 Edits stay pending until you press **Save & apply**. The colours then take
 effect without restarting or reopening the quest counter. **Reset defaults**
