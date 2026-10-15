@@ -191,12 +191,12 @@ badge state. Protected quest/completion/progression records remain unchanged.
 Pixel rendering and the game's actual query results still require a manual trial.
 
 No emulator was launched, package installed, save modified or loader replaced by
-this implementation. r9 is active DEVELOPMENT, with manual acceptance pending on
-English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
+this implementation. The user confirmed r9 works on English HD Eden/Linux;
+individual cases and Ryujinx remain unconfirmed: Village/Hub/G progression, alternative groups,
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
 Disable the old prefix plugin during a trial; preserve accepted releases and
-installed rollback payloads. r9 visible output and gameplay acceptance remain untested.
+installed rollback payloads. See RUNTIME_RESULTS.json for the scoped r9 confirmation.
 
 ## r3 runtime failure and r4 correction
 
@@ -364,6 +364,31 @@ colours and logical atlas UVs. With top-left anchoring, row-local X=-28 plus
 quad X=0..24 leaves the requested four-pixel gap.
 
 The host fixture does not establish actual clipping, world transforms or visible
-GPU pixels. r9 remains an active DEVELOPMENT candidate awaiting manual acceptance;
-no emulator launch, install, archive replacement, settings or save change is part
+GPU pixels. The later user-confirmed r9 Eden success is recorded below;
+no emulator launch, install, archive replacement, settings or save change by the agent is part
 of this repair.
+
+
+## Confirmed working baseline — r9, 2026-10-15
+
+The user confirmed: “ok then save this knowledge somewhere in this project
+because this is working, nice job”. The installed NRO matches the r9 candidate
+SHA `331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576`.
+The fresh Eden log identifies MHGU 1.4.0, Forge1.5.0, r9 initialization and both
+hook entries. Visible success is established by the user report. The snapshot
+ends partway through a diagnostic line, so it proves no clean-shutdown result.
+Full hashes, snapshot identity and coverage limits are in [RUNTIME_RESULTS.json](RUNTIME_RESULTS.json).
+
+Preserve this native GUI implementation: the game's own cGUIObjTexture objects,
+row hierarchy, loaded HD atlas and native renderer provide the badges. Forge
+supplies lifecycle, hooks, logging, singleton/DTI lookup and supporting APIs.
+There is no ImGui or forge_onImGuiFreeRender drawing, ARC replacement or shipped
+extracted emblem. For this row, Mask0 is the normal colour path; the immediate
+INIT_PARAM kinds17/18 must not be decoded as kv8 offsets. Preserve the expanded
+13-entry object map and 168-byte draw cache with native allocation/cleanup.
+
+This is confirmation of working r9 badges on Eden/Linux, with individual rank,
+colour and transition checks unenumerated. It grants no Ryujinx/native Switch
+acceptance or distribution promotion. Keep r9 runtime/ZIP bytes unchanged; future
+runtime changes need a new candidate version. Its packaged pretrial validation
+is a historical snapshot; this record is the later manual evidence.

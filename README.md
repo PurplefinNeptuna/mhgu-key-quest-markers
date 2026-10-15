@@ -1,6 +1,6 @@
 # Native Quest Badges (Rust)
 
-**DEVELOPMENT r9. Corrects the native mask/material settings; in-game acceptance pending.** Implements native 24×24 quest badges by creating GUI children
+**DEVELOPMENT r9. Corrects the native mask/material settings; user-confirmed working on Eden/Linux (2026-10-15).** Implements native 24×24 quest badges by creating GUI children
 at runtime. Red means a key still needed for current progression, yellow means a
 currently offered available urgent, and grey means a completed/obsolete key or an
 inactive/old urgent. Ordinary and unresolved quests have no badge.
@@ -16,4 +16,5 @@ See [DISTRIBUTION_README.md](DISTRIBUTION_README.md) for installing a clean pack
 [docs/NATIVE_AUDIT.md](docs/NATIVE_AUDIT.md) for the native ownership and ABI audit.
 Old C++/PC releases and earlier development candidates remain preserved.
 Compiled fixtures execute native draw-list traversal and destructor cleanup;
-actual pixels and gameplay still require a manual Eden/Ryujinx trial.
+the user confirmed r9 works on Eden/Linux. Individual states/transitions and
+Ryujinx gameplay remain unconfirmed. See [runtime evidence](docs/RUNTIME_RESULTS.json).
