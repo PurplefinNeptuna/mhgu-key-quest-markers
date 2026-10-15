@@ -12,6 +12,82 @@ use core::{
 use quest_badges_core::{Badge, Evidence, Group};
 
 static ERRORS: AtomicU32 = AtomicU32::new(0);
+// Two bounded development snapshots distinguish classification from rendering.
+// Only scalars cross into onUpdate; native pointers never outlive the callback.
+struct Snapshot {
+    // 0=empty, 1=writer owns it, 2=published, 3=claimed by the lifecycle logger.
+    state: AtomicU32,
+    progress: AtomicU32,
+    ids: [AtomicU32; 8],
+    decisions: [AtomicU32; 8],
+    flags: [AtomicU32; 8],
+}
+impl Snapshot {
+    const fn new() -> Self {
+        Self {
+            state: AtomicU32::new(0),
+            progress: AtomicU32::new(0),
+            ids: [const { AtomicU32::new(0) }; 8],
+            decisions: [const { AtomicU32::new(0) }; 8],
+            flags: [const { AtomicU32::new(0) }; 8],
+        }
+    }
+    fn publish(&self, progress: u32, ids: &[u32; 8], decisions: &[u32; 8], objects: &[u32; 8]) {
+        if self
+            .state
+            .compare_exchange(0, 1, Ordering::Acquire, Ordering::Relaxed)
+            .is_err()
+        {
+            return;
+        }
+        self.progress.store(progress, Ordering::Relaxed);
+        for i in 0..8 {
+            self.ids[i].store(ids[i], Ordering::Relaxed);
+            self.decisions[i].store(decisions[i], Ordering::Relaxed);
+            self.flags[i].store(
+                memory::word(objects[i] + 0x54).unwrap_or(0),
+                Ordering::Relaxed,
+            );
+        }
+        self.state.store(2, Ordering::Release);
+    }
+    fn report(&self, label: &str) {
+        // Claim this immutable snapshot once; acquire pairs with publication.
+        if self
+            .state
+            .compare_exchange(2, 3, Ordering::Acquire, Ordering::Relaxed)
+            .is_err()
+        {
+            return;
+        }
+        let p = self.progress.load(Ordering::Relaxed);
+        log::error!(
+            "Native quest badges r8 diagnostic: {label}, Village={}, Hub/G={}",
+            p & 65535,
+            p >> 16
+        );
+        for i in 0..8 {
+            let d = self.decisions[i].load(Ordering::Relaxed);
+            log::error!(
+                "Native quest badges r8 diagnostic: row={} quest={} group={} quest_flags={:#x} badge={} gui_flags={:#x}",
+                i,
+                self.ids[i].load(Ordering::Relaxed),
+                d & 255,
+                (d >> 8) & 65535,
+                d >> 24,
+                self.flags[i].load(Ordering::Relaxed)
+            );
+        }
+    }
+}
+static FIRST_PAGE: Snapshot = Snapshot::new();
+static FIRST_VISIBLE: Snapshot = Snapshot::new();
+pub fn report_diagnostics() {
+    FIRST_PAGE.report("first classified page");
+    FIRST_VISIBLE.report(
+        "first visible badges; badge 0=hidden, 1=red, 2=grey, 3=yellow; group 255=unresolved",
+    );
+}
 pub fn take_errors() -> u32 {
     ERRORS.swap(0, Ordering::Relaxed)
 }
@@ -172,6 +248,8 @@ pub fn update(ui: u32, quests: u32) {
         return;
     };
     let mut badges = [Badge::Hidden; 8];
+    let mut ids = [0; 8];
+    let mut decisions = [255; 8];
     for (i, badge) in badges.iter_mut().enumerate() {
         let Some(data) = memory::word(quests + i as u32 * 4) else {
             continue;
@@ -182,6 +260,7 @@ pub fn update(ui: u32, quests: u32) {
         let Some(id) = memory::word(data + 8) else {
             continue;
         };
+        ids[i] = id;
         let Some(g) = groups.find(id) else {
             continue;
         };
@@ -206,6 +285,9 @@ pub fn update(ui: u32, quests: u32) {
                 urgent_listed: in_list,
             },
         );
+        // Pack category / u16 quest flags / badge into separate bytes. The
+        // initial category 255 denotes an absent or conflicting group record.
+        decisions[i] = u32::from(g.category) | (u32::from(flags) << 8) | ((*badge as u32) << 24);
     }
     if !groups.unchanged(quest) {
         error(4);
@@ -213,5 +295,10 @@ pub fn update(ui: u32, quests: u32) {
     }
     for (i, badge) in badges.into_iter().enumerate() {
         set(objects[i], badge);
+    }
+    let progress = u32::from(village) | (u32::from(hub) << 16);
+    FIRST_PAGE.publish(progress, &ids, &decisions, &objects);
+    if badges.iter().any(|b| *b != Badge::Hidden) {
+        FIRST_VISIBLE.publish(progress, &ids, &decisions, &objects);
     }
 }

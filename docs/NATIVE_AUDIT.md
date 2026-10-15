@@ -1,8 +1,8 @@
-# Native implementation audit — active r7
+# Native implementation audit — diagnostic r8
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r7
+The blanket r1 disable gate and unresolved-state placeholders are removed. r8
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -191,7 +191,7 @@ badge state. Protected quest/completion/progression records remain unchanged.
 Pixel rendering and the game's actual query results still require a manual trial.
 
 No emulator was launched, package installed, save modified or loader replaced by
-this implementation. r7 is active DEVELOPMENT, with manual acceptance pending on
+this implementation. r8 is active DEVELOPMENT, with manual acceptance pending on
 English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
@@ -287,3 +287,32 @@ both aliases, and destruction of all new allocations. The other three callers of
 the native tree count (0x546360,0x547a14,0x548438) likewise iterate the live map;
 none needs a new object's resource property descriptor. Live GPU pixels and
 progression queries still require manual acceptance.
+
+
+## r7 invisible report and r8 diagnostic build
+
+The fresh Eden log ending 2026-10-15 06:56:17 +0700 has no native badge
+rejection or guest exception. The installed NRO matches r7:
+`0bc68c1053cfee62a442645d5144e87f6c15e455f218cd495168e19c63f68d36`.
+The user reported no icons. This does not establish successful hook execution,
+classification, geometry emission or visible pixels. The shutdown unmap is not
+attributed to the badges.
+
+r8 retains r7's functional insertion/classification and adds bounded diagnostics;
+it is not a confirmed visibility repair. Initialization records successful hook
+installation. Parent/row entry bits and two immutable scalar snapshots are
+published in callbacks and logged outside them in forge_onUpdate. A snapshot
+records eight quest IDs, group categories, urgency flags, badge decisions, native
+visibility flags and both progression tiers. It retains no pointers. Release/acquire
+publication prevents partial records; each snapshot is claimed once for logging.
+The first classified page and first page with a visible decision are independent,
+so an ordinary first page cannot suppress the useful key-page record.
+
+DEVELOPMENT diagnostic lines intentionally use ERROR severity to pass the user's
+existing error-only Forge filter, with an explicit diagnostic label. No loader
+configuration is changed. ARM fixtures now run with that same ERROR threshold and
+verify hook entries, exact scalar records and absence of per-frame repeated logs.
+They still do not execute the actual GPU geometry/draw path or establish pixels.
+The next manual trial must open a page containing a key and retain its Eden log;
+these records will separate absent hooks, all-hidden decisions and a rendering
+failure before another functional change is proposed.

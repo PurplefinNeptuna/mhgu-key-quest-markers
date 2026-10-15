@@ -167,7 +167,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     def ret(cpu,value=0):cpu.reg_write(arm.UC_ARM_REG_R0,value);cpu.reg_write(arm.UC_ARM_REG_PC,cpu.reg_read(arm.UC_ARM_REG_LR))
     def text(cpu,p):
         out=b''
-        while len(out)<100:
+        while len(out)<512:
             c=bytes(cpu.mem_read(p+len(out),1))
             if c==b'\0':return out.decode()
             out+=c
@@ -180,7 +180,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert r[1]==18;cpu.mem_write(r[0],struct.pack('<Q',0x0100770008dd8000));ret(cpu);return
         if address==MODULE+names['mwc_svc_flush']:ret(cpu);return
         if address==imports.get('nnosAllocateTlsSlot'):word(r[0],1);ret(cpu);return
-        if address==imports.get('forge_log_getLevel'):ret(cpu,0);return
+        if address==imports.get('forge_log_getLevel'):ret(cpu,3);return # User's unchanged ERROR-only filter.
         if address==imports.get('forge_log'):startup_logs.append(text(cpu,r[2]));ret(cpu);return
         if address==imports.get('malloc'):ret(cpu,plugin_allocate(r[0]));return
         if address==imports.get('free'):ret(cpu);return
@@ -320,6 +320,18 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     if invalid_object:word(read(DATA+0x2a000+7*0x100+8)+0x50,99)
     call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO)
     assert tls_value==0 and calls==['parent','row-original']
+    call(MODULE+names['forge_onUpdate'])
+    assert any('entered urgent parent hook' in s for s in startup_logs)
+    assert any('entered quest row hook' in s for s in startup_logs)
+    if not (invalid_object or invalid_owner or invalid_info or bad_count or gui_identity!=5 or fail_object or fail_cache or fail_mapping or fail_at):
+        assert any('first classified page, Village=2, Hub/G=1' in s for s in startup_logs),startup_logs
+        if not ordinary:
+            assert any('row=0 quest=207 group=2 quest_flags=0x0 badge=' in s for s in startup_logs),startup_logs
+            assert any('first visible badges;' in s for s in startup_logs),startup_logs
+        else:assert not any('first visible badges;' in s for s in startup_logs)
+    log_count=len(startup_logs)
+    call(MODULE+names['forge_onUpdate'])
+    assert len(startup_logs)==log_count,('diagnostics repeat every frame',startup_logs)
     if fail_at:
         assert len(created)==fail_at-1 and not states and not colors
         call(GAME+0x54d030,CONTROLLER,INFO) # Recover while retaining valid hidden native children.
@@ -379,6 +391,7 @@ results=[test_case('first malformed trampoline rolls back',fail_hook=1),
          test_case('repeated row update reuses native children',repeat=True),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
+          'error_only_filter_diagnostic_snapshots':True,'deduplicated_scalar_snapshots':True,
           'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')

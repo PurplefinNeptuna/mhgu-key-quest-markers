@@ -9,6 +9,7 @@ mod offers;
 mod signatures;
 use core::sync::atomic::{AtomicU32, Ordering};
 static REPORTED: AtomicU32 = AtomicU32::new(0);
+static REPORTED_ENTRIES: AtomicU32 = AtomicU32::new(0);
 // forge-rs exposes only the six-byte version prefix. The matching native loader
 // also owns name[64] at offset 6 and hides empty names in its Loaded Plugins list.
 #[repr(C)]
@@ -26,7 +27,7 @@ pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
         return;
     }
     let mut name = [0; 64];
-    let label = b"Native Quest Badges r7";
+    let label = b"Native Quest Badges r8";
     name[..label.len()].copy_from_slice(label);
     // The pinned Forge loader provides the complete writable 70-byte record.
     // This narrow ABI extension leaves vendored bindings and their pins intact.
@@ -46,7 +47,11 @@ fn start() {
     match hooks::install() {
         Ok(owner) => {
             core::mem::forget(owner);
-            log::info!("Native quest badges installed");
+            // DEVELOPMENT diagnostics use ERROR so the user's existing error-only
+            // Forge filter records this result without changing their settings.
+            log::error!(
+                "Native quest badges r8 diagnostic: hooks installed; waiting for quest counter"
+            );
         }
         Err(reason) => log::error!("Native quest badges: {reason}"),
     }
@@ -55,6 +60,14 @@ fn start() {
 /// regular lifecycle callback without a settings panel or config file.
 #[unsafe(no_mangle)]
 pub extern "C" fn forge_onUpdate(_delta: f32) {
+    let entered = hooks::entered();
+    let previous = REPORTED_ENTRIES.fetch_or(entered, Ordering::Relaxed);
+    for (bit, label) in [(1, "urgent parent"), (2, "quest row")] {
+        if entered & !previous & bit != 0 {
+            log::error!("Native quest badges r8 diagnostic: entered {label} hook");
+        }
+    }
+    native::report_diagnostics();
     let errors = native::take_errors();
     let old = REPORTED.fetch_or(errors, Ordering::Relaxed);
     for (bit, message) in [
