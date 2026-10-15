@@ -7,6 +7,7 @@ use quest_badges_core::Badge;
 
 const ID: u32 = 0x4b514d33; // KQM3, outside the counter's existing object IDs.
 const TEXTURE_BYTES: usize = 304;
+const TEXT_BYTES: usize = 384;
 const MAP_BYTES: usize = 13 * 4; // Original twelve bindings plus our native child.
 const CACHE_BYTES: usize = 10 * 16 + 8; // Ten drawable begin/end pairs plus terminator.
 static FAILURE: AtomicU32 = AtomicU32::new(0);
@@ -55,6 +56,19 @@ struct Row {
     badge: u32,
 }
 impl Row {
+    // Lookup indices stay those of the original resource, even after appending
+    // the badge. Check type and ownership before borrowing either native object.
+    fn binding(self, index: u32, id: u32, dti: u32, size: usize) -> Option<u32> {
+        let object = memory::word(self.objects + index * 4)?;
+        (memory::writable(object, size)
+            && memory::word(object + 0x50)? == id
+            && memory::word(object + 0x70)? == self.parent
+            && memory::word(object + 0x74)? == self.owner
+            && memory::word(object + 0x78)? == self.resource
+            && is_type(object, dti))
+        .then_some(object)
+    }
+
     fn read(instance: u32, root_dti: u32, texture_dti: u32) -> Option<Self> {
         let mut stage = 1;
         let result = (|| {
@@ -288,7 +302,7 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
         word(object + 0x78, row.resource);
         // PosX/PosY setters use the game's VFP scalar ABI. Their verified scalar
         // fields plus dirty bit give the same result without a float-call shim.
-        bits(object + 0x80, -28.0);
+        bits(object + 0x80, 369.0);
         bits(object + 0x84, 8.0);
         bits(object + 0xb4, 24.0);
         bits(object + 0xb8, 24.0);
@@ -373,9 +387,10 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
     Ok(object)
 }
 /// Called only after the original normal counter row builder on its GUI thread.
-/// Validate all eight rows first, hide old badges, then create missing native children.
-pub fn objects(ui: u32) -> Result<[u32; 8], u32> {
-    let (rows, texture) = (|| {
+/// Hide old badges and restore titles before any classification can return early.
+/// Handles contain only callback-scoped pointers; no native object is retained.
+pub fn objects(ui: u32) -> Result<[Option<Decoration>; 8], u32> {
+    let (rows, texture, text) = (|| {
         let holder = memory::word(ui.checked_add(0x24)?)?;
         if !memory::readable(holder, 0x29c) || method(holder, 0xac).is_none() {
             return None;
@@ -391,7 +406,8 @@ pub fn objects(ui: u32) -> Result<[u32; 8], u32> {
         }
         let texture = MtDti::find("cGUIObjTexture")?;
         let root = MtDti::find("cGUIObjRoot")?;
-        if texture.size() != TEXTURE_BYTES || root.size() != 176 {
+        let text = MtDti::find("cGUIObjText")?;
+        if texture.size() != TEXTURE_BYTES || root.size() != 176 || text.size() != TEXT_BYTES {
             return None;
         }
         let mut rows = [None; 8];
@@ -416,20 +432,33 @@ pub fn objects(ui: u32) -> Result<[u32; 8], u32> {
                 )
             })();
         }
-        Some((rows, texture))
+        Some((rows, texture, text))
     })()
     .ok_or(1u32)?;
     for row in rows.iter().flatten() {
         if row.badge != 0 {
             set(row.badge, Badge::Hidden);
         }
+        // Restore a valid title even when the request binding is missing. Only
+        // rows with our child could have been fitted by a previous callback.
+        if row.badge != 0 {
+            if let Some(title) = row.binding(4, 6, text as *const _ as u32, TEXT_BYTES) {
+                fit_title(title, 355.0, false);
+            }
+        }
     }
     if rows.iter().any(Option::is_none) {
         return Err(64);
     }
-    let mut result = [0; 8];
+    let mut result = [None; 8];
     for (i, row) in rows.into_iter().flatten().enumerate() {
-        result[i] = if row.badge != 0 {
+        let Some(title) = row.binding(4, 6, text as *const _ as u32, TEXT_BYTES) else {
+            continue;
+        };
+        let Some(request) = row.binding(3, 20, texture as *const _ as u32, TEXTURE_BYTES) else {
+            continue;
+        };
+        let object = if row.badge != 0 {
             row.badge
         } else {
             create(row, texture).map_err(|stage| {
@@ -437,8 +466,67 @@ pub fn objects(ui: u32) -> Result<[u32; 8], u32> {
                 16u32
             })?
         };
+        result[i] = Some(Decoration {
+            object,
+            title,
+            root: row.root,
+            request_visible: memory::word(request + 0x54).unwrap() & 1 != 0,
+        });
     }
     Ok(result)
+}
+
+/// Size and AutoScale setters take integer/pointer arguments, unlike PosX's VFP
+/// setter. Their native bodies do not invalidate text: match FontSize's +0xf0
+/// bit16 (a5350c), consumed by a53aa8 to rebuild the cached glyph geometry.
+fn fit_title(title: u32, width: f32, auto_scale: bool) {
+    let flags = memory::word(title + 0xf0).unwrap();
+    if memory::word(title + 0xc8) == Some(width.to_bits())
+        && memory::word(title + 0xcc) == Some(38.0f32.to_bits())
+        && flags & 1 == u32::from(auto_scale)
+        && memory::word(title + 0xf8).unwrap() & 0xc0000 == 0
+    {
+        return;
+    }
+    let size = [width, 38.0];
+    let set_size: unsafe extern "C" fn(u32, *const f32) =
+        unsafe { core::mem::transmute((base() + 0xa53528) as usize) };
+    unsafe { set_size(title, size.as_ptr()) };
+    integer(0xa53348, title, u32::from(auto_scale));
+    integer(0xa53324, title, 0); // Native AutoWrap enum: keep one line.
+    unsafe { word(title + 0xf0, memory::word(title + 0xf0).unwrap() | 0x10000) };
+}
+
+#[derive(Clone, Copy)]
+pub struct Decoration {
+    pub object: u32,
+    title: u32,
+    root: u32,
+    request_visible: bool,
+}
+impl Decoration {
+    /// The original builder has already set request visibility for this row.
+    /// Reserve four pixels before each badge; fit only badge-bearing titles.
+    pub fn set(self, badge: Badge) {
+        if badge != Badge::Hidden {
+            let x: f32 = if self.request_visible { 337.0 } else { 369.0 };
+            fit_title(self.title, x - 62.0 - 4.0, true);
+            if memory::word(self.object + 0x80) != Some(x.to_bits()) {
+                unsafe {
+                    bits(self.object + 0x80, x);
+                    word(
+                        self.object + 0x54,
+                        memory::word(self.object + 0x54).unwrap() | 0x20000,
+                    );
+                    word(
+                        self.root + 0x8c,
+                        memory::word(self.root + 0x8c).unwrap() | 2,
+                    );
+                }
+            }
+        }
+        set(self.object, badge);
+    }
 }
 pub fn set(object: u32, badge: Badge) {
     if badge != Badge::Hidden {

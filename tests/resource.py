@@ -26,5 +26,13 @@ assert {k:props[k]for k in ['ControlPoint','FixFrame','Mask','ReferenceScaleX','
     'ControlPoint':0,'FixFrame':0,'Mask':0,'ReferenceScaleX':3,'ReferenceScaleY':3,
     'ReferenceScaleZ':3,'Reverse':0,'SamplerState':0}
 assert props['Visible']==1 and props['BlendState']==1 and props['Priority']==2
+objects=gui.table(48,172,36)[30:42]
+request=gui.props(struct.unpack_from('<I',objects[3],24)[0],objects[3][4])
+title=gui.props(struct.unpack_from('<I',objects[4],24)[0],objects[4][4])
+assert struct.unpack_from('<I',objects[3])[0]==20 and struct.unpack_from('<I',objects[4])[0]==6
+assert (request['PosX'],request['PosY'],request['Size'][:2])==(365.,2.,(32.,32.))
+assert (title['PosX'],title['Size'][:2],title['AutoScale'],title['AutoWrap'])==(62.,(355.,38.),0,0)
+assert 369+12==365+16 and 337+24+4==365
+assert 62+303+4==369 and 62+271+4==337
 assert not list((BUILD_ROOT/'package').rglob('*.arc'))
 print('PASS: native row/atlas fixture, resource bounds, all 15 original sequences and zero ARC payloads')

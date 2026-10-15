@@ -1,8 +1,8 @@
-# Native implementation audit — r9 material correction
+# Native implementation audit — r10 request-slot layout
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r9
+The blanket r1 disable gate and unresolved-state placeholders are removed. r10
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -87,7 +87,8 @@ the checked raw call keeps native ownership and borrowing local instead.
 
 The native texture gets ID22 from the existing rGUI context through lookup
 0xb80fd0 / setter0xa4faf0. Its 512² logical atlas and loaded resource are validated.
-The display size is 24×24; position is (-28,8) relative to the main row Null.
+The display size is 24×24. r9 used (-28,8) relative to the main row Null;
+r10 uses (369,8), or (337,8) when the native request bubble is visible.
 The source rectangle is `(136,344,198,406)` in HD_lobby00_BM_NOMIP, the white lobby
 emblem already loaded by English HD. The size/position fields (+0xb4/+0xb8 and
 +0x80/+0x84) are verified by native getters/setters. Position setters use VFP scalar
@@ -392,3 +393,50 @@ colour and transition checks unenumerated. It grants no Ryujinx/native Switch
 acceptance or distribution promotion. Keep r9 runtime/ZIP bytes unchanged; future
 runtime changes need a new candidate version. Its packaged pretrial validation
 is a historical snapshot; this record is the later manual evidence.
+
+
+## r10 request-slot placement and title fitting
+
+The unchanged English HD resource has request Texture ID20 at lookup index3,
+position (365,2), size32×32; title Text ID6 at index4, X=62, size355×38. Both are
+children of the same row Null. The native builder calls 0x56e530/0x545630 to set
+the request object's visibility immediately through 0xa47950; +0x54 bit0 is
+therefore the current displayed request state after the original returns.
+
+The child stays 24×24 at Y=8. X=369 centres it in the free 32px request slot;
+X=337 ends at361, leaving four pixels before the request bubble. Title widths
+303/271 leave four pixels before these respective positions. No request object,
+resource animation, original map binding, colour classifier or progression record
+is modified. Shared identity is possible: copied quest107, Another Pack Attack,
+is native key category1 with mRequestVillage=8, which the builder's 0x11e0 mask
+shows as a request bubble.
+
+Row handles validate Text size384, Texture size304, IDs, native types, owning cGUI,
+resource and common parent. Handles remain synchronous callback locals. Existing
+badges are hidden and valid titles restored before classification can fail.
+A bad request/title binding skips only its decoration and reports error128 once;
+a valid title is restored even when its request binding is invalid.
+
+Verified native title operations (main-relative):
+
+| Operation | Address / contract |
+| --- | --- |
+| AutoScale setter | 0xa53348, two integers, preserves all but +0xf0 bit0 |
+| AutoWrap setter | 0xa53324, two integers, +0xf8 bits18..19; enum0 disables wrapping |
+| Size setter | 0xa53528, object and float2 pointer, writes +0xc8/+0xcc |
+| Native FontSize invalidation tail | 0xa5350c, ORs +0xf0 bit16 |
+| Cached-layout refresh | 0xa53aa8 checks bit16, calls virtual+0x70, then clears it |
+| Text type getter | 0xa56b4c |
+
+Size and AutoScale setters do not invalidate cached glyphs. The adapter sets the
+same bit16 as FontSize after an actual layout change. It changes neither font,
+font size, colours nor title strings. Restore uses width355, height38, AutoScale=0
+and AutoWrap=0, matching the hashed source. Badge movement marks native transform
+state dirty. These six added supporting windows are checked before hook installation.
+
+ARM fixtures run the native AutoScale flag dispatch at 0xa42374..0xa423cc and
+complete clamp function0xa449c0, using supplied glyph bounds. An 80px title stays
+at scale1; a 500px title fits width303/271, without enlargement. The final glyph
+scaler and GPU submission are doubles. Fixture results establish dispatch,
+geometry and restoration, not font measurement, visible clipping or GPU pixels.
+The r9 acceptance record remains historical; r10 needs its own manual trial.

@@ -1,7 +1,8 @@
-# Native Quest Badges — Rust r9 candidate
+# Native Quest Badges — Rust r10 candidate
 
-**DEVELOPMENT build; in-game acceptance pending.** Implements Rise-style native badges for English HD MHGU
-1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching 24-byte Hook ABI.
+**DEVELOPMENT build; in-game acceptance pending.** Rise-style quest badges for
+English HD MHGU 1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching
+24-byte Hook ABI and the English HD Project.
 
 ## Badges
 
@@ -13,55 +14,33 @@
 | Completed, old or inactive urgent | Grey |
 | Ordinary or unresolved quest | Hidden |
 
-The 24×24 badges sit left of the existing rows with a four-pixel gap. New native
-GUI children reuse the already-loaded HD lobby emblem. The package replaces no
-ARC or atlas and contains no separate image, overlay, settings, counter or
-progression changes. The game draws the badges and releases them with the menu.
+The 24×24 badge appears inside the quest row, in the request-mark slot. When a
+quest also has a yellow request bubble, both marks appear, with the badge four
+pixels left of the bubble. Long quest names automatically shrink to fit before
+the badge; their full text is preserved.
 
 ## Installation
 
-Close the game first. Back up and disable/remove the old Rust badge candidate
-folder as a whole; do not copy r9 over it and leave its old `common_eng.arc` behind.
-Keep that backup outside the emulator's enabled mod directory.
+1. Close the game and extract the ZIP.
+2. Put its `key-quest-markers-rs` folder in the emulator's MHGU mod location beside
+   Forge and the English HD Project, then enable it. When updating, keep the old
+   package outside the enabled mod directory and replace its folder as a whole.
+3. Keep the HD Project enabled. Disable the original Key Quest Markers prefix
+   plugin so `[KEY]` disappears from list/detail titles.
 
-Extract the ZIP and put its `key-quest-markers-rs` folder in the emulator's MHGU mod
-location beside Forge and the English HD Project, then enable it. The runtime
-folder contains only:
+The runtime folder contains:
 
 ```text
 romfs/nativeNX/plugins/key_quest_markers_rs.nro
 ```
 
-Keep the HD Project enabled. Disable the original Key Quest Markers prefix plugin
-so `[KEY]` disappears from list/detail titles. Only one Rust badge candidate should
-be enabled. The ZIP does not include or replace Forge; confirm Ryujinx's loader is
-also 1.5.0 before testing.
+Forge's Loaded Plugins list shows **Native Quest Badges r10**. This plugin has no
+settings panel. Initialization and GUI failures are logged once at ERROR level.
 
-Forge's Loaded Plugins list should show **Native Quest Badges r9**. There is no
-Plugin UI settings panel. Earlier forge-rs entries omitted the name, so a loaded
-plugin could be missing from that list. This candidate reports actual initialization
-or GUI failures once at ERROR level, without requiring a loader config change.
+To remove it, close the game and disable/remove its folder.
 
-To remove it, close the game and disable/remove its folder. Restore previous
-packages from your backups if desired. No saves or game archives need changing.
+## Known limits
 
-r9 corrects the badge's native rendering settings. It uses the normal colour pass,
-top-left anchor, reference scales, orientation and sampler from the game's quest
-icon. The 24×24 badge spans row-local X=-28..-4, leaving the intended four-pixel gap.
-
-Bounded diagnostic lines still record hook entry and classification. They use ERROR
-severity so the existing Forge filter captures them and are explicitly labeled
-diagnostic. No loader settings or archives are changed.
-
-## Validation limits
-
-Host policy/rollback checks, ARM argument forwarding and named registration,
-native imports, runtime GUI insertion, allocation failure cleanup, unchanged
-original lookup bindings, and native draw-list/destructor execution pass automated fixtures. Native prepaint
-dispatch, texture drawing and quad generation also run with GPU commands mocked.
-These checks do not establish actual in-game pixels or gameplay acceptance.
-
-Manual English HD acceptance remains pending on Eden and Ryujinx: Village/Hub/G,
-scrolling, selection, confirmation, reopening, quest return and progression
-advancement. Check badge placement, clipping, size and colors. Keep rollback
-packages available while testing this development build.
+This development candidate needs an in-game trial on Eden and Ryujinx. Check long
+names, both marks together, completion ribbons, selection, scrolling, confirmation
+and reopening the menu. Only the English HD layout is supported.

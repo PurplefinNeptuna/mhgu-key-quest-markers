@@ -1,20 +1,23 @@
 # Native Quest Badges (Rust)
 
-**DEVELOPMENT r9. Corrects the native mask/material settings; user-confirmed working on Eden/Linux (2026-10-15).** Implements native 24×24 quest badges by creating GUI children
+**DEVELOPMENT r10. Moves badges into the request-mark area and fits full quest names; r10 manual acceptance is pending.** Implements native 24×24 quest badges by creating GUI children
 at runtime. Red means a key still needed for current progression, yellow means a
 currently offered available urgent, and grey means a completed/obsolete key or an
 inactive/old urgent. Ordinary and unresolved quests have no badge.
 
+Badges share an empty request slot and sit four pixels left of a visible request
+bubble. Native AutoScale fits long titles and resets on row reuse.
+
 The badges reuse the already-loaded English HD lobby emblem. The package contains
 one NRO; no ARC, atlas or other game asset is replaced. The game owns rendering and
 object cleanup. There is no overlay, settings panel, configuration or progression
-write. Forge lists the plugin as **Native Quest Badges r9** and logs failures at
-ERROR level even with the default loader filter. r9 also records installation, first hook entry and two bounded classification snapshots, without changing loader settings.
+write. Forge lists the plugin as **Native Quest Badges r10** and logs failures at
+ERROR level even with the default loader filter. r10 also records installation, first hook entry and two bounded classification snapshots, without changing loader settings.
 
 See [DISTRIBUTION_README.md](DISTRIBUTION_README.md) for installing a clean package,
 [DEVELOPMENT.md](DEVELOPMENT.md) for independent builds, and
 [docs/NATIVE_AUDIT.md](docs/NATIVE_AUDIT.md) for the native ownership and ABI audit.
 Old C++/PC releases and earlier development candidates remain preserved.
 Compiled fixtures execute native draw-list traversal and destructor cleanup;
-the user confirmed r9 works on Eden/Linux. Individual states/transitions and
+the user confirmed the preceding r9 works on Eden/Linux. Individual states/transitions and
 Ryujinx gameplay remain unconfirmed. See [runtime evidence](docs/RUNTIME_RESULTS.json).

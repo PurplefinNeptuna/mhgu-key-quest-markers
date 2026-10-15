@@ -31,6 +31,7 @@ UI,HOLDER,CONTROLLER,INFO,PROFILE,QUEST,RESOURCE,RECORDS,PROGRESS,ROWS,DTI,VFT=(
     [0x1000,0x2000,0x3000,0x4000,0x10000,0x20000,0x21000,0x22000,0x23000,0x24000,0x25000,0x26000])
 ROOT_DTI,ALLOCATOR,ATLAS,GUI_RESOURCE=DATA+0x25100,DATA+0x25200,DATA+0x61000,DATA+0x62000
 GUI_OWNER,GUI_HEADER,OBJECT_TABLE=DATA+0x65000,DATA+0x66000,DATA+0x67000
+TEXT_DTI=DATA+0x25700
 MAP_DTI,MAP_ALLOCATOR,ANIM_DTI,NULL_DTI=(DATA+x for x in [0x25300,0x25400,0x25500,0x25600])
 INSTANCE_ARRAY=DATA+0x27000
 REGS=[getattr(arm,'UC_ARM_REG_R'+str(i))for i in range(13)]
@@ -39,11 +40,13 @@ STYLE=[0xa4dc24,0xa4a9f4,0xa47a94,0xa4dca0,0xa47a04,0xa4aa24,0xa4aa5c,0xa4aa94,0
 icon_props=gui.props(struct.unpack_from('<I',row_objects[2],24)[0],row_objects[2][4])
 SOURCE_STYLE=dict(zip(STYLE,(icon_props[k]for k in ['BlendState','ControlPoint','FixFrame','Mask','Priority',
     'ReferencePosition','ReferenceRotation','ReferenceScaleX','ReferenceScaleY','ReferenceScaleZ','Reverse','SamplerState'])))
+TEXT_CRC=0x313f6cc4
 CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
-              simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False):
+              simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False,
+              requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0):
     global CASES
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
@@ -52,7 +55,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     for first,last in [(0xa494a0,0xa4964c),(0xa48668,0xa486fc),(0xa475e0,0xa47648),
                        (0xa38828,0xa38944),(0xa38bc0,0xa38e50),(0xa49b28,0xa49bac),(0xa4844c,0xa48470),(0x540c08,0x540c64),
                        (0xa4d0d8,0xa4d32c),(0xa4f60c,0xa4f840),
-                       (0xa38b58,0xa38bc0),(0xa38ffc,0xa39020),(0x5456e4,0x545930)]:
+                       (0xa42374,0xa423cc),(0xa449c0,0xa44e0c),(0xa38b58,0xa38bc0),(0xa38ffc,0xa39020),(0x5456e4,0x545930)]:
         u.mem_write(GAME+first,native_image[first:last])
     # Exercise the actual texture setters too, including their dirty propagation.
     u.mem_write(GAME+0xa47000,native_image[0xa47000:0xa57000])
@@ -86,7 +89,9 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         target=struct.unpack_from('<I',native_image,0x178ff90+offset)[0]
         word(VFT+0x200+offset,GAME+target if target else 0)
     assert read(VFT+0x20c)==0
-    word(ROOT_DTI+4,1);word(DTI+4,2)
+    word(ROOT_DTI+4,1);word(DTI+4,2);word(TEXT_DTI+4,4);word(TEXT_DTI+24,384//4);word(TEXT_DTI+28,TEXT_CRC)
+    word(VFT+0x914,GAME+0x1088);word(VFT+0x904,GAME+0x1040);word(VFT+0x950,GAME+0x1060);word(VFT+0x970,GAME+0xa554d0)
+    for offset,target in [(0x38,0x1050),(0x3c,0x1054),(0x40,0x1058)]:word(VFT+0x900+offset,GAME+target)
     # Relocate the real Object/Polygon/Texture vtables and constructor globals.
     # Matrix/color/sGUI contents are fixture inputs; constructor instructions run.
     for table in [0x178f948,0x178fc40,0x178fcc0]:
@@ -134,12 +139,16 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         word(parent,VFT+0x500);word(parent+0x50,14);word(parent+0x54,1)
         word(desc,20);half(desc+4,12);half(desc+6,15);word(desc+8,9);word(desc+12,30)
         word(root+0x9c,desc);word(root+0xa0,objects);word(root+0xa4,cache);word(root+0x80,cache)
-        leaves=[DATA+0x70000+i*0x2000+j*0x140 for j in range(10)]
+        leaves=[DATA+0x70000+i*0x2000+j*0x200 for j in range(10)]
         for j,leaf in enumerate(leaves):
             word(objects+(j+2)*4,leaf);word(leaf,VFT)
             # Nine original drawable leaves and one non-drawing ticket container.
             word(leaf+0x54,1 if j==7 else 0x2000001)
             word(leaf+0x6c,0)
+            if j==2:
+                word(leaf,VFT+0x900)
+                u.mem_write(leaf+0x80,struct.pack("<2f",62.,9.))
+                u.mem_write(leaf+0xc8,struct.pack("<2f",355.,38.))
         roots.append(root);parents.append(parent);arrays.append(bytes(u.mem_read(objects,48)));original_caches.append(cache)
     word(ATLAS,22);word(ATLAS+12,0x02000200);word(ATLAS+0x28,DATA+0x64000)
     word(QUEST+0xb4,RESOURCE);word(RESOURCE+0x64,8);word(RESOURCE+0x6c,RECORDS)
@@ -158,7 +167,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
     constructing=None;factory_index=0
     plugin_heap=DATA+0x120000;hook_count=0;startup_logs=[]
-    allocations={};freed=[];created=[];drawn=[];object_attempts=0;mapping_allocations=[];styles={};quads=[]
+    allocations={};freed=[];created=[];drawn=[];object_attempts=0;mapping_allocations=[];styles={};quads=[];fitting=False;fit_factors=[]
     # Isolate native colour/mask dispatch and geometry from GPU command encoding.
     # Model an active vertex-buffer frame and an already-bound texture shader.
     pool=DATA+0xf0300;context=DATA+0x150000;commands=DATA+0x151000
@@ -185,7 +194,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     def trace(cpu,address,size,_):
         nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index,hook_count,draw_object,vertex_offset
         r=[cpu.reg_read(x)for x in REGS[:4]]
-        if address==RETURN:cpu.emu_stop();return
+        if address==RETURN or (fitting and address==GAME+0xa423cc):cpu.emu_stop();return
+        if fitting and address==GAME+0xa45b58:
+            # Glyph measurement and final glyph scaling are supplied; execute
+            # the real AutoScale flag dispatch and native clamped scale decision.
+            fit_factors.append(struct.unpack('<f',struct.pack('<I',cpu.reg_read(arm.UC_ARM_REG_S0)))[0])
+            ret(cpu);return
         if address==MODULE+names['mwc_svc_get_info']:
             assert r[1]==18;cpu.mem_write(r[0],struct.pack('<Q',0x0100770008dd8000));ret(cpu);return
         if address==MODULE+names['mwc_svc_flush']:ret(cpu);return
@@ -227,18 +241,24 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert r[:2]==[CONTROLLER,0 if invalid_info else INFO] and tls_value!=0
             parent_return=cpu.reg_read(arm.UC_ARM_REG_LR);parent_sp=cpu.reg_read(arm.UC_ARM_REG_SP)
             cpu.reg_write(arm.UC_ARM_REG_SP,parent_sp-16);cpu.mem_write(parent_sp-16,struct.pack('<4I',0,0,ROWS,0))
-            for reg,value in zip(REGS[:4],[UI,0,2,0]):cpu.reg_write(reg,value)
+            for reg,value in zip(REGS[:4],[UI,selected,2,0]):cpu.reg_write(reg,value)
             cpu.reg_write(arm.UC_ARM_REG_LR,ENGINE+8);cpu.reg_write(arm.UC_ARM_REG_PC,GAME+0x616cb0);calls.append('parent');return
         if address==ENGINE+8:cpu.reg_write(arm.UC_ARM_REG_SP,parent_sp);cpu.reg_write(arm.UC_ARM_REG_PC,parent_return);return
         if address in [ENGINE,ENGINE+0x800]:
-            sp=cpu.reg_read(arm.UC_ARM_REG_SP);assert r+list(struct.unpack('<3I',cpu.mem_read(sp,12)))==[UI,0,2,0,0,0,ROWS]
+            sp=cpu.reg_read(arm.UC_ARM_REG_SP);assert r+list(struct.unpack('<3I',cpu.mem_read(sp,12)))==[UI,selected,2,0,0,0,ROWS]
+            # Model the original builder's immediate request visibility, independent
+            # of quest data. This catches accidental classification-based layout.
+            for i in range(8):
+                table=read(DATA+0x28000+i*0x200+0xd8);request=read(table+12)
+                word(request+0x54,(read(request+0x54)&~1)|int(i in requests))
             calls.append('row-original');ret(cpu);return
         if address==GAME+0x546f28:assert r[0]==HOLDER;ret(cpu,gui_identity);return
-        if address==GAME+0x7aef68:ret(cpu,MAP_DTI if r[0]==0x57fd7fb5 else DTI if r[0]==0x1b6313a3 else ROOT_DTI);return
+        if address==GAME+0x7aef68:ret(cpu,MAP_DTI if r[0]==0x57fd7fb5 else DTI if r[0]==0x1b6313a3 else TEXT_DTI if r[0]==TEXT_CRC else ROOT_DTI);return
         if address==GAME+0x1000:ret(cpu,DTI);return
         if address==GAME+0x1014:ret(cpu,ROOT_DTI);return
         if address==GAME+0x1080:ret(cpu,ANIM_DTI);return
         if address==GAME+0x1084:ret(cpu,NULL_DTI);return
+        if address==GAME+0x1088:ret(cpu,TEXT_DTI);return
         if address==GAME+0xb80f94:
             assert r[:2]==[GUI_RESOURCE,20];ret(cpu,DATA+0x60000+constructing*0x40);return
         if address==GAME+0x1038:
@@ -342,7 +362,10 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(pointer+0x74)==GUI_OWNER and read(pointer+0x78)==GUI_RESOURCE
             assert read(pointer+0x50)==struct.unpack_from('<I',row_objects[j])[0]
         assert GUI_OWNER!=instance
+        word(roots[i]+0x8c,3) # A newly constructed native row needs its first draw-list build.
     constructing=None
+    if invalid_request:word(read(DATA+0x2a000+12)+0x50,99)
+    if invalid_title:word(read(DATA+0x2a000+16)+0x50,99)
     if invalid_owner:word(read(DATA+0x2a000+8)+0x74,DATA+0x28000)
     if invalid_object:word(read(DATA+0x2a000+7*0x100+8)+0x50,99)
     call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO)
@@ -373,16 +396,48 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         # Run the exact cleanup function seen in the crash. Its real count getter
         # counts 13 linked nodes and therefore requires a 13-entry lookup array.
         for i in range(8):call(GAME+0x5456e4,0,DATA+0x28000+i*0x200)
-        assert len(created)==8 and len(allocations)==24
-        assert all(p in freed for p in original_caches)
+        assert len(created)==8-int(invalid_request or invalid_title) and len(allocations)==3*len(created)
+        assert all(p in freed for i,p in enumerate(original_caches) if not(i==0 and (invalid_request or invalid_title)))
         if repeat:
-            call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8 and len(allocations)==24
+            call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8-int(invalid_request or invalid_title) and len(allocations)==3*len(created)
         if invalid_info or ordinary or bad_count:assert states==dict.fromkeys(range(8),0) and not colors
         else:
-            assert states==dict(enumerate([1,1,1,1,1,0,0,0]))
+            assert states=={i:v for i,v in enumerate([1,1,1,1,1,0,0,0]) if not(i==0 and (invalid_request or invalid_title))}
             urgency=0xff39d2ff if 303 in offered and available and prerequisites else 0xff808080
-            assert colors=={0:0xff808080 if 207 in completed or alternative_done else 0xff2547e7,1:0xff808080,
+            expected_colors={0:0xff808080 if 207 in completed or alternative_done else 0xff2547e7,1:0xff808080,
                            2:0xff808080 if 303 in completed else urgency,3:0xff39d2ff if simultaneous and 206 in offered else 0xff808080,4:0xff808080}
+            if invalid_request or invalid_title:expected_colors.pop(0)
+            assert colors==expected_colors
+        request_bytes=[]
+        for i in range(8):
+            table=read(DATA+0x28000+i*0x200+0xd8)
+            title=read(table+16);request=read(table+12)
+            request_bytes.append(bytes(u.mem_read(request,304)))
+            fitted=bool(states.get(i))
+            width=(271. if i in requests else 303.) if fitted else 355.
+            assert struct.unpack('<2f',u.mem_read(title+0xc8,8))==(width,38.)
+            assert bool(read(title+0xf0)&1)==fitted
+            assert read(title+0xf8)&0xc0000==0
+            if fitted:assert read(title+0xf0)&0x10000 # Native cached-layout invalidation.
+            if fitted:
+                for measured in [80.,500.]:
+                    parser=DATA+0x180000;glyph=parser+0x100
+                    u.mem_write(parser,b'\0'*0x200)
+                    word(parser+0x10,title);word(parser+0x1c,1);word(parser+8,1)
+                    word(parser+0x48,glyph);u.mem_write(parser+0x30,struct.pack('<3f',width,38.,20.))
+                    u.mem_write(glyph+4,struct.pack('<2f',measured,20.));word(glyph+0x28,22)
+                    u.reg_write(arm.UC_ARM_REG_R4,parser);fitting=True;fit_factors.clear()
+                    call(GAME+0xa42374);fitting=False
+                    expected=min(1.,width/measured)
+                    assert abs(struct.unpack('<f',u.mem_read(parser+0x38,4))[0]-20.*expected)<0.0001
+                    assert bool(fit_factors)==(measured>width)
+                    if fit_factors:assert abs(fit_factors[0]-expected)<0.0001
+                # The real cached-layout refresh consumes bit16 and invokes
+                # the native Text refresh virtual. Text buffers are empty in
+                # this fixture; measurement/scaling were checked above.
+                call(GAME+0xa53aa8,title)
+                assert not(read(title+0xf0)&0x10000)
+
         for p in created:
             assert styles[p]==SOURCE_STYLE,('runtime style differs from actual GUI constants',styles[p],SOURCE_STYLE)
             assert read(p+0x74)==GUI_OWNER
@@ -391,8 +446,58 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             if i in colors:assert struct.unpack('<4I',u.mem_read(p+0xa4,16))==(colors[i],)*4
             assert read(p+0x104)==ATLAS
             assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==(136.,344.,198.,406.)
-            assert struct.unpack('<2f',u.mem_read(p+0x80,8))==(-28.,8.)
+            assert struct.unpack('<2f',u.mem_read(p+0x80,8))==((337. if i in requests and states.get(i) else 369.),8.)
             assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(24.,24.)
+        if late_invalid:
+            table=read(DATA+0x28000+0xd8);request=read(table+12);title=read(table+16)
+            word(request+0x50,99)
+            call(GAME+0x54d030,CONTROLLER,INFO)
+            assert states[0]==0 and states[1]==1
+            assert struct.unpack('<2f',u.mem_read(title+0xc8,8))==(355.,38.)
+            assert not(read(title+0xf0)&1)
+            call(MODULE+names['forge_onUpdate'])
+            assert any('request/title binding invalid' in log for log in startup_logs)
+            log_count=len(startup_logs)
+            call(MODULE+names['forge_onUpdate']);assert len(startup_logs)==log_count
+            word(request+0x50,20)
+            call(GAME+0x54d030,CONTROLLER,INFO)
+            assert states[0]==1 and len(created)==8
+        if recycle:
+            old_created=list(created)
+            # Same slot changes from free to occupied; request mark stays intact.
+            requests=tuple(range(8))
+            call(GAME+0x54d030,CONTROLLER,INFO)
+            for p in created:
+                if read(p+0x54)&1:assert struct.unpack('<f',u.mem_read(p+0x80,4))[0]==337.
+            # A later unavailable offer context must restore every fitted title
+            # before classification's early return, including all unused rows.
+            invalid_info=True
+            call(GAME+0x54d030,CONTROLLER,0)
+            assert created==old_created
+            assert states==dict.fromkeys(range(8),0)
+            for i in range(8):
+                table=read(DATA+0x28000+i*0x200+0xd8);title=read(table+16)
+                assert struct.unpack('<2f',u.mem_read(title+0xc8,8))==(355.,38.)
+                assert not(read(title+0xf0)&1)
+            # Reuse the slots for ordinary quests as when scrolling to a page
+            # without keys. Their title area must be restored too.
+            invalid_info=False
+            for i in range(8):word(DATA+0x30000+i*0x200+8,202)
+            call(GAME+0x54d030,CONTROLLER,INFO)
+            assert states==dict.fromkeys(range(8),0)
+            for i in range(8):
+                title=read(read(DATA+0x28000+i*0x200+0xd8)+16)
+                assert struct.unpack('<2f',u.mem_read(title+0xc8,8))==(355.,38.)
+                assert not(read(title+0xf0)&1)
+            for i,id in enumerate(ids):word(DATA+0x30000+i*0x200+8,id)
+            # Restore valid context and original request states, exactly as a
+            # scroll back to the first page does; no objects may be duplicated.
+            requests=();invalid_info=False
+            call(GAME+0x54d030,CONTROLLER,INFO)
+            assert created==old_created and states==dict(enumerate([1,1,1,1,1,0,0,0]))
+        for i in range(8):
+            table=read(DATA+0x28000+i*0x200+0xd8)
+            assert bytes(u.mem_read(read(table+12),304))==request_bytes[i]
         for root in roots:call(GAME+0xa494a0,root,context)
         assert len(drawn)==sum(states.values()),('native draw walker omitted badge',drawn,states)
         assert len(quads)==len(drawn),('no native colour quad emitted',len(quads),len(drawn))
@@ -410,12 +515,18 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         for i,root in enumerate(roots):
             instance=DATA+0x28000+i*0x200;table=read(instance+0xd8)
             assert table==read(root+0xa0) and bytes(u.mem_read(table,48))==arrays[i]
-            assert read(read(table+48)+0x50)==BADGE_ID
+            if not(i==0 and (invalid_request or invalid_title)):assert read(read(table+48)+0x50)==BADGE_ID
             call(GAME+0xa38b58,instance)
             assert read(instance+0xd8)==read(instance+0xdc)==0
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
-results=[test_case('first malformed trampoline rolls back',fail_hook=1),
+results=[test_case('invalid request on a fitted row restores its title',late_invalid=True),
+         test_case('request shares the key slot without overwriting bubble',requests=(0,2,3,5)),
+         test_case('selected row uses the same request-relative layout',requests=(0,4),selected=4),
+         test_case('missing request binding leaves other badges working',invalid_request=True),
+         test_case('missing title binding leaves other badges working',invalid_title=True),
+         test_case('scrolling and early-return restore title fitting',recycle=True),
+         test_case('first malformed trampoline rolls back',fail_hook=1),
          test_case('second malformed trampoline rolls back both targets',fail_hook=2),
          test_case('all badge states and native draw traversal'),test_case('urgent inactive',offered=()),
          test_case('urgent unavailable',available=False),test_case('urgent prerequisites incomplete',prerequisites=False),
@@ -429,7 +540,7 @@ results=[test_case('first malformed trampoline rolls back',fail_hook=1),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
           'error_only_filter_diagnostic_snapshots':True,'deduplicated_scalar_snapshots':True,
-          'resource_inline_constants':SOURCE_STYLE,'native_prepaint_and_texture_draw':True,'native_quad_geometry':True,
+          'resource_inline_constants':SOURCE_STYLE,'native_prepaint_and_texture_draw':True,'native_quad_geometry':True,'native_autoscale_dispatch_and_clamp':True,'request_visibility_placement':True,'title_restoration':True,
           'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')

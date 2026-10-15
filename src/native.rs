@@ -62,14 +62,14 @@ impl Snapshot {
         }
         let p = self.progress.load(Ordering::Relaxed);
         log::error!(
-            "Native quest badges r9 diagnostic: {label}, Village={}, Hub/G={}",
+            "Native quest badges r10 diagnostic: {label}, Village={}, Hub/G={}",
             p & 65535,
             p >> 16
         );
         for i in 0..8 {
             let d = self.decisions[i].load(Ordering::Relaxed);
             log::error!(
-                "Native quest badges r9 diagnostic: row={} quest={} group={} quest_flags={:#x} badge={} gui_flags={:#x}",
+                "Native quest badges r10 diagnostic: row={} quest={} group={} quest_flags={:#x} badge={} gui_flags={:#x}",
                 i,
                 self.ids[i].load(Ordering::Relaxed),
                 d & 255,
@@ -189,8 +189,10 @@ fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
             && completed(profile, other.id)
     })
 }
-fn set(object: u32, badge: Badge) {
-    gui::set(object, badge);
+fn set(object: Option<gui::Decoration>, badge: Badge) {
+    if let Some(object) = object {
+        object.set(badge);
+    }
 }
 /// Apply the copied decision after the normal game row update. Hide first so
 /// invalid metadata cannot leave yesterday's quest badge on a newly reused row.
@@ -202,6 +204,9 @@ pub fn update(ui: u32, quests: u32) {
             return;
         }
     };
+    if objects.iter().any(Option::is_none) {
+        error(128);
+    }
     for object in objects {
         set(object, Badge::Hidden);
     }
@@ -297,6 +302,7 @@ pub fn update(ui: u32, quests: u32) {
         set(objects[i], badge);
     }
     let progress = u32::from(village) | (u32::from(hub) << 16);
+    let objects = objects.map(|object| object.map_or(0, |object| object.object));
     FIRST_PAGE.publish(progress, &ids, &decisions, &objects);
     if badges.iter().any(|b| *b != Badge::Hidden) {
         FIRST_VISIBLE.publish(progress, &ids, &decisions, &objects);

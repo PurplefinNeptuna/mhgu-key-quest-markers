@@ -3,18 +3,18 @@
   "mod": "key-quest-markers-rs",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "User confirmed native quest badges r9 working on Eden/Linux on 2026-10-15; the fresh log identifies r9 and both hooks, and the installed NRO matches the candidate. Individual state/transition coverage and Ryujinx gameplay remain unconfirmed. Keep the accepted r9 bytes; no distribution promotion was requested.",
+  "reason": "Moves native badges into the request slot, or four pixels left of a visible request bubble; native AutoScale fits full quest titles. r10 manual acceptance is pending. The accepted Eden r9 payload and evidence remain preserved.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r9",
+  "version": "r10",
   "package_name": "key-quest-markers-rs",
-  "archive": "key-quest-markers-rs-r9-candidate.zip",
-  "candidate": "build/key-quest-markers-rs/candidates/r9/delivery/",
+  "archive": "key-quest-markers-rs-r10-candidate.zip",
+  "candidate": "build/key-quest-markers-rs/candidates/r10/delivery/",
   "candidate_builder": "scripts/build.py",
-  "runtime_test": "USER_CONFIRMED_EDEN_BASIC_SUCCESS",
+  "runtime_test": "NOT RUN",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -61,5 +61,5 @@
       }
     ]
   },
-  "runtime_evidence": "docs/RUNTIME_RESULTS.json"
+  "previous_runtime_evidence": "docs/RUNTIME_RESULTS.json"
 }

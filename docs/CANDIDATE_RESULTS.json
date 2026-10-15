@@ -1,13 +1,34 @@
 {
-  "version": "r7",
+  "version": "r10",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
   "host_tests": 10,
   "typed_arm_cases": 16,
-  "compiled_active_adapter_cases": 25,
+  "compiled_active_adapter_cases": 31,
   "archive_replacements": 0,
-  "runtime_gui": "Native children and game-owned expanded draw caches",
+  "runtime_gui": "Existing native child, request visibility, title AutoScale and game-owned maps/caches",
+  "layout": {
+    "badge_size": [
+      24,
+      24
+    ],
+    "y": 8,
+    "request_hidden_x": 369,
+    "request_visible_x": 337,
+    "title_widths": [
+      303,
+      271
+    ],
+    "restored_title_size": [
+      355,
+      38
+    ],
+    "request_objects_unchanged": true,
+    "native_cached_layout_refresh": true,
+    "native_autoscale_dispatch_and_clamp": true,
+    "glyph_measurement_and_scaling": "Supplied fixture bounds and scaler double; actual pixels require a manual trial"
+  },
   "resource_checks": {
     "status": "PASSED",
     "source_sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
@@ -24,8 +45,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "0bc68c1053cfee62a442645d5144e87f6c15e455f218cd495168e19c63f68d36",
-    "elf_sha256": "96b250460f0b0f022b647a60b2a8c5fb320e64d3d573e9553ebfe3e594385b41",
+    "nro_sha256": "df8099a24b8c4f33e033b8eb99d59972cee1899569ce724ea3b587e8baeba1a9",
+    "elf_sha256": "1c0c6772035ff0b16584a5c334a67dbd7dbaf4de8672adae854bd06598425386",
     "exports": [
       "fini",
       "forge_onInit",
@@ -51,6 +72,12 @@
       "nnosSetTlsValue"
     ],
     "signature_windows": [
+      "0xa53324",
+      "0xa53348",
+      "0xa53528",
+      "0xa5350c",
+      "0xa53aa8",
+      "0xa56b4c",
       "0x5456e4",
       "0xa38ffc",
       "0xa47d2c",
@@ -106,89 +133,27 @@
     "progression_semantics": "Native stages, alternatives and offered urgent IDs",
     "runtime_test": "NOT RUN"
   },
-  "gui_registration": {
-    "name": "Native Quest Badges r7",
-    "metadata_bytes": 70,
-    "canaries": "PASSED"
+  "candidate_manifest": {
+    "mod": "key-quest-markers-rs",
+    "version": "r10",
+    "status": "DEVELOPMENT",
+    "runtime_test": "NOT RUN",
+    "runtime_active": true,
+    "package_name": "key-quest-markers-rs",
+    "payloads": {
+      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "df8099a24b8c4f33e033b8eb99d59972cee1899569ce724ea3b587e8baeba1a9"
+    },
+    "archive_sha256": "cc8b9e4cefd293bcba2ec994473166e19a8d11dcc3b9ace5fc23a0a365a4ed28"
   },
-  "standalone": {
-    "build_test_package": "PASSED",
-    "inputs": "Externally supplied, copied into independent checkout",
-    "parent_source_dependencies": false,
-    "payload_sha256_matches_workspace": true,
-    "native_constructor_cases": 25
+  "prior_accepted_r9": {
+    "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
+    "zip_sha256": "5113237365aa63ef2bbf64b446154c682d336690fb0dd4f3544303f4a97cac35",
+    "installed_matches_candidate": true,
+    "runtime_changed_for_this_record": false
   },
-  "remaining_acceptance": [
-    "Live English HD pixels, clipping, size and native cleanup",
-    "Eden/Ryujinx Village/Hub/G progression and menu/quest transitions"
-  ],
-  "installed_by_this_implementation": false,
-  "published": false,
-  "reported_r2_runtime": "No badges; Damage Numbers callbacks run but its metadata name is blank",
-  "payload_sha256": {
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "0bc68c1053cfee62a442645d5144e87f6c15e455f218cd495168e19c63f68d36"
-  },
-  "full_distribution_check_mods": 14,
-  "reported_r3_runtime": {
-    "result": "FAILED: no badges",
-    "eden_error": "Native quest badges hidden: native row/HD atlas mismatch; remove old candidate ARC files",
-    "installed_nro_sha256": "ce50e321cfbb1d54944c4adc27ae5de935affc8f130cc2ce7add7da56b0d1889",
-    "badge_package_contains_arc": false,
-    "hd_archive_matches_copied_input": true
-  },
-  "row_owner_regression": {
-    "old_r3": "FAILED as expected with native constructor-built rows",
-    "new_r4": "PASSED",
-    "owner": "instance+0x6c cGUI, distinct from animation instance",
-    "original_arm_functions": [
-      "0xa38828",
-      "0xa38bc0",
-      "0xa49b28",
-      "0xa4844c",
-      "0xa48460"
-    ]
-  },
-  "texture_constructor_regression": {
-    "old_r4": "FAILED as expected with the real null DTI placement slot",
-    "new_r5": "PASSED: actual ARM constructor, setters, cache allocation/free and destructors",
-    "placement_virtual": false,
-    "native_constructor": "0xa4f60c",
-    "base_constructor": "0xa4d0d8"
-  },
-  "reported_r4_runtime": {
-    "result": "FAILED: no badges",
-    "eden_error": "Native quest badges hidden: native badge object/cache allocation or initialization failed",
-    "installed_nro_sha256": "e29fe7711acde87e77dac19bc51f4d0c686d6cbf0e7cee0e53294ba5de762087",
-    "log_checked": "2026-10-15 06:15:25 +0700",
-    "row_validation_error": false
-  },
-  "reported_r5_runtime": {
-    "result": "FAILED during initialization; hooks restored",
-    "eden_error": "Native quest badges: Forge hook failed; restored originals",
-    "installed_nro_sha256": "9e671b3f62a52fa529ef9abb39c854ff9108ebecff7b6b6463326d1d7cb8c1b5",
-    "log_checked": "2026-10-15 06:26:30 +0700"
-  },
-  "startup_regression": {
-    "old_r5": "FAILED as expected: compares constructor bytes with hook trampoline bytes",
-    "new_r6": "PASSED: actual forge_onInit, installer and patched entry branches",
-    "forced_active_flag": false,
-    "first_and_second_hook_rollback": "PASSED"
-  },
-  "reported_r6_runtime": {
-    "result": "FAILED: no icon and game freeze",
-    "installed_nro_sha256": "617382d047da92579d8d0c0588a03e7dc4f7d276c31329485f0bba1b0e0f43f0",
-    "preserved_eden_log_sha256": "dbe9d6c3b91aa1f9cafe9ae2d3c42d2e0b3bd3f4ac0dd6657171c2f652234204",
-    "native_return_offset": "0x5457c8",
-    "native_function": "0x5456e4",
-    "object_lookup_index": 12
-  },
-  "map_lifetime_regression": {
-    "old_r6": "FAILED in actual resource cleanup at lookup index12, matching live crash",
-    "new_r7": "PASSED: actual cleanup and animation clear functions",
-    "runtime_object_map_entries": 13,
-    "preserved_original_bindings": 12,
-    "native_map_allocator": "cGUIInstance MT alloc1/free",
-    "separate_map_and_texture_allocator_fixtures": true,
-    "map_allocation_failure": "PASSED"
-  }
+  "limits": [
+    "r10 was not installed or launched.",
+    "Eden/Ryujinx clipping, long-title appearance, completion ribbons and menu transitions need manual acceptance.",
+    "r9 user acceptance remains scoped to that unchanged payload."
+  ]
 }
