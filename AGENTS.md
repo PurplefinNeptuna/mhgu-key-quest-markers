@@ -36,3 +36,4 @@ r17 works with the base game and optional MHGU HD Project (user-confirmed
 2026-10-15). The copied English HD common archive is a build fixture, not a
 runtime requirement. See EVIDENCE.json. User guides call badge colours Green,
 Red and Grey. Keep Gathering/objective source labels in research records.
+Omit advice about disabling the old prefix plugin from the release README.

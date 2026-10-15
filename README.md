@@ -23,8 +23,6 @@ automatically shrink to fit before the badge.
 2. Copy the `key-quest-markers` folder into your emulator's MHGU mod directory,
    beside Forge, then enable it. Replace the whole
    folder when updating.
-3. If you use the original Key Quest Markers prefix plugin, disable it to
-   remove `[KEY]` from quest titles.
 
 Forge's Loaded Plugins list shows **Key Quest Markers r17**. The badges work
 automatically when you open the quest counter.
