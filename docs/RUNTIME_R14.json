@@ -1,0 +1,39 @@
+{
+  "version": "r14",
+  "date": "2026-10-15",
+  "release_status": "READY_TO_DISTRIBUTE",
+  "result": "USER_ACCEPTED_ORIGINAL_EMBLEM",
+  "user_report": "good, use original only and promote it to ready to distribute statys",
+  "platform": "Eden/Linux, MHGU Switch 1.4.0 English HD",
+  "emulator": "Eden Development Build master-a594c8d60e-master",
+  "forge_version": "1.5.0",
+  "nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65",
+  "candidate_zip_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db",
+  "installed_matches_candidate": true,
+  "source_commit": "96fcd21",
+  "renderer": "MHGU native GUI",
+  "emblem": "Original large lobby emblem; logical UV (136,344,198,406), displayed 32x32",
+  "active_urgent_colour": "#9B4DCA",
+  "log_snapshot": {
+    "workspace_path": "work/key-quest-markers-rs/runtime-acceptance/r14-original-20261015/eden_log.txt",
+    "sha256": "381eac76d1d8638c5d18c5e136965dbda24cb8487f35d74cfd6ff4dd551fec00",
+    "bytes": 93664,
+    "both_hooks_entered": true,
+    "village_stage": 3,
+    "hub_g_stage": 1,
+    "quest_308_group_47_badge": 3,
+    "badge_3_meaning": "Purple active urgent",
+    "visible_native_badge_flag": "0x20a0001",
+    "ordinary_rows_hidden": true,
+    "grey_badge_decisions_present": true,
+    "plugin_failure_lines_present": false
+  },
+  "scope": "User accepted the current original-emblem build. Fresh log corroborates version, hooks and special urgent 308 purple classification; it is not a pixel capture or exhaustive gameplay test.",
+  "limits": [
+    "Ryujinx and native Switch gameplay remain unconfirmed.",
+    "Individual ranks, colours, scrolling, request overlaps, long titles and transitions were not separately enumerated for r14.",
+    "Log snapshots record the first classified/visible page; they do not establish all later progression states."
+  ],
+  "runtime_changed_for_promotion": false,
+  "installed_or_launched_by_promotion": false
+}

@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers-rs",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
-  "reason": "Changes active urgent badges to purple #9B4DCA in both emblem variants. Classification, key/grey colours, geometry and native rendering remain unchanged. r13 delivery bytes preserved; manual colour acceptance pending.",
+  "reason": "User accepted r14 and explicitly selected the original emblem only. Promote the unchanged installed/tested NRO; small-emblem comparisons are archived. Eden acceptance is scoped and Ryujinx remains unconfirmed.",
   "publication": {
     "published": false,
     "url": null,
@@ -11,10 +11,8 @@
   },
   "version": "r14",
   "package_name": "key-quest-markers-rs",
-  "archive": "key-quest-markers-rs-r14-candidate.zip",
-  "candidate": "build/key-quest-markers-rs/candidates/r14/delivery/",
-  "candidate_builder": "scripts/build.py",
-  "runtime_test": "NOT RUN",
+  "archive": "key-quest-markers-rs-r14.zip",
+  "runtime_test": "USER_CONFIRMED_EDEN",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -61,5 +59,60 @@
       }
     ]
   },
-  "previous_runtime_evidence": "docs/RUNTIME_R11.json"
+  "previous_runtime_evidence": "docs/RUNTIME_R14.json",
+  "approval": {
+    "date": "2026-10-15",
+    "basis": "Explicit user instruction: good, use original only and promote it to ready to distribute statys"
+  },
+  "target": "MHGU Nintendo Switch 1.4.0 English HD; Forge 1.5.0 matching forge-rs 1.5.0 Hook ABI; Eden/Ryujinx.",
+  "limitations": [
+    "User accepted the unchanged original-emblem r14 on Eden/Linux; individual ranks, colours, scrolling, request overlaps, long titles and transitions were not separately enumerated.",
+    "Ryujinx and native Switch gameplay remain unconfirmed.",
+    "English HD layout only. The HD Project and compatible Forge 1.5.0 loader are external dependencies.",
+    "The accepted r14 binary retains bounded startup and first-page diagnostic logs at ERROR level; no per-frame logging."
+  ],
+  "readme": "mods/key-quest-markers-rs/DISTRIBUTION_README.md",
+  "notices": [
+    "mods/key-quest-markers-rs/DISTRIBUTION_NOTICES.md",
+    "mods/key-quest-markers-rs/LICENSE",
+    "mods/key-quest-markers-rs/vendor/forge-rs/LICENSE",
+    "mods/key-quest-markers-rs/vendor/libnx/LICENSE-MIT",
+    "mods/key-quest-markers-rs/licenses/FORGE-MIT.txt",
+    "mods/key-quest-markers-rs/vendor/crates/log-0.4.34/LICENSE-MIT",
+    "mods/key-quest-markers-rs/licenses/RUST-MIT.txt",
+    "mods/key-quest-markers-rs/licenses/COMPILER_BUILTINS.txt"
+  ],
+  "payloads": {
+    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": {
+      "source": "build/key-quest-markers-rs/candidates/r14/package/romfs/nativeNX/plugins/key_quest_markers_rs.nro",
+      "sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
+    }
+  },
+  "evidence": {
+    "static": [
+      "build/key-quest-markers-rs/candidates/r14/resource.json",
+      "build/key-quest-markers-rs/candidates/r14/build.json",
+      "build/key-quest-markers-rs/candidates/r14/arm.json",
+      "build/key-quest-markers-rs/candidates/r14/native-adapter.json",
+      "build/key-quest-markers-rs/candidates/r14/verify.json",
+      "build/key-quest-markers-rs/candidates/r14/tests.json",
+      "mods/key-quest-markers-rs/docs/CANDIDATE_RESULTS.json",
+      "mods/key-quest-markers-rs/docs/SPECIAL_URGENTS.json"
+    ],
+    "manual": [
+      "mods/key-quest-markers-rs/docs/RUNTIME_R14.json"
+    ],
+    "manual_summary": "User accepted original r14 on Eden/Linux and requested promotion. Fresh Eden 1.4.0/Forge1.5.0 log and matching installed NRO corroborate r14 hooks, grey decisions and quest308/group47 active purple classification. This is not exhaustive coverage or Ryujinx acceptance.",
+    "static_summary": "11 host tests, 16 ARM ABI/GE cases, 40 compiled native adapter cases, import/signature/resource checks and standalone builds/verification passed before acceptance. No runtime rebuild during promotion."
+  },
+  "dependencies": [
+    {
+      "name": "Forge 1.5.0",
+      "scope": "External Switch loader with the matching 24-byte ordinary Hook ABI used by forge-rs1.5.0."
+    },
+    {
+      "name": "MHGU HD Project English",
+      "scope": "External loaded HD_lobby00_BM_NOMIP atlas and supported English counter layout; no HD assets shipped."
+    }
+  ]
 }

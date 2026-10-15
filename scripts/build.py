@@ -82,6 +82,15 @@ def test():
                      'host':True,'resource':True,'arm':True,'runtime_test':'NOT RUN'})
 def verify(): run([PYTHON,MOD/'scripts/verify.py'])
 def package():
+    spec=json.loads((MOD/'DISTRIBUTION.json').read_text())
+    if spec['status'] in ('READY_TO_DISTRIBUTE','PUBLISHED'):
+        if SMALL_MARK=='1': raise ValueError('Small-emblem comparisons are archived; only the original emblem is released')
+        verify()
+        # Promote pinned accepted bytes through the existing distribution engine;
+        # do not rewrite the original candidate or rebuild the tested runtime.
+        import mod_distribution as distribution
+        print('Verified release:',distribution.package(spec['mod'],ROOT))
+        return
     verify();source=BUILD_ROOT/'package';nro=source/'romfs/nativeNX/plugins/key_quest_markers_rs.nro'
     test_record=json.loads((BUILD_ROOT/'tests.json').read_text())
     if test_record['status']!='PASSED' or test_record['nro_sha256']!=digest(nro) or test_record.get('archive_replacements')!=0: raise ValueError('Test this exact build first')

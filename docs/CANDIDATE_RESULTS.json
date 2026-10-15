@@ -1,8 +1,8 @@
 {
   "version": "r14",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_active": true,
-  "runtime_test": "NOT RUN",
+  "runtime_test": "USER_CONFIRMED_EDEN",
   "host_tests": 11,
   "typed_arm_cases": 16,
   "compiled_active_adapter_cases": 40,
@@ -156,9 +156,9 @@
     "runtime_changed_for_this_record": false
   },
   "limits": [
-    "Neither r14 variant was installed or launched.",
-    "Purple colour appearance requires a manual in-game trial.",
-    "Special-urgent activation coverage and Ryujinx gameplay remain unconfirmed; r13 semantics are unchanged."
+    "User accepted original-emblem r14 on Eden/Linux; individual cases were not separately enumerated.",
+    "Ryujinx and native Switch gameplay remain unconfirmed.",
+    "Static receipts retain their original pre-acceptance NOT RUN fields; current manual evidence is docs/RUNTIME_R14.json."
   ],
   "fix": {
     "cause": "r10 required cGUIObjText, but native title binding4/ID6 is cGUIObjMessage",
@@ -230,7 +230,8 @@
         "archive_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db"
       },
       "native_adapter_cases": 40,
-      "tests": "PASSED"
+      "tests": "PASSED",
+      "distribution": "READY_TO_DISTRIBUTE"
     },
     "r14-small": {
       "manifest": {
@@ -246,7 +247,9 @@
         "archive_sha256": "ece9431459f0a0a0752a61ce75a95c0766edb4dae249b72600bac276387f4465"
       },
       "native_adapter_cases": 40,
-      "tests": "PASSED"
+      "tests": "PASSED",
+      "distribution": "ARCHIVED_COMPARISON",
+      "archive_path": "backups/key-quest-markers-rs/small-emblem-comparisons/20261015/r14-small"
     }
   },
   "previous_r13_variants": {
@@ -282,5 +285,11 @@
     "inactive_completed": "#808080",
     "request_bubble_unchanged": true,
     "classification_unchanged": true
+  },
+  "promotion": {
+    "record": "docs/PROMOTION_R14.json",
+    "runtime_evidence": "docs/RUNTIME_R14.json",
+    "released_variant": "r14",
+    "runtime_bytes_changed": false
   }
 }

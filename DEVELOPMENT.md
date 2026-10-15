@@ -1,3 +1,20 @@
+# Current release workflow
+
+r14 with the original emblem is READY_TO_DISTRIBUTE, approved on 2026-10-15.
+Its NRO is pinned to SHA-256
+`79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65`.
+Use `./build.sh package` or the workspace distribution coordinator to package
+those approved bytes. Packaging verifies the existing build and test receipts;
+it does not rebuild, install or launch. Rebuilding a different runtime requires
+a new version and separate validation/acceptance.
+
+Only the original emblem is a supported release. `KQM_SMALL_MARK=1` remains solely
+for reproducing historical comparisons; ready-release packaging rejects it.
+All small-emblem candidate deliveries are archived with verified hashes recorded
+in docs/PROMOTION_R14.json. Preserve original candidate/rollback bytes.
+
+The following sections retain the build procedure and implementation history.
+
 # Development
 
 The independent source folder owns its recipes, Rust sources, vendored sources,

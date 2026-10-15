@@ -1,49 +1,39 @@
-# Native Quest Badges — Rust r14 candidate
+# Native Quest Badges
 
-**DEVELOPMENT build; in-game acceptance pending.** Rise-style quest badges for
-English HD MHGU 1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching
-24-byte Hook ABI and the English HD Project.
+Rise-style quest badges for Monster Hunter Generations Ultimate 1.4.0 on Switch
+emulators. Requires a compatible Forge 1.5.0 loader and the English MHGU HD Project.
 
 ## Badges
 
 | Quest state | Badge |
 | --- | --- |
-| Key still needed for current progression | Red |
+| Key still needed for current progression | Orange-red |
 | Completed or obsolete key | Grey |
-| Currently needed, offered and available urgent | Purple |
+| Currently needed and available urgent | Purple |
 | Completed, old or inactive urgent | Grey |
-| Ordinary or unresolved quest | Hidden |
+| Ordinary quest | No badge |
 
-The 32×32 badge appears inside the quest row, in the request-mark slot. When a
-quest also has a yellow request bubble, both marks appear, with the badge four
-pixels left of the bubble. Long quest names automatically shrink to fit before
-the badge; their full text is preserved.
-
-The original-emblem and small-emblem comparison packages use the same 32×32
-size and placement. Both include the special Village urgent quest pairs.
+The 32×32 badge appears in the quest row's request-mark slot. When a quest also
+has a yellow request bubble, the badge appears four pixels to its left. Long
+quest names automatically shrink to fit before the badge.
 
 ## Installation
 
 1. Close the game and extract the ZIP.
-2. Put its `key-quest-markers-rs` folder in the emulator's MHGU mod location beside
-   Forge and the English HD Project, then enable it. When updating, keep the old
-   package outside the enabled mod directory and replace its folder as a whole.
-3. Keep the HD Project enabled. Disable the original Key Quest Markers prefix
-   plugin so `[KEY]` disappears from list/detail titles.
+2. Copy the `key-quest-markers-rs` folder into your emulator's MHGU mod directory,
+   beside Forge and the English HD Project, then enable it. Replace the whole
+   folder when updating.
+3. Keep the English HD Project enabled. Disable the original Key Quest Markers
+   prefix plugin to remove `[KEY]` from quest titles.
 
-The runtime folder contains:
+Forge's Loaded Plugins list shows **Native Quest Badges r14**. The badges work
+automatically when you open the quest counter.
 
-```text
-romfs/nativeNX/plugins/key_quest_markers_rs.nro
-```
+To remove the mod, close the game and disable or remove its folder.
 
-Forge's Loaded Plugins list shows **Native Quest Badges r14**. This plugin has no
-settings panel. Initialization and GUI failures are logged once at ERROR level.
+## Compatibility
 
-To remove it, close the game and disable/remove its folder.
-
-## Known limits
-
-This development candidate needs an in-game trial on Eden and Ryujinx. Check long
-names, both marks together, completion ribbons, selection, scrolling, confirmation
-and reopening the menu. Only the English HD layout is supported.
+Use the English HD counter layout. Other languages and replacement counter
+layouts are unsupported. If the plugin reports an incompatible loader or resource,
+check that MHGU is version 1.4.0 and that Forge and the English HD Project match
+these requirements.
