@@ -1,4 +1,4 @@
-# r17 game UI colours and quiet logs — DEVELOPMENT
+# r17 game UI colours and quiet logs — READY_TO_DISTRIBUTE
 
 The reported Eden r16 log contains21 false ERROR diagnostics: successful hook
 installation, two hook-entry notices and two nine-line snapshots. Its NRO hash
@@ -24,7 +24,14 @@ instance colour overrides its shared Message template; the separate Slaying
 category red `#CC0000` is not the colour requested here.
 
 The r16 candidate, receipts and support remain unchanged in its versioned tree.
-r17 gameplay is NOT RUN; retain separate Eden/Ryujinx/manual acceptance limits.
+The user accepted the unchanged r17 on Eden/Linux on 2026-10-15 and requested
+distribution readiness. The fresh log contains none of the old plugin diagnostic
+dumps. The installed NRO matches the candidate SHA-256
+`ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6`. Individual settings,
+persistence, ranks, quest states and transitions were not separately enumerated;
+Ryujinx/native Switch gameplay remains unconfirmed. See EVIDENCE.json for the
+log fingerprint, scoped acceptance and byte-for-byte candidate preservation.
+Promotion changes metadata/support only; it does not rebuild or install.
 
 # r16 configurable colours — DEVELOPMENT
 

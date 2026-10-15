@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
-  "reason": "Game UI Gathering green and objective red defaults, traced to original native resource and message bindings; awaiting gameplay validation. Includes removal of misleading ERROR-level success diagnostics.",
+  "reason": "User confirmed the exact r17 candidate was tested and requested distribution readiness. Promotes the unchanged installed/candidate NRO; Ryujinx/native Switch gameplay remains unconfirmed.",
   "publication": {
     "published": false,
     "url": null,
@@ -11,8 +11,8 @@
   },
   "version": "r17",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r17-candidate.zip",
-  "runtime_test": "NOT_RUN",
+  "archive": "key-quest-markers-r17.zip",
+  "runtime_test": "USER_CONFIRMED_EDEN",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -61,8 +61,8 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. English HD Project required.",
   "limitations": [
-    "r17 settings, persistence and palette refresh require a new gameplay trial.",
-    "Eden, Ryujinx and native Switch r17 gameplay remain unconfirmed."
+    "User accepted r17 on Eden/Linux; individual settings, persistence, ranks, quest states and transitions were not separately enumerated.",
+    "Ryujinx and native Switch gameplay remain unconfirmed."
   ],
   "readme": "mods/key-quest-markers/README.md",
   "notices": [
@@ -83,7 +83,7 @@
       "mods/key-quest-markers/EVIDENCE.json"
     ],
     "static_summary": "r17: host configuration/classification fixtures, compiled ARM settings/save-failure/native GUI fixtures, ABI/state/import/resource checks; details in EVIDENCE.json.",
-    "manual_summary": "r17 gameplay NOT RUN. Historical acceptance remains scoped to the original preserved binaries."
+    "manual_summary": "User-confirmed Eden/Linux r17 acceptance with matching installed/candidate hash and a preserved fresh log. Detailed scenario coverage and other platforms remain unconfirmed."
   },
   "dependencies": [
     {
@@ -100,6 +100,14 @@
     "DEVELOPMENT.md": "mods/key-quest-markers/DEVELOPMENT.md",
     "EVIDENCE.json": "mods/key-quest-markers/EVIDENCE.json"
   },
-  "candidate_builder": "scripts/build.py",
-  "candidate": "build/key-quest-markers/candidates/r17/delivery"
+  "approval": {
+    "date": "2026-10-15",
+    "basis": "User: ok, tested, promote to ready to distribute status. Installed r17 NRO matches the validated candidate exactly."
+  },
+  "payloads": {
+    "romfs/nativeNX/plugins/key_quest_markers.nro": {
+      "source": "build/key-quest-markers/candidates/r17/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6"
+    }
+  }
 }

@@ -3043,7 +3043,7 @@
   "current": {
     "version": "r17",
     "date": "2026-10-15",
-    "scope": "Game UI green/red defaults and removal of false ERROR-level success diagnostics; DEVELOPMENT, no installation or r17 gameplay run.",
+    "scope": "Unchanged r17 accepted by the user on Eden/Linux and promoted locally; no rebuild, installation or publication.",
     "forge": {
       "version": "1.5.1",
       "commit": "b23e114a23f41c9a8e2fd34b2f4df2a2102d0ee1",
@@ -3052,11 +3052,24 @@
       "path": "work/shared/forge-1.5.1",
       "nso_sha256": "469f425dd02a37b7a5d84ddde5f769922bc5e0d5fbc8adb0ca270e2c0773cd7d"
     },
-    "runtime_test": "NOT RUN",
+    "runtime_test": "USER_CONFIRMED_EDEN",
     "manual": {
-      "Eden": "NOT RUN",
-      "Ryujinx": "NOT RUN",
-      "native Switch": "NOT RUN"
+      "date": "2026-10-15",
+      "platform": "Eden/Linux",
+      "emulator": "Eden Development Build master-a594c8d60e-master",
+      "game": "MHGU Switch 1.4.0",
+      "user_confirmation": "ok, tested, promote to ready to distribute status",
+      "scope": "User confirmed r17 test and approved local distribution. Individual settings, persistence, ranks, quest states and transitions were not separately enumerated.",
+      "installed_nro_sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
+      "candidate_nro_sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
+      "log_sha256": "c99ff65116a44cc72737c6610bc7695302f5b48b30620ee008e1d7e69f273190",
+      "log_mtime_ns": 1792052054147286081,
+      "log_snapshot": "work/key-quest-markers/runtime-acceptance/r17-20261015/eden_log.txt",
+      "plugin_log_lines": 0,
+      "old_error_diagnostics": 0,
+      "initialization_evidence": "User test confirmation; absence of plugin log messages alone does not prove initialization.",
+      "Ryujinx": "NOT CONFIRMED",
+      "native Switch": "NOT CONFIRMED"
     },
     "r16_preserved": {
       "files": {
@@ -4330,6 +4343,32 @@
       "full_distribution_check": "PASS: 1 mod record",
       "nro_sha256": "adffee198312b4678422fd08bc03a43dc9dcf17d1bf6c1775ca25ffa351727cb"
     },
-    "workspace_distribution_check": "PASS: 11 mod records"
+    "workspace_distribution_check": "PASS: 11 mod records",
+    "status": "READY_TO_DISTRIBUTE",
+    "promotion": {
+      "runtime_bytes_changed": false,
+      "candidate_preservation": {
+        "build.json": "dbe0a87be62d0e9ecc53a628793e09c2a77f343620195d109f32496778b107dc",
+        "native-adapter.json": "55096044faf34b45a67c04049c5eae745336c12a32dcbc518ceb9f29e08e2fd7",
+        "arm.json": "d908d4f42173f8798e5c7e15b97f1fb63e9a64e1895b291c47779348443cbcfa",
+        "verify.json": "25a7e170f97a46ea2a573384c65d29228cb8609847010b6f3491b6b2d67b1063",
+        "tests.json": "e569facbbfaa5bb9da148a16b9e4798d012a7a6cd94303edcbad7f428833a370",
+        "resource.json": "ffd94e6869d409869f695d3ca7901f05028854e5c0ecafcf1a86494526c2ff23",
+        "delivery/README.html": "eab4fe3a163e5a8aefa93b2ceb11348f55946fcbf6177a40ffe8b92c707e4f77",
+        "delivery/GAMEBANANA_README.html": "7f189d2d0e9dfb80b56fb1980bf09eade942c620307b7943721fe9176dc2bf21",
+        "delivery/SHA256SUMS": "a501fc00c25953cc36681defeaae5435f19591d5e31e215edaa237ae83d335b5",
+        "delivery/manifest.json": "7b52645053fa6e6a919482906948fa0886c4433937f257a03058dea80ab99864",
+        "delivery/NOTICES.html": "b42fbbc34039f50f9cdd127dd05a80d7021a2ee8184b76e2197a53499bc7f83d",
+        "delivery/NOTICES.txt": "aff882e4b549c886f82de430a0a6a77096cc0438afe5d8093b61485520ccef22",
+        "delivery/key-quest-markers-r17-candidate.zip": "64ca2a15ef96fe63176487eb60da3cb4438c219abc0d6be4511127cb06ea3bff",
+        "delivery/README.md": "30b11496578017bf7c3a2ce677477c2cc4071123dabb061cedd7d54f1260047e",
+        "delivery/VALIDATION.json": "8e85b3d7d7fd981f14a0deff0f5ddfb686efa97046d783b38eff6ff7a843c665",
+        "delivery/key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
+        "package/romfs/nativeNX/plugins/key_quest_markers.nro": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6"
+      },
+      "release_directory": "build/key-quest-markers/releases/r17",
+      "source_commit": "befdea5",
+      "publication": false
+    }
   }
 }
