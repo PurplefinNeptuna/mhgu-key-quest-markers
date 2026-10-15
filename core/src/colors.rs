@@ -9,9 +9,11 @@ pub struct Palette {
     pub completed: u32,
 }
 impl Palette {
+    // Exact game UI colours: counter_down Gathering object16 and objective
+    // instance14. Provenance and offsets are in research/theme-colours.json.
     pub const DEFAULT: Self = Self {
-        key: 0x4f8a62,
-        urgent: 0xd65345,
+        key: 0x006305,
+        urgent: 0xa30000,
         completed: 0x808080,
     };
     pub fn color(self, badge: Badge) -> u32 {
@@ -278,8 +280,8 @@ mod tests {
     #[test]
     fn defaults_and_packing() {
         let p = Palette::DEFAULT;
-        assert_eq!(p.color(Badge::Key), 0xff628a4f);
-        assert_eq!(p.color(Badge::Urgent), 0xff4553d6);
+        assert_eq!(p.color(Badge::Key), 0xff056300);
+        assert_eq!(p.color(Badge::Urgent), 0xff0000a3);
         assert_eq!(p.color(Badge::Completed), 0xff808080);
         assert_eq!(p.color(Badge::Hidden), 0);
         assert_eq!(
@@ -301,7 +303,7 @@ mod tests {
         }
         assert_eq!(Palette::parse(b"\xff"), Err(Error::Invalid));
         assert_eq!(
-            Palette::parse(b"; comment\n[Colors]\nkey=4f8a62\nurgent=d65345\ncompleted=808080\n"),
+            Palette::parse(b"; comment\n[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\n"),
             Ok(Palette::DEFAULT)
         );
     }

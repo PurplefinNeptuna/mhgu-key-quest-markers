@@ -2125,6 +2125,8 @@
     "vendor/libnx/LICENSE-MIT",
     "core/src/colors.rs",
     "src/config.rs",
-    "src/settings.rs"
+    "src/settings.rs",
+    "research/theme-colours.json",
+    "research/log-cleanup.json"
   ]
 }

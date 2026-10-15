@@ -75,3 +75,51 @@ def inspect(source):
             'existing_sequences':15,'instances':63,'texture_id':22,'archive_replacements':0,
             'title_class':'cGUIObjMessage','title_type_crc':0x2fb82eae,'title_bytes':352,
             'new_atlas':False,'runtime_test':'NOT RUN'}
+
+
+def inspect_theme(source, image):
+    """Trace the displayed Gathering/objective colours to original UI records.
+
+    The native category table selects sequence/binding/message, not a screenshot
+    pixel. Objective instances override their shared Message template's colour.
+    """
+    from mhgu_assets import read_arc
+    _, entries = read_arc(source)
+    data = entries[('eng\\GUI\\05_meeting_p\\count\\counter_down', 0x22948394)]['data']
+    source_sha = 'fdde4d1a34247b9150bd6bb7490d4e58f7a8492a616e8345b05cd8eb28d361cb'
+    require(hashlib.sha256(data).hexdigest() == source_sha, 'Quest detail UI differs from audited base/HD resource')
+    gui = Gui(data)
+    # Main+0x6135fc gets this row through the GOT at0x183ff78. Category3 is
+    # Gathering: sequence1000008, Message binding11, QuestCounter text40.
+    require(struct.unpack_from('<I', image, 0x183ff78)[0] == 0x1634b88, 'Quest category table moved')
+    sequence, binding, message = struct.unpack_from('<3I', image, 0x1634b88 + 3 * 12)
+    require((sequence, binding, message) == (1000008, 11, 40), 'Gathering category mapping differs')
+    animation = next(row for row in gui.table(40, 164, 24) if struct.unpack_from('<I', row)[0] == 32)
+    first_object = struct.unpack_from('<I', animation, 12)[0]
+    obj = gui.table(48, 172, 36)[first_object + binding]
+    green = gui.props(struct.unpack_from('<I', obj, 24)[0], obj[4])['Color']
+    require(first_object + binding == 16 and struct.unpack_from('<I', obj)[0] == 12, 'Gathering Message binding differs')
+    require(green == (0.0, 99.0, 5.0, 255.0), 'Gathering native green differs')
+    # GMD's bounded text tail verifies which localized label the table selects;
+    # no GMD editor or general round-trip encoder is needed for this read.
+    msg = entries[('eng\\GUI\\06_msg\\QuestCounter_eng', 0x242bb29a)]['data']
+    text_count, _, text_size = struct.unpack_from('<3I', msg, 24)
+    require(msg[:4] == b'GMD\0' and 0 < text_size <= len(msg), 'QuestCounter message bounds differ')
+    texts = msg[-text_size:].split(b'\0')
+    require(len(texts) == text_count + 1 and texts[-1] == b'' and texts[message] == b'Gathering', 'Native green no longer belongs to Gathering')
+    red = None
+    for index, name in [(14, 'Mes_content00'), (20, 'Mes_content01')]:
+        row = gui.table(68, 188, 36)[index]
+        require(gui.text(struct.unpack_from('<I', row, 20)[0]) == name, 'Objective instance identity differs')
+        props = gui.props(struct.unpack_from('<I', row, 28)[0], struct.unpack_from('<I', row, 16)[0])
+        require(props['ColorControl'] == 2 and props['Color'] == (163.0, 0.0, 0.0, 255.0), 'Objective native red differs')
+        red = props['Color']
+    return {'status': 'PASSED', 'source_gui_sha256': source_sha,
+            'key_rgb': '006305', 'urgent_rgb': 'A30000', 'completed_rgb': '808080',
+            'gathering': {'category_table': '0x1634b88', 'category': 3,
+                          'animation': 32, 'sequence': sequence, 'binding': binding,
+                          'object_index': 16, 'object_id': 12, 'message_index': message,
+                          'rgba': green, 'value_file_offset': '0x18c50'},
+            'objective': {'instance': 14, 'name': 'Mes_content00', 'rgba': red,
+                          'subquest_instance': 20, 'value_file_offset': '0x19370'},
+            'sampled_from_image': False, 'runtime_test': 'NOT RUN'}

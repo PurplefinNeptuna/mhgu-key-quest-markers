@@ -1,3 +1,31 @@
+# r17 game UI colours and quiet logs — DEVELOPMENT
+
+The reported Eden r16 log contains21 false ERROR diagnostics: successful hook
+installation, two hook-entry notices and two nine-line snapshots. Its NRO hash
+matches the preserved r16 candidate. `research/log-cleanup.json` records the
+log/payload correlation. r17 removes snapshots, hook-entry atomics and diagnostic
+ID/flag packets entirely. One INFO startup remains; actual hook/resource failures
+are reported once per reason from onUpdate. Creation/validation failures retain
+their numeric stage on the same line; historical stage explanations follow below.
+No successful rows, pages, saves or frames produce warnings/errors.
+
+## Game UI defaults
+
+Defaults now use the exact game UI colour properties: key green `#006305`
+(RGB0,99,5) and urgent red `#A30000` (RGB163,0,0). Completed stays `#808080`.
+Saved custom RGB values remain untouched; Reset defaults then Save & apply uses
+this palette. Classification, settings, native rendering and geometry are unchanged.
+
+See `research/theme-colours.json` for copied input hashes, object/instance IDs,
+file offsets and native category/message bindings. `inspect_theme` verifies the
+actual pinned resource and executable at build time; no screenshot is sampled.
+The base and HD `counter_down` resource are byte-identical. The main objective's
+instance colour overrides its shared Message template; the separate Slaying
+category red `#CC0000` is not the colour requested here.
+
+The r16 candidate, receipts and support remain unchanged in its versioned tree.
+r17 gameplay is NOT RUN; retain separate Eden/Ryujinx/manual acceptance limits.
+
 # r16 configurable colours — DEVELOPMENT
 
 The current candidate targets stock Forge 1.5.1 and preserves r15's original

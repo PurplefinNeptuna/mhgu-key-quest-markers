@@ -3,7 +3,8 @@ from pathlib import Path
 import sys,struct
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from paths import input_path,BUILD_ROOT
-from gui_layout import inspect,Gui
+from gui_layout import inspect,Gui,inspect_theme
+from mhgu_binary import main_image
 from mhgu_assets import read_arc
 info=inspect(input_path('common_eng.arc'))
 _,entries=read_arc(input_path('common_eng.arc'))
@@ -41,3 +42,8 @@ background=gui.props(struct.unpack_from('<I',objects[6],24)[0],objects[6][4])
 assert 0 <= 3 and 3+32 <= background['Size'][1] # Native row envelope.
 assert not list((BUILD_ROOT/'package').rglob('*.arc'))
 print('PASS: native row/atlas fixture, resource bounds, all 15 original sequences and zero ARC payloads')
+
+image,_=main_image(input_path('main').read_bytes())
+theme=inspect_theme(input_path('common_eng.arc'),image)
+assert (theme['key_rgb'],theme['urgent_rgb'])==('006305','A30000')
+print('PASS: native Gathering/category binding and objective-instance colours; no image sampling')

@@ -6,10 +6,6 @@ use core::{
     sync::atomic::{AtomicBool, AtomicU32, Ordering},
 };
 use forge::patch::Patch;
-static ENTERED: AtomicU32 = AtomicU32::new(0);
-pub fn entered() -> u32 {
-    ENTERED.load(Ordering::Acquire)
-}
 // Internal detour/state symbols are inspectable in the ELF, not loader callbacks.
 core::arch::global_asm!(
     ".hidden kqm_row\n.hidden kqm_original\n.hidden kqm_active\n.hidden kqm_parent_original\n.hidden kqm_parent"
@@ -45,7 +41,6 @@ pub unsafe extern "C" fn kqm_row(
     cursor: u32,
     quests: u32,
 ) {
-    ENTERED.fetch_or(2, Ordering::Release);
     let original = kqm_original.load(Ordering::Acquire);
     if original == 0 {
         return;
@@ -63,7 +58,6 @@ pub unsafe extern "C" fn kqm_row(
 /// its previous TLS frame on return, including nested menu updates on this thread.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kqm_parent(controller: u32, info: u32) {
-    ENTERED.fetch_or(1, Ordering::Release);
     let original = kqm_parent_original.load(Ordering::Acquire);
     if original == 0 {
         return;

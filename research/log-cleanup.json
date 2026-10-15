@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-15",
+  "reported_issue": "Successful plugin diagnostics incorrectly emitted at ERROR severity.",
+  "emulator": "Eden master-a594c8d60e-master",
+  "game": "MHGU Switch 1.4.0",
+  "log_sha256": "0fbd913789c40adaae954aed4f0ce67a9ba5fb3474b572b630352fe892f226a5",
+  "log_mtime_ns": 1792051040016494966,
+  "installed_version": "r16",
+  "installed_nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+  "false_error_diagnostics": 21,
+  "cause": "Successful hook installation, hook-entry flags and first-page/visible-row scalar snapshots used log::error! for early development diagnosis.",
+  "fix": "Delete diagnostic snapshots, hook-entry counters and per-row packet collection. One INFO startup; actual failures remain deduplicated and concise.",
+  "runtime_test": "r17 NOT RUN"
+}

@@ -1,0 +1,88 @@
+{
+  "game": "MHGU Switch 1.4.0",
+  "main_build": "FB08F1D20FD1204FE7070672777F869B",
+  "method": "Original native resource records and executable/category/message tracing; no screenshot colour sampling.",
+  "inputs": {
+    "base_common_arc": {
+      "source": "romfs/nativeNX/eng/arc/village/common_eng.arc",
+      "sha256": "c4a614f61a629e5d9591dd8772b335fc24615001c8d5ed52e964f91ea1cfea44"
+    },
+    "selected_HD_common_arc": {
+      "sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438"
+    },
+    "detail_gui": {
+      "resource": "eng\\GUI\\05_meeting_p\\count\\counter_down",
+      "sha256": "fdde4d1a34247b9150bd6bb7490d4e58f7a8492a616e8345b05cd8eb28d361cb",
+      "base_and_HD_identical": true
+    },
+    "selected_quest_message": {
+      "resource": "eng/quest/questData/questData_0000301_eng.gmd",
+      "sha256": "cc0ea1433edfe251ea6f59a7a49f64a7b3f7a8d71173125bfbdf913664d42148",
+      "title": "Harvest Tour: Deserted Island",
+      "objective_text_index": 4,
+      "subquest_text_index": 6,
+      "colour_markup": false
+    }
+  },
+  "key": {
+    "rgb": "006305",
+    "rgba": [
+      0,
+      99,
+      5,
+      255
+    ],
+    "label": "Gathering",
+    "native_setup": "main+0x6135fc",
+    "category_table": "main+0x1634b88",
+    "category_index": 3,
+    "category_record": [
+      1000008,
+      11,
+      40
+    ],
+    "animation_id": 32,
+    "animation_first_object": 5,
+    "binding_index": 11,
+    "object_index": 16,
+    "object_id": 12,
+    "object_class": "cGUIObjMessage",
+    "color_property_file_offset": "0x5508",
+    "rgba_float4_file_offset": "0x18c50",
+    "message_resource": "eng\\GUI\\06_msg\\QuestCounter_eng",
+    "message_key": "Q_bord_request_PICK",
+    "message_index": 40
+  },
+  "urgent": {
+    "rgb": "A30000",
+    "rgba": [
+      163,
+      0,
+      0,
+      255
+    ],
+    "label": "Main-objective and subquest text",
+    "native_setup": "main+0x613170",
+    "objective_message_getter": "main+0x3b58cc",
+    "objective_instance_index": 14,
+    "objective_instance_name": "Mes_content00",
+    "objective_color_property_file_offset": "0x10ad4",
+    "subquest_instance_index": 20,
+    "subquest_instance_name": "Mes_content01",
+    "subquest_color_property_file_offset": "0x1190c",
+    "rgba_float4_file_offset": "0x19370",
+    "color_control": 2,
+    "distinct_from_slaying_category_red": "CC0000"
+  },
+  "native_audit": {
+    "imported_image_base": "0x9c9000",
+    "functions": [
+      "0x613170",
+      "0x6135fc"
+    ],
+    "instruction_byte_mismatches": 0,
+    "database_changed": false
+  },
+  "runtime_test": "NOT RUN",
+  "changes": "Default constants only. Existing INI values are not migrated or overwritten."
+}

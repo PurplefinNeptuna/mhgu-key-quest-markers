@@ -3,15 +3,15 @@
   "mod": "key-quest-markers",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "Configurable native quest badge colours; new runtime candidate awaiting in-game validation.",
+  "reason": "Game UI Gathering green and objective red defaults, traced to original native resource and message bindings; awaiting gameplay validation. Includes removal of misleading ERROR-level success diagnostics.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r16",
+  "version": "r17",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r16-candidate.zip",
+  "archive": "key-quest-markers-r17-candidate.zip",
   "runtime_test": "NOT_RUN",
   "runtime_active": true,
   "gamebanana": {
@@ -61,8 +61,8 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. English HD Project required.",
   "limitations": [
-    "r16 settings, persistence and palette refresh require a new gameplay trial.",
-    "Eden, Ryujinx and native Switch r16 gameplay remain unconfirmed."
+    "r17 settings, persistence and palette refresh require a new gameplay trial.",
+    "Eden, Ryujinx and native Switch r17 gameplay remain unconfirmed."
   ],
   "readme": "mods/key-quest-markers/README.md",
   "notices": [
@@ -82,8 +82,8 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r16: host configuration/classification fixtures, compiled ARM settings/save-failure/native GUI fixtures, ABI/state/import/resource checks; details in EVIDENCE.json.",
-    "manual_summary": "r16 gameplay NOT RUN. Historical acceptance remains scoped to the original preserved binaries."
+    "static_summary": "r17: host configuration/classification fixtures, compiled ARM settings/save-failure/native GUI fixtures, ABI/state/import/resource checks; details in EVIDENCE.json.",
+    "manual_summary": "r17 gameplay NOT RUN. Historical acceptance remains scoped to the original preserved binaries."
   },
   "dependencies": [
     {
@@ -101,5 +101,5 @@
     "EVIDENCE.json": "mods/key-quest-markers/EVIDENCE.json"
   },
   "candidate_builder": "scripts/build.py",
-  "candidate": "build/key-quest-markers/candidates/r16/delivery"
+  "candidate": "build/key-quest-markers/candidates/r17/delivery"
 }

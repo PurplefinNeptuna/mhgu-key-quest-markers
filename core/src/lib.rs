@@ -345,7 +345,7 @@ mod tests {
     fn exact_opaque_colors() {
         assert_eq!(
             colors::Palette::DEFAULT.color(Badge::Key).to_le_bytes(),
-            [79, 138, 98, 255]
+            [0, 99, 5, 255]
         );
         assert_eq!(
             colors::Palette::DEFAULT
@@ -355,7 +355,7 @@ mod tests {
         );
         assert_eq!(
             colors::Palette::DEFAULT.color(Badge::Urgent).to_le_bytes(),
-            [214, 83, 69, 255]
+            [163, 0, 0, 255]
         );
     }
 }

@@ -11,7 +11,6 @@ mod settings;
 mod signatures;
 use core::sync::atomic::{AtomicU32, Ordering};
 static REPORTED: AtomicU32 = AtomicU32::new(0);
-static REPORTED_ENTRIES: AtomicU32 = AtomicU32::new(0);
 // forge-rs exposes only the six-byte version prefix. The matching native loader
 // also owns name[64] at offset 6 and hides empty names in its Loaded Plugins list.
 #[repr(C)]
@@ -54,37 +53,20 @@ fn start() {
     match hooks::install() {
         Ok(owner) => {
             core::mem::forget(owner);
-            // DEVELOPMENT diagnostics use ERROR so the user's existing error-only
-            // Forge filter records this result without changing their settings.
-            log::error!(concat!(
+            log::info!(concat!(
                 "Key Quest Markers ",
                 env!("KQM_VERSION"),
-                " diagnostic: hooks installed; waiting for quest counter"
+                " loaded"
             ));
         }
         Err(reason) => log::error!("Key Quest Markers: {reason}"),
     }
 }
-/// Hot hooks publish only bit flags. Deduplicated diagnostics run in Forge's
-/// regular lifecycle callback. Config I/O stays outside native game hooks.
+/// Native hooks publish failure bits only. Report each genuine failure once
+/// here; successful row updates never generate log lines or retain snapshots.
 #[unsafe(no_mangle)]
 pub extern "C" fn forge_onUpdate(delta: f32) {
     settings::update(delta);
-    let entered = hooks::entered();
-    let previous = REPORTED_ENTRIES.fetch_or(entered, Ordering::Relaxed);
-    for (bit, label) in [(1, "urgent parent"), (2, "quest row")] {
-        if entered & !previous & bit != 0 {
-            log::error!(
-                concat!(
-                    "Key Quest Markers ",
-                    env!("KQM_VERSION"),
-                    " diagnostic: entered {} hook"
-                ),
-                label
-            );
-        }
-    }
-    native::report_diagnostics();
     let errors = native::take_errors();
     let old = REPORTED.fetch_or(errors, Ordering::Relaxed);
     for (bit, message) in [
@@ -100,18 +82,11 @@ pub extern "C" fn forge_onUpdate(delta: f32) {
         (128, "request/title binding invalid; affected badge hidden"),
     ] {
         if errors & !old & bit != 0 {
-            log::error!("Key Quest Markers hidden: {message}");
-            if bit == 16 {
+            if bit == 16 || bit == 64 {
                 let stage = gui::take_failure();
-                log::error!(
-                    "Native quest badge creation stage {stage}: 1=MT allocation, 2=constructor result, 3=destructor, 4=object type/fields, 5=texture binding, 6=cache methods, 7=cache allocation, 8=cache memory, 9=object map allocation"
-                );
-            }
-            if bit == 64 {
-                let stage = gui::take_failure();
-                log::error!(
-                    "Native quest badge validation stage {stage}: 1=instance, 2=root/type, 3=animation, 4=cache, 5=parent/icon, 6=GUI owner, 7=HD atlas, 8=child chain"
-                );
+                log::error!("Key Quest Markers hidden: {message}; stage={stage}");
+            } else {
+                log::error!("Key Quest Markers hidden: {message}");
             }
         }
     }

@@ -1933,12 +1933,1117 @@
         "key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d"
       },
       "runtime_bytes_changed": false
+    },
+    "r16-before-game-ui-defaults": {
+      "version": "r16",
+      "date": "2026-10-15",
+      "scope": "DEVELOPMENT: configurable key/urgent/completed colours with explicit Save & apply; no installation or gameplay run.",
+      "forge": {
+        "version": "1.5.1",
+        "commit": "b23e114a23f41c9a8e2fd34b2f4df2a2102d0ee1",
+        "url": "https://github.com/Fexty12573/forge/releases/tag/v1.5.1",
+        "archive_sha256": "9c9a04d5d4d842e71b6ed05b85612cea7a1c7dfedb4a8d2e23eb9870211300dd",
+        "path": "work/shared/forge-1.5.1",
+        "nso_sha256": "469f425dd02a37b7a5d84ddde5f769922bc5e0d5fbc8adb0ca270e2c0773cd7d"
+      },
+      "runtime_test": "NOT RUN",
+      "manual": {
+        "Eden": "NOT RUN",
+        "Ryujinx": "NOT RUN",
+        "native Switch": "NOT RUN"
+      },
+      "reports": {
+        "resource": {
+          "status": "PASSED",
+          "source_sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
+          "source_gui_sha256": "95730f3adbaf2c017968cb0079a0caa666de541cecd66ff8ad223e1137b30c5a",
+          "row_animation": 20,
+          "existing_objects": 12,
+          "existing_drawables": 9,
+          "existing_sequences": 15,
+          "instances": 63,
+          "texture_id": 22,
+          "archive_replacements": 0,
+          "title_class": "cGUIObjMessage",
+          "title_type_crc": 800599726,
+          "title_bytes": 352,
+          "new_atlas": false,
+          "runtime_test": "NOT RUN"
+        },
+        "build": {
+          "version": "r16",
+          "status": "BUILT",
+          "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+          "forge_rs_revision": "d1865b68e9b194eb3eacc8bd71bbf601a5fac63e",
+          "runtime_active": true,
+          "source_sha256": {
+            "Cargo.toml": "a320bde7df53d7682ad98884dac4ea7bbfdb5421257673098ea59ce80cdc848d",
+            "Cargo.lock": "dcbbd074896b1c59bff34fa50ce2b6adad6e9a77f72c7cb7f1d55051e94962a5",
+            ".cargo/config.toml": "f6a8921cede665cd4d67f8da70ef86bcf78700371a84216bb6b0fc036c3e442b",
+            "armv7a-none-eabi.json": "d2be3e33facf2d2da75a5cb64029ee8e617f406e1dd9767e3063aee76292f7d5",
+            "build.rs": "295e23e5c1b5c6df7410f49017285dd7d612ea6ef0ea716c99ae622a35518484",
+            "scripts/gui_layout.py": "aeb3c044b33393adf50e475883275c7547460281c8419f34c93f03332ac742c6",
+            "src/config.rs": "048c07da98739923abfe7434082ba13df30683fea0432089ca9683d55977c6cc",
+            "src/gui.rs": "15a82264d797d696a229f70704e950e5e814f0d02dce0300191321886bf7bb59",
+            "src/hooks.rs": "b70c40abee00782b0c7bbc18a1ca8f924e736b06ef25995b6af0a21c43c67c9f",
+            "src/lib.rs": "50fa75e769de347171cf03e53dcfb98aa2231a5141c4da2d5189553f7db182c8",
+            "src/memory.rs": "c191f6a5be4a38a5bafe94626d0783976080fa1650d6fd96f2e83804915d154f",
+            "src/native.rs": "5ca12c77149088cf66dd27cde63c9058395bf80047ed84dd38a2344dd3b813db",
+            "src/offers.rs": "49e101abec86ca8de0ee8923ee2923d2b6f445ddea1530cc734ea6512ce2eabe",
+            "src/settings.rs": "8fefc338497af9bfb9d2c71de1643c0f10c202350ce5b44bd83b1803fd2dc0a3",
+            "src/signatures.rs": "64ef009630b99fc3b2dd2983e7718088c37af7645d06f6a8555f7ce9928d47fb",
+            "src/svc.S": "ad8af8eadfe25a122ee2f0e4e5b1722a947b7d0747f52f30ac9373190fc7ac2c",
+            "core/src/colors.rs": "82fd0d2f9e68471f234134843da5a5ea864e054f9ac20c1e45a689148a8a3303",
+            "core/src/lib.rs": "760523cebe61f051fd8e1b1708d16894b7f1fbd62862771c0a9250008b362773",
+            "link/exported.txt": "bc8ae60be80bf5472c8afd251d6a5b4eaf2aa51be703674f54f7569a17f7ef5c",
+            "link/switch32.ld": "dfa3102bf0a910ad89aaa60e286153a087f44d74cb19c5f694a9542866540aa5"
+          },
+          "runtime_test": "NOT RUN"
+        },
+        "arm": {
+          "status": "PASSED",
+          "typed_detour_cases": 16,
+          "forwarded_integer_arguments": 7,
+          "registered_name": "Key Quest Markers r16",
+          "metadata_bytes": 70,
+          "hook_abi_bytes": 24,
+          "minimum_forge_version": "1.5.1",
+          "GE": "unchanged before original in all 16 patterns; no restoration required at audited direct continuations",
+          "preserved": [
+            "r4-r11",
+            "d8-d15",
+            "sp",
+            "incoming stack words"
+          ],
+          "direct_caller_windows": {
+            "0x616c00": "00616c00 <.data+0x616c00>:\n  616c00:\te7961104 \tldr\tr1, [r6, r4, lsl #2]\n  616c04:\te3510000 \tcmp\tr1, #0\n  616c08:\t0a000011 \tbeq\t0x616c54\n  616c0c:\te59f0094 \tldr\tr0, [pc, #148]\t@ 0x616ca8\n  616c10:\te3a02000 \tmov\tr2, #0\n  616c14:\te3a03001 \tmov\tr3, #1\n  616c18:\te79f0000 \tldr\tr0, [pc, r0]\n  616c1c:\te5900000 \tldr\tr0, [r0]\n  616c20:\te58d2000 \tstr\tr2, [sp]\n  616c24:\te3a02000 \tmov\tr2, #0\n  616c28:\tebf693e3 \tbl\t0x3bbbbc\n  616c2c:\te3500001 \tcmp\tr0, #1",
+            "0x618bc0": "00618bc0 <.data+0x618bc0>:\n  618bc0:\te59f0088 \tldr\tr0, [pc, #136]\t@ 0x618c50\n  618bc4:\te59d1030 \tldr\tr1, [sp, #48]\t@ 0x30\n  618bc8:\te79f0000 \tldr\tr0, [pc, r0]\n  618bcc:\te3510012 \tcmp\tr1, #18\n  618bd0:\te3a01017 \tmov\tr1, #23\n  618bd4:\t13a02002 \tmovne\tr2, #2\n  618bd8:\t03a02001 \tmoveq\tr2, #1\n  618bdc:\te5900000 \tldr\tr0, [r0]\n  618be0:\tebfd0c25 \tbl\t0x55bc7c\n  618be4:\te1a03000 \tmov\tr3, r0",
+            "0x618cbc": "00618cbc <.data+0x618cbc>:\n  618cbc:\te59f0048 \tldr\tr0, [pc, #72]\t@ 0x618d0c\n  618cc0:\te3a01017 \tmov\tr1, #23\n  618cc4:\te3a02003 \tmov\tr2, #3\n  618cc8:\te79f0000 \tldr\tr0, [pc, r0]\n  618ccc:\te5900000 \tldr\tr0, [r0]\n  618cd0:\tebfd0be9 \tbl\t0x55bc7c\n  618cd4:\te1a03000 \tmov\tr3, r0",
+            "0x782bb4": "00782bb4 <.data+0x782bb4>:\n  782bb4:\tea000092 \tb\t0x782e04",
+            "0x782e04": "00782e04 <.data+0x782e04>:\n  782e04:\te1a00004 \tmov\tr0, r4\n  782e08:\te3a01000 \tmov\tr1, #0\n  782e0c:\tebfb674a \tbl\t0x65cb3c\n  782e10:\te5d4103c \tldrb\tr1, [r4, #60]\t@ 0x3c\n  782e14:\te351000f \tcmp\tr1, #15\n  782e18:\t8a000011 \tbhi\t0x782e64\n  782e1c:\te3a02001 \tmov\tr2, #1\n  782e20:\te30d3080 \tmovw\tr3, #53376\t@ 0xd080",
+            "0x6e3f68": "006e3f68 <.data+0x6e3f68>:\n  6e3f68:\te30e0c7d \tmovw\tr0, #60541\t@ 0xec7d\n  6e3f6c:\te34f0fff \tmovt\tr0, #65535\t@ 0xffff\n  6e3f70:\te7d50000 \tldrb\tr0, [r5, r0]\n  6e3f74:\te3500001 \tcmp\tr0, #1\n  6e3f78:\t0a0000d0 \tbeq\t0x6e42c0\n  6e3f7c:\te3500000 \tcmp\tr0, #0\n  6e3f80:\t1a00002a \tbne\t0x6e4030"
+          },
+          "live_flags": "Row and parent direct callers replace NZCVQ before conditional use or make an unconditional next call; no incoming GE consumer",
+          "runtime_test": "NOT RUN",
+          "resource_attachment": "NOT VERIFIED"
+        },
+        "native-adapter": {
+          "status": "PASSED",
+          "compiled_nro": true,
+          "cases": 41,
+          "results": [
+            {
+              "case": "settings pending save failure apply reset and native custom colours",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4283839506,
+                "1": 4286607456,
+                "2": 4281492648,
+                "3": 4286607456,
+                "4": 4286607456
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "all eight special urgents outside rank-up offer pool",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4282733526,
+                "1": 4282733526,
+                "2": 4282733526,
+                "3": 4282733526,
+                "4": 4282733526,
+                "5": 4282733526,
+                "6": 4282733526,
+                "7": 4282733526
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "only enabled special records become urgent",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4282733526,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4282733526,
+                "5": 4286611584,
+                "6": 4282733526,
+                "7": 4286611584
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "disabled special records remain grey despite scene availability",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584,
+                "5": 4286611584,
+                "6": 4286611584,
+                "7": 4286611584
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special pair completed by first-run quest",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4282733526,
+                "4": 4282733526,
+                "5": 4282733526,
+                "6": 4282733526,
+                "7": 4282733526
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special pair completed by repeat quest",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4282733526,
+                "4": 4282733526,
+                "5": 4282733526,
+                "6": 4282733526,
+                "7": 4282733526
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special pairs complete independently",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4282733526,
+                "4": 4286611584,
+                "5": 4286611584,
+                "6": 4282733526,
+                "7": 4282733526
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "unavailable special urgents are grey",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584,
+                "5": 4286611584,
+                "6": 4286611584,
+                "7": 4286611584
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special urgency does not bypass invalid offer context",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "Text subclass is rejected for the Message resource",
+              "visible": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 4,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "invalid request on a fitted row restores its title",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "request shares the key slot without overwriting bubble",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "selected row uses the same request-relative layout",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "missing request binding leaves other badges working",
+              "visible": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 4,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "missing title binding leaves other badges working",
+              "visible": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 4,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "scrolling and early-return restore title fitting",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "first malformed trampoline rolls back",
+              "startup_rollback": true,
+              "failed_hook": 1
+            },
+            {
+              "case": "second malformed trampoline rolls back both targets",
+              "startup_rollback": true,
+              "failed_hook": 2
+            },
+            {
+              "case": "all badge states and native draw traversal",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent inactive",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent unavailable",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent prerequisites incomplete",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "viewing does not complete key",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "key completion",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent completion",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "resource object mismatch",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "animation address is not the GUI owner",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "no offer context",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "ordinary rows",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "invalid offer count",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "different GUI",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "satisfied alternative",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "simultaneous urgents",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4282733526,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "secondary table",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "both tables",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "primary table empty",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "object allocation failure",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "cache allocation failure",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "map allocation failure",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "repeated row update reuses native children",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "partial allocation failure recovers without duplicate children",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4284648015,
+                "1": 4286611584,
+                "2": 4282733526,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            }
+          ],
+          "error_only_filter_diagnostic_snapshots": true,
+          "deduplicated_scalar_snapshots": true,
+          "title_resource_class_crc": 800599726,
+          "native_message_type_getter": true,
+          "resource_inline_constants": {
+            "10804260": 1,
+            "10791412": 0,
+            "10779284": 0,
+            "10804384": 0,
+            "10779140": 2,
+            "10791460": 1,
+            "10791516": 1,
+            "10791572": 3,
+            "10791624": 3,
+            "10791676": 3,
+            "10804308": 0,
+            "10811996": 0
+          },
+          "native_prepaint_and_texture_draw": true,
+          "native_quad_geometry": true,
+          "native_autoscale_dispatch_and_clamp": true,
+          "request_visibility_placement": true,
+          "title_restoration": true,
+          "actual_forge_lifecycle_and_installer": true,
+          "installed_entry_branches": true,
+          "native_resource_cleanup": true,
+          "expanded_object_map_and_native_instance_clear": true,
+          "support_signatures_precede_hook_signatures": true,
+          "native_animation_constructor": true,
+          "native_texture_constructor": true,
+          "native_style_texture_color_visibility_setters": true,
+          "null_dti_placement_slot": true,
+          "native_cache_allocator_and_free": true,
+          "distinct_gui_owner": true,
+          "native_draw_walker": true,
+          "native_root_destructors": true,
+          "archive_replacements": 0,
+          "settings_save_apply_existing_rows": true,
+          "settings_checked_arm32_sdk": true,
+          "settings_imGui_init_and_panel": true,
+          "settings_failures": [
+            "mount",
+            "create",
+            "open",
+            "resize",
+            "write",
+            "flush",
+            "size",
+            "read",
+            "verify",
+            "commit"
+          ],
+          "thread_context_restored": true,
+          "runtime_test": "NOT RUN",
+          "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8"
+        },
+        "verify": {
+          "status": "PASSED",
+          "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+          "elf_sha256": "f997195a97b86cf880050c9447f3361895db388468e93be947e7d4ccfde42055",
+          "exports": [
+            "fini",
+            "forge_onImGuiInit",
+            "forge_onImGuiRender",
+            "forge_onInit",
+            "forge_onLoad",
+            "forge_onUpdate",
+            "init"
+          ],
+          "strong_imports": [
+            "_ZN2nn2fs10CreateFileEPKcx",
+            "_ZN2nn2fs11GetFileSizeEPxNS0_10FileHandleE",
+            "_ZN2nn2fs11SetFileSizeENS0_10FileHandleEx",
+            "_ZN2nn2fs14CommitSaveDataEPKc",
+            "_ZN2nn2fs23ScopedAutoAbortDisablerC1Ev",
+            "_ZN2nn2fs25SetCurrentThreadFsContextEPKNS0_9FsContextE",
+            "_ZN2nn2fs8OpenFileEPNS0_10FileHandleEPKci",
+            "_ZN2nn2fs8ReadFileENS0_10FileHandleExPvj",
+            "_ZN2nn2fs9CloseFileENS0_10FileHandleE",
+            "_ZN2nn2fs9FlushFileENS0_10FileHandleE",
+            "_ZN2nn2fs9WriteFileENS0_10FileHandleExPKvjRKNS0_11WriteOptionE",
+            "__aeabi_unwind_cpp_pr0",
+            "forge_fs_mountSaveData",
+            "forge_fs_unmountSaveData",
+            "forge_hook_create",
+            "forge_log",
+            "forge_log_getLevel",
+            "forge_mem_getMainTextAddr",
+            "forge_nnosSignalLightEvent",
+            "forge_nnosWaitLightEvent",
+            "forge_patch_create",
+            "forge_patch_destroy",
+            "forge_patch_disable",
+            "forge_patch_enable",
+            "forge_singleton_getInstanceByName",
+            "free",
+            "igButton",
+            "igColorEdit3",
+            "igSetAllocatorFunctions",
+            "igSetCurrentContext",
+            "igTextUnformatted",
+            "igTreeNode_Str",
+            "igTreePop",
+            "malloc",
+            "nnosAllocateTlsSlot",
+            "nnosGetTlsValue",
+            "nnosInitializeMutex",
+            "nnosLockMutex",
+            "nnosSetTlsValue",
+            "nnosUnlockMutex",
+            "realloc"
+          ],
+          "signature_windows": [
+            "0xa53324",
+            "0xa53348",
+            "0xa53528",
+            "0xa5350c",
+            "0xa53aa8",
+            "0xa56ab8",
+            "0x5456e4",
+            "0xa38ffc",
+            "0xa47d2c",
+            "0xa38b58",
+            "0xa4f60c",
+            "0xa4d0d8",
+            "0x616cb0",
+            "0x54d030",
+            "0x523da4",
+            "0x3b1a18",
+            "0x3b1d70",
+            "0x50cbd0",
+            "0x3b57d0",
+            "0x7aef68",
+            "0x3b2174",
+            "0x546f28",
+            "0x54af8c",
+            "0x7aa47c",
+            "0x540c08",
+            "0x540c38",
+            "0xa4faf0",
+            "0xa4fb58",
+            "0xa4e0b8",
+            "0xa47950",
+            "0xa4844c",
+            "0xa48668",
+            "0xa4f6a4",
+            "0xa4f77c",
+            "0xa494a0",
+            "0xa4964c",
+            "0xa4dc24",
+            "0xa4a9f4",
+            "0xa47a94",
+            "0xa4dca0",
+            "0xa47a04",
+            "0xa4aa24",
+            "0xa4aa5c",
+            "0xa4aa94",
+            "0xa4aac8",
+            "0xa4aafc",
+            "0xa4dc54",
+            "0xa4fa5c"
+          ],
+          "hook_abi_bytes": 24,
+          "ordinary_hook_slots": 2,
+          "texture_constructor": "0xa4f60c",
+          "texture_dti_placement_virtual": false,
+          "forge_trampoline_bytes": 32,
+          "forge_pool_chunk_bytes": 16384,
+          "compiled_status_writes": [],
+          "runtime_active": true,
+          "gui_attachment": "Game-owned native children and expanded draw caches",
+          "progression_semantics": "Native stages, alternatives and offered urgent IDs",
+          "runtime_test": "NOT RUN"
+        },
+        "tests": {
+          "status": "PASSED",
+          "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+          "archive_replacements": 0,
+          "host": true,
+          "resource": true,
+          "arm": true,
+          "runtime_test": "NOT RUN"
+        }
+      },
+      "host_tests": 15,
+      "hook_host_tests": 1,
+      "standalone": {
+        "status": "PASSED",
+        "directory": "work/key-quest-markers/candidates/r16/standalone-source",
+        "build": "PASSED",
+        "tests": "15 core + 1 rollback, 16 ARM ABI/GE cases, 41 native adapter cases",
+        "package": "PASSED",
+        "full_distribution_check": "PASS: 1 mod record",
+        "nro_sha256": "22552451fee3284314c7fb4ddeef37aa32f0e04b2574be31fe711cdf74fb2163",
+        "note": "Separate build paths change embedded source-location bytes; independently built/exported runtime passed its own complete verification."
+      },
+      "workspace_distribution_check": "PASS: 11 mod records"
     }
   },
   "current": {
-    "version": "r16",
+    "version": "r17",
     "date": "2026-10-15",
-    "scope": "DEVELOPMENT: configurable key/urgent/completed colours with explicit Save & apply; no installation or gameplay run.",
+    "scope": "Game UI green/red defaults and removal of false ERROR-level success diagnostics; DEVELOPMENT, no installation or r17 gameplay run.",
     "forge": {
       "version": "1.5.1",
       "commit": "b23e114a23f41c9a8e2fd34b2f4df2a2102d0ee1",
@@ -1952,6 +3057,28 @@
       "Eden": "NOT RUN",
       "Ryujinx": "NOT RUN",
       "native Switch": "NOT RUN"
+    },
+    "r16_preserved": {
+      "files": {
+        "build.json": "9e0ddb77fd37cc6991bc3feff018f87b3762c0b2b97a42baaa346407a4e48176",
+        "native-adapter.json": "78d431ce25cc37fe3d456195792f3c6b0de9f296017b73ee068445064b8619dd",
+        "arm.json": "8e64c1204b99764840ea6721109b39cd4372f6fd95317b2b952203140e61dc2f",
+        "verify.json": "52604251967d05ccd548b3cd49520a68d1b0438a136c03463afa423724c10955",
+        "tests.json": "f4cd96212ea10fd6881c675b0d9cd2492ec7e1930b8c696515de9ae4a97b2921",
+        "resource.json": "eb4e1e353df6aaf1e1892025f0ce7aeea9e40855b9f050bc88ef59888e10a51f",
+        "delivery/README.html": "178182fb1c763fc3ab11b7db58175a5677ca7f9cb00f7c923bfe494f50aa901e",
+        "delivery/GAMEBANANA_README.html": "91e2b76b5934348869cbd62c3f98a85f4ab938822c7feb3fd631d1e91765ddde",
+        "delivery/SHA256SUMS": "57f582516284d677f78800c73b73a17850a5db9bb8e109a9f7bac5fa6a9fdcfb",
+        "delivery/manifest.json": "6366b577bf5e6a7ade0f0d6026c4c439632b72723dc7885d8f56aae2a96b810e",
+        "delivery/NOTICES.html": "b42fbbc34039f50f9cdd127dd05a80d7021a2ee8184b76e2197a53499bc7f83d",
+        "delivery/NOTICES.txt": "aff882e4b549c886f82de430a0a6a77096cc0438afe5d8093b61485520ccef22",
+        "delivery/README.md": "083373340d56137977f75c0691eac00f1b4fd39386d7c4c60029c1bf0fae33ec",
+        "delivery/key-quest-markers-r16-candidate.zip": "c4fd72b9c951b2c8ddc0d2a97440514d57c2ffcbb69472a9a0fcfce2b0d3fa1b",
+        "delivery/VALIDATION.json": "6c400b588fae10d462dd2ab11d05a0b1e59da5f16194fd9e1621ccc2993a7cb2",
+        "delivery/key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+        "package/romfs/nativeNX/plugins/key_quest_markers.nro": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8"
+      },
+      "bytes_changed": false
     },
     "reports": {
       "resource": {
@@ -1969,12 +3096,50 @@
         "title_type_crc": 800599726,
         "title_bytes": 352,
         "new_atlas": false,
-        "runtime_test": "NOT RUN"
+        "runtime_test": "NOT RUN",
+        "theme_colours": {
+          "status": "PASSED",
+          "source_gui_sha256": "fdde4d1a34247b9150bd6bb7490d4e58f7a8492a616e8345b05cd8eb28d361cb",
+          "key_rgb": "006305",
+          "urgent_rgb": "A30000",
+          "completed_rgb": "808080",
+          "gathering": {
+            "category_table": "0x1634b88",
+            "category": 3,
+            "animation": 32,
+            "sequence": 1000008,
+            "binding": 11,
+            "object_index": 16,
+            "object_id": 12,
+            "message_index": 40,
+            "rgba": [
+              0.0,
+              99.0,
+              5.0,
+              255.0
+            ],
+            "value_file_offset": "0x18c50"
+          },
+          "objective": {
+            "instance": 14,
+            "name": "Mes_content00",
+            "rgba": [
+              163.0,
+              0.0,
+              0.0,
+              255.0
+            ],
+            "subquest_instance": 20,
+            "value_file_offset": "0x19370"
+          },
+          "sampled_from_image": false,
+          "runtime_test": "NOT RUN"
+        }
       },
       "build": {
-        "version": "r16",
+        "version": "r17",
         "status": "BUILT",
-        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+        "nro_sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
         "forge_rs_revision": "d1865b68e9b194eb3eacc8bd71bbf601a5fac63e",
         "runtime_active": true,
         "source_sha256": {
@@ -1983,19 +3148,19 @@
           ".cargo/config.toml": "f6a8921cede665cd4d67f8da70ef86bcf78700371a84216bb6b0fc036c3e442b",
           "armv7a-none-eabi.json": "d2be3e33facf2d2da75a5cb64029ee8e617f406e1dd9767e3063aee76292f7d5",
           "build.rs": "295e23e5c1b5c6df7410f49017285dd7d612ea6ef0ea716c99ae622a35518484",
-          "scripts/gui_layout.py": "aeb3c044b33393adf50e475883275c7547460281c8419f34c93f03332ac742c6",
+          "scripts/gui_layout.py": "b0a1011a3a234df6b68c6c52a88718100bf130adaceed2db5172536733953c0e",
           "src/config.rs": "048c07da98739923abfe7434082ba13df30683fea0432089ca9683d55977c6cc",
           "src/gui.rs": "15a82264d797d696a229f70704e950e5e814f0d02dce0300191321886bf7bb59",
-          "src/hooks.rs": "b70c40abee00782b0c7bbc18a1ca8f924e736b06ef25995b6af0a21c43c67c9f",
-          "src/lib.rs": "50fa75e769de347171cf03e53dcfb98aa2231a5141c4da2d5189553f7db182c8",
+          "src/hooks.rs": "5fa15cb619b15430fb221c90d013ab737ccf4d895695c2d941a8b20a3b80ed5d",
+          "src/lib.rs": "c3c1a86d4ea936e82dc0c24dd311fc4cabf3343c02c506222c2bf6afe47e395e",
           "src/memory.rs": "c191f6a5be4a38a5bafe94626d0783976080fa1650d6fd96f2e83804915d154f",
-          "src/native.rs": "5ca12c77149088cf66dd27cde63c9058395bf80047ed84dd38a2344dd3b813db",
+          "src/native.rs": "758d64a9eb9af57708608519a3c9c6ccd2adcb33ce5548b1ac1c981c2f8097ce",
           "src/offers.rs": "49e101abec86ca8de0ee8923ee2923d2b6f445ddea1530cc734ea6512ce2eabe",
           "src/settings.rs": "8fefc338497af9bfb9d2c71de1643c0f10c202350ce5b44bd83b1803fd2dc0a3",
           "src/signatures.rs": "64ef009630b99fc3b2dd2983e7718088c37af7645d06f6a8555f7ce9928d47fb",
           "src/svc.S": "ad8af8eadfe25a122ee2f0e4e5b1722a947b7d0747f52f30ac9373190fc7ac2c",
-          "core/src/colors.rs": "82fd0d2f9e68471f234134843da5a5ea864e054f9ac20c1e45a689148a8a3303",
-          "core/src/lib.rs": "760523cebe61f051fd8e1b1708d16894b7f1fbd62862771c0a9250008b362773",
+          "core/src/colors.rs": "938a791e575fcb56707ec5e77e1b9e2a24fac69b04458ff32ec539c31db5f900",
+          "core/src/lib.rs": "6b0c6e86667aff64594b5698883f2e488406f5e4fe18ee89fbfb6bb56c78dcd9",
           "link/exported.txt": "bc8ae60be80bf5472c8afd251d6a5b4eaf2aa51be703674f54f7569a17f7ef5c",
           "link/switch32.ld": "dfa3102bf0a910ad89aaa60e286153a087f44d74cb19c5f694a9542866540aa5"
         },
@@ -2005,7 +3170,7 @@
         "status": "PASSED",
         "typed_detour_cases": 16,
         "forwarded_integer_arguments": 7,
-        "registered_name": "Key Quest Markers r16",
+        "registered_name": "Key Quest Markers r17",
         "metadata_bytes": 70,
         "hook_abi_bytes": 24,
         "minimum_forge_version": "1.5.1",
@@ -2031,8 +3196,31 @@
       "native-adapter": {
         "status": "PASSED",
         "compiled_nro": true,
-        "cases": 41,
+        "cases": 42,
         "results": [
+          {
+            "case": "one INFO startup and no logs for successful native rows",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4278543104,
+              "1": 4286611584,
+              "2": 4278190243,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
           {
             "case": "settings pending save failure apply reset and native custom colours",
             "visible": {
@@ -2069,14 +3257,14 @@
               "7": 1
             },
             "colors": {
-              "0": 4282733526,
-              "1": 4282733526,
-              "2": 4282733526,
-              "3": 4282733526,
-              "4": 4282733526,
-              "5": 4282733526,
-              "6": 4282733526,
-              "7": 4282733526
+              "0": 4278190243,
+              "1": 4278190243,
+              "2": 4278190243,
+              "3": 4278190243,
+              "4": 4278190243,
+              "5": 4278190243,
+              "6": 4278190243,
+              "7": 4278190243
             },
             "native_draws": 8,
             "ownership_cleanup": true,
@@ -2095,13 +3283,13 @@
               "7": 1
             },
             "colors": {
-              "0": 4282733526,
+              "0": 4278190243,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
-              "4": 4282733526,
+              "4": 4278190243,
               "5": 4286611584,
-              "6": 4282733526,
+              "6": 4278190243,
               "7": 4286611584
             },
             "native_draws": 8,
@@ -2149,12 +3337,12 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4282733526,
-              "3": 4282733526,
-              "4": 4282733526,
-              "5": 4282733526,
-              "6": 4282733526,
-              "7": 4282733526
+              "2": 4278190243,
+              "3": 4278190243,
+              "4": 4278190243,
+              "5": 4278190243,
+              "6": 4278190243,
+              "7": 4278190243
             },
             "native_draws": 8,
             "ownership_cleanup": true,
@@ -2175,12 +3363,12 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4282733526,
-              "3": 4282733526,
-              "4": 4282733526,
-              "5": 4282733526,
-              "6": 4282733526,
-              "7": 4282733526
+              "2": 4278190243,
+              "3": 4278190243,
+              "4": 4278190243,
+              "5": 4278190243,
+              "6": 4278190243,
+              "7": 4278190243
             },
             "native_draws": 8,
             "ownership_cleanup": true,
@@ -2201,12 +3389,12 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4282733526,
-              "3": 4282733526,
+              "2": 4278190243,
+              "3": 4278190243,
               "4": 4286611584,
               "5": 4286611584,
-              "6": 4282733526,
-              "7": 4282733526
+              "6": 4278190243,
+              "7": 4278190243
             },
             "native_draws": 8,
             "ownership_cleanup": true,
@@ -2268,7 +3456,7 @@
             },
             "colors": {
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2289,9 +3477,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2312,9 +3500,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2335,9 +3523,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2358,7 +3546,7 @@
             },
             "colors": {
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2379,7 +3567,7 @@
             },
             "colors": {
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2400,9 +3588,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2433,9 +3621,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2456,7 +3644,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -2479,7 +3667,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -2502,7 +3690,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -2525,9 +3713,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2550,7 +3738,7 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2571,7 +3759,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -2671,7 +3859,7 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2692,10 +3880,10 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
-              "3": 4282733526,
+              "2": 4278190243,
+              "3": 4278190243,
               "4": 4286611584
             },
             "native_draws": 5,
@@ -2715,9 +3903,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2738,9 +3926,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2761,9 +3949,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2808,9 +3996,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2831,9 +4019,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4284648015,
+              "0": 4278543104,
               "1": 4286611584,
-              "2": 4282733526,
+              "2": 4278190243,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -2842,8 +4030,9 @@
             "saved_records_unchanged": true
           }
         ],
-        "error_only_filter_diagnostic_snapshots": true,
-        "deduplicated_scalar_snapshots": true,
+        "successful_rows_quiet_at_INFO_and_ERROR": true,
+        "no_development_snapshots": true,
+        "genuine_failures_deduplicated": true,
         "title_resource_class_crc": 800599726,
         "native_message_type_getter": true,
         "resource_inline_constants": {
@@ -2896,12 +4085,12 @@
         ],
         "thread_context_restored": true,
         "runtime_test": "NOT RUN",
-        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8"
+        "nro_sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6"
       },
       "verify": {
         "status": "PASSED",
-        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
-        "elf_sha256": "f997195a97b86cf880050c9447f3361895db388468e93be947e7d4ccfde42055",
+        "nro_sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
+        "elf_sha256": "d537af87a4ebe2ac577c4299a8fc7b32ed91823c162b83361d4266c14894d6dd",
         "exports": [
           "fini",
           "forge_onImGuiInit",
@@ -2951,8 +4140,7 @@
           "nnosInitializeMutex",
           "nnosLockMutex",
           "nnosSetTlsValue",
-          "nnosUnlockMutex",
-          "realloc"
+          "nnosUnlockMutex"
         ],
         "signature_windows": [
           "0xa53324",
@@ -3018,7 +4206,7 @@
       },
       "tests": {
         "status": "PASSED",
-        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+        "nro_sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
         "archive_replacements": 0,
         "host": true,
         "resource": true,
@@ -3028,15 +4216,119 @@
     },
     "host_tests": 15,
     "hook_host_tests": 1,
+    "theme_provenance": {
+      "game": "MHGU Switch 1.4.0",
+      "main_build": "FB08F1D20FD1204FE7070672777F869B",
+      "method": "Original native resource records and executable/category/message tracing; no screenshot colour sampling.",
+      "inputs": {
+        "base_common_arc": {
+          "source": "romfs/nativeNX/eng/arc/village/common_eng.arc",
+          "sha256": "c4a614f61a629e5d9591dd8772b335fc24615001c8d5ed52e964f91ea1cfea44"
+        },
+        "selected_HD_common_arc": {
+          "sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438"
+        },
+        "detail_gui": {
+          "resource": "eng\\GUI\\05_meeting_p\\count\\counter_down",
+          "sha256": "fdde4d1a34247b9150bd6bb7490d4e58f7a8492a616e8345b05cd8eb28d361cb",
+          "base_and_HD_identical": true
+        },
+        "selected_quest_message": {
+          "resource": "eng/quest/questData/questData_0000301_eng.gmd",
+          "sha256": "cc0ea1433edfe251ea6f59a7a49f64a7b3f7a8d71173125bfbdf913664d42148",
+          "title": "Harvest Tour: Deserted Island",
+          "objective_text_index": 4,
+          "subquest_text_index": 6,
+          "colour_markup": false
+        }
+      },
+      "key": {
+        "rgb": "006305",
+        "rgba": [
+          0,
+          99,
+          5,
+          255
+        ],
+        "label": "Gathering",
+        "native_setup": "main+0x6135fc",
+        "category_table": "main+0x1634b88",
+        "category_index": 3,
+        "category_record": [
+          1000008,
+          11,
+          40
+        ],
+        "animation_id": 32,
+        "animation_first_object": 5,
+        "binding_index": 11,
+        "object_index": 16,
+        "object_id": 12,
+        "object_class": "cGUIObjMessage",
+        "color_property_file_offset": "0x5508",
+        "rgba_float4_file_offset": "0x18c50",
+        "message_resource": "eng\\GUI\\06_msg\\QuestCounter_eng",
+        "message_key": "Q_bord_request_PICK",
+        "message_index": 40
+      },
+      "urgent": {
+        "rgb": "A30000",
+        "rgba": [
+          163,
+          0,
+          0,
+          255
+        ],
+        "label": "Main-objective and subquest text",
+        "native_setup": "main+0x613170",
+        "objective_message_getter": "main+0x3b58cc",
+        "objective_instance_index": 14,
+        "objective_instance_name": "Mes_content00",
+        "objective_color_property_file_offset": "0x10ad4",
+        "subquest_instance_index": 20,
+        "subquest_instance_name": "Mes_content01",
+        "subquest_color_property_file_offset": "0x1190c",
+        "rgba_float4_file_offset": "0x19370",
+        "color_control": 2,
+        "distinct_from_slaying_category_red": "CC0000"
+      },
+      "native_audit": {
+        "imported_image_base": "0x9c9000",
+        "functions": [
+          "0x613170",
+          "0x6135fc"
+        ],
+        "instruction_byte_mismatches": 0,
+        "database_changed": false
+      },
+      "runtime_test": "NOT RUN",
+      "changes": "Default constants only. Existing INI values are not migrated or overwritten."
+    },
+    "log_cleanup": {
+      "date": "2026-10-15",
+      "reported_issue": "Successful plugin diagnostics incorrectly emitted at ERROR severity.",
+      "emulator": "Eden master-a594c8d60e-master",
+      "game": "MHGU Switch 1.4.0",
+      "log_sha256": "0fbd913789c40adaae954aed4f0ce67a9ba5fb3474b572b630352fe892f226a5",
+      "log_mtime_ns": 1792051040016494966,
+      "installed_version": "r16",
+      "installed_nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+      "false_error_diagnostics": 21,
+      "cause": "Successful hook installation, hook-entry flags and first-page/visible-row scalar snapshots used log::error! for early development diagnosis.",
+      "fix": "Delete diagnostic snapshots, hook-entry counters and per-row packet collection. One INFO startup; actual failures remain deduplicated and concise.",
+      "runtime_test": "r17 NOT RUN"
+    },
     "standalone": {
       "status": "PASSED",
-      "directory": "work/key-quest-markers/candidates/r16/standalone-source",
+      "directory": "work/key-quest-markers/candidates/r17/standalone-final",
       "build": "PASSED",
-      "tests": "15 core + 1 rollback, 16 ARM ABI/GE cases, 41 native adapter cases",
+      "host_tests": 15,
+      "rollback_tests": 1,
+      "arm_abi_ge_cases": 16,
+      "native_adapter_cases": 42,
       "package": "PASSED",
       "full_distribution_check": "PASS: 1 mod record",
-      "nro_sha256": "22552451fee3284314c7fb4ddeef37aa32f0e04b2574be31fe711cdf74fb2163",
-      "note": "Separate build paths change embedded source-location bytes; independently built/exported runtime passed its own complete verification."
+      "nro_sha256": "adffee198312b4678422fd08bc03a43dc9dcf17d1bf6c1775ca25ffa351727cb"
     },
     "workspace_distribution_check": "PASS: 11 mod records"
   }

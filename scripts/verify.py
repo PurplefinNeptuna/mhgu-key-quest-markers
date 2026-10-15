@@ -46,6 +46,8 @@ def verify():
     if not {'igTreeNode_Str','igTreePop','igColorEdit3','forge_fs_mountSaveData','forge_fs_unmountSaveData'} <= imports:
         raise ValueError('Settings/config integration imports missing')
     if 'forge_onImGuiFreeRender' in exports: raise ValueError('Native badges must not use free rendering')
+    if any(marker in data for marker in [b'diagnostic:', b'first classified page', b'gui_flags=', b'waiting for quest counter']):
+        raise ValueError('Development log dumps remain in production runtime')
     expected={'romfs/nativeNX/plugins/key_quest_markers.nro'}
     source=BUILD_ROOT/'package';actual={str(p.relative_to(source)) for p in source.rglob('*') if p.is_file()}
     if actual!=expected:raise ValueError('Unexpected runtime payload files')

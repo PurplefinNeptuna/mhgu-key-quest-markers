@@ -45,14 +45,14 @@ assert TITLE_CRC==0x2fb82eae # Derive the fixture's title class from the real re
 UNUSED_TEXT_DTI=DATA+0x25800
 UV=(342.,0.,372.,30.) if SMALL_MARK=='1' else (136.,344.,198.,406.)
 CASES=0
-KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=0xff628a4f,0xff4553d6,0xff808080
+KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=0xff056300,0xff0000a3,0xff808080
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
               simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False,
-              custom_palette=False,requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
+              custom_palette=False,log_level=3,requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
     global CASES
-    KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=(0xff563412,0xff3264a8,0xff807060) if custom_palette else (0xff628a4f,0xff4553d6,0xff808080)
+    KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=(0xff563412,0xff3264a8,0xff807060) if custom_palette else (0xff056300,0xff0000a3,0xff808080)
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
     u.mem_map(ENGINE,4096);u.mem_map(0x41000000,0x20000);u.mem_map(GAME,0x2000000)
@@ -70,6 +70,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     imports={};next_import=ENGINE+0x300
     for name,e,*_ in nro.symbols:
         if name and not e[5]:imports[name.decode()]=next_import;next_import+=4
+    import_by_address={address:name for name,address in imports.items()}
     ranges=[]
     if 17 in nro.tags:ranges.append((nro.tags[17],nro.tags[18]))
     if 23 in nro.tags:ranges.append((nro.tags[23],nro.tags[2]))
@@ -187,7 +188,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     u.reg_write(arm.UC_ARM_REG_C1_C0_2,0xf00000);u.reg_write(arm.UC_ARM_REG_FPEXC,0x40000000)
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
     constructing=None;factory_index=0
-    plugin_heap=DATA+0x120000;hook_count=0;startup_logs=[]
+    plugin_heap=DATA+0x120000;hook_count=0;startup_logs=[];log_levels=[]
     picker_values=None; save_clicked=False;reset_clicked=False; panel_open=True;tree_balance=0
     disk=None;handles={};next_handle=1;mounted=0;contexts=0;fs_ready=False;fs_fail='';commits=0
     allocations={};freed=[];created=[];drawn=[];object_attempts=0;mapping_allocations=[];styles={};quads=[];fitting=False;fit_factors=[]
@@ -229,7 +230,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==MODULE+names['mwc_svc_flush']:ret(cpu);return
         # Run actual compiled settings/persistence code against narrow SDK and
         # ImGui doubles. AAPCS i64 offsets occupy r2/r3; buffer/count use stack.
-        imported=next((name for name,at in imports.items() if at==address),None)
+        imported=import_by_address.get(address)
         if imported in ['nnosInitializeMutex','nnosLockMutex','nnosUnlockMutex','forge_nnosSignalLightEvent']:
             ret(cpu);return
         if imported=='forge_fs_mountSaveData':
@@ -282,8 +283,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             label=text(cpu,r[0]);ret(cpu,int(save_clicked if label.startswith('Save & apply') else reset_clicked));return
         if imported=='igTextUnformatted':ret(cpu);return
         if address==imports.get('nnosAllocateTlsSlot'):word(r[0],1);ret(cpu);return
-        if address==imports.get('forge_log_getLevel'):ret(cpu,3);return # User's unchanged ERROR-only filter.
-        if address==imports.get('forge_log'):startup_logs.append(text(cpu,r[2]));ret(cpu);return
+        if address==imports.get('forge_log_getLevel'):ret(cpu,log_level);return # Exercise both normal INFO and ERROR-only filters.
+        if address==imports.get('forge_log'):startup_logs.append(text(cpu,r[2]));log_levels.append(r[0]);ret(cpu);return
         if address==imports.get('malloc'):ret(cpu,plugin_allocate(r[0]));return
         if address==imports.get('free'):ret(cpu);return
         if address==imports.get('forge_patch_create'):
@@ -426,7 +427,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     assert bytes(u.mem_read(MODULE+names['kqm_active'],1))==b'\x01',startup_logs
     assert hook_count==2 and read(MODULE+names['kqm_original'])==ENGINE+0x800
     assert read(MODULE+names['kqm_parent_original'])==ENGINE+0x810
-    assert any('installed' in message for message in startup_logs)
+    assert startup_logs==(['Key Quest Markers '+__import__('paths').VERSION+' loaded'] if log_level<=1 else [])
     if custom_palette:
         fs_ready=True
         call(MODULE+names['forge_onImGuiInit'],DATA+0x180000,ENGINE+0x100,ENGINE+0x104)
@@ -487,7 +488,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         call(MODULE+names['forge_onImGuiRender'])
         assert colors[0]==0xff563412 # Saving does not write game GUI from ImGui.
         call(GAME+0x54d030,CONTROLLER,INFO)
-        assert colors[0]==0xff628a4f and colors[2]==0xff4553d6 and colors[1]==0xff808080
+        assert colors[0]==0xff056300 and colors[2]==0xff0000a3 and colors[1]==0xff808080
         assert tuple(created)==before_objects and allocations==before_allocations
         picker_values=(0x123456,0xA86432,0x607080)
         call(MODULE+names['forge_onImGuiRender'])
@@ -496,14 +497,9 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         picker_values=None;save_clicked=False;panel_open=False
         assert not handles and mounted==contexts==tree_balance==0
     call(MODULE+names['forge_onUpdate'])
-    assert any('entered urgent parent hook' in s for s in startup_logs)
-    assert any('entered quest row hook' in s for s in startup_logs)
-    if not (invalid_object or invalid_owner or invalid_info or bad_count or gui_identity!=5 or fail_object or fail_cache or fail_mapping or fail_at):
-        assert any('first classified page, Village=2, Hub/G=1' in s for s in startup_logs),startup_logs
-        if not ordinary:
-            assert any(('row=0 quest=308 group=47 quest_flags=0x300 badge=' if special else 'row=0 quest=207 group=2 quest_flags=0x0 badge=') in s for s in startup_logs),startup_logs
-            assert any('first visible badges;' in s for s in startup_logs),startup_logs
-        else:assert not any('first visible badges;' in s for s in startup_logs)
+    assert not any('diagnostic:' in message or 'row=' in message or 'gui_flags=' in message for message in startup_logs)
+    if log_level==1:
+        assert log_levels==[1] and len(startup_logs)==1,('successful drawing logged warnings/errors',startup_logs,log_levels)
     log_count=len(startup_logs)
     call(MODULE+names['forge_onUpdate'])
     assert len(startup_logs)==log_count,('diagnostics repeat every frame',startup_logs)
@@ -648,7 +644,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(instance+0xd8)==read(instance+0xdc)==0
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
-results=[test_case('settings pending save failure apply reset and native custom colours',custom_palette=True,repeat=True,requests=(0,2)),test_case('all eight special urgents outside rank-up offer pool',special=True,offered=(),prerequisites=False,requests=(0,2,4,6),repeat=True),
+results=[test_case('one INFO startup and no logs for successful native rows',log_level=1,repeat=True),test_case('settings pending save failure apply reset and native custom colours',custom_palette=True,repeat=True,requests=(0,2)),test_case('all eight special urgents outside rank-up offer pool',special=True,offered=(),prerequisites=False,requests=(0,2,4,6),repeat=True),
          test_case('only enabled special records become urgent',special=True,offered=(),special_enabled=(0,2,4,6),prerequisites=False),
          test_case('disabled special records remain grey despite scene availability',special=True,offered=(),special_enabled=(),prerequisites=False),
          test_case('special pair completed by first-run quest',special=True,offered=(),completed=(308,),prerequisites=False),
@@ -676,7 +672,7 @@ results=[test_case('settings pending save failure apply reset and native custom 
          test_case('repeated row update reuses native children',repeat=True),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
-          'error_only_filter_diagnostic_snapshots':True,'deduplicated_scalar_snapshots':True,
+          'successful_rows_quiet_at_INFO_and_ERROR':True,'no_development_snapshots':True,'genuine_failures_deduplicated':True,
           'title_resource_class_crc':TITLE_CRC,'native_message_type_getter':True,
           'resource_inline_constants':SOURCE_STYLE,'native_prepaint_and_texture_draw':True,'native_quad_geometry':True,'native_autoscale_dispatch_and_clamp':True,'request_visibility_placement':True,'title_restoration':True,
           'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
