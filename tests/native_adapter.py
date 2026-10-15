@@ -426,7 +426,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             title=read(table+16);request=read(table+12)
             request_bytes.append(bytes(u.mem_read(request,304)))
             fitted=bool(states.get(i))
-            width=(271. if i in requests else 303.) if fitted else 355.
+            width=(263. if i in requests else 299.) if fitted else 355.
             assert struct.unpack('<2f',u.mem_read(title+0xc8,8))==(width,38.)
             assert bool(read(title+0xf0)&1)==fitted
             assert read(title+0xf8)&0xc0000==0
@@ -458,8 +458,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             if i in colors:assert struct.unpack('<4I',u.mem_read(p+0xa4,16))==(colors[i],)*4
             assert read(p+0x104)==ATLAS
             assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==(136.,344.,198.,406.)
-            assert struct.unpack('<2f',u.mem_read(p+0x80,8))==((337. if i in requests and states.get(i) else 369.),8.)
-            assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(24.,24.)
+            assert struct.unpack('<2f',u.mem_read(p+0x80,8))==((329. if i in requests and states.get(i) else 365.),3.)
+            assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(32.,32.)
         if late_invalid:
             table=read(DATA+0x28000+0xd8);request=read(table+12);title=read(table+16)
             word(request+0x50,99)
@@ -480,7 +480,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             requests=tuple(range(8))
             call(GAME+0x54d030,CONTROLLER,INFO)
             for p in created:
-                if read(p+0x54)&1:assert struct.unpack('<f',u.mem_read(p+0x80,4))[0]==337.
+                if read(p+0x54)&1:assert struct.unpack('<f',u.mem_read(p+0x80,4))[0]==329.
             # A later unavailable offer context must restore every fitted title
             # before classification's early return, including all unused rows.
             invalid_info=True
@@ -517,8 +517,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             f=struct.unpack('<24f',quad);words=struct.unpack('<24I',quad)
             i=next(i for i,parent in enumerate(parents)if read(p+0x70)==parent)
             assert [words[j]for j in [3,9,15,21]]==[colors[i]]*4
-            assert [f[j]for j in [0,6,12,18]]==[0.,24.,0.,24.]
-            assert [f[j]for j in [1,7,13,19]]==[0.,0.,24.,24.]
+            assert [f[j]for j in [0,6,12,18]]==[0.,32.,0.,32.]
+            assert [f[j]for j in [1,7,13,19]]==[0.,0.,32.,32.]
             assert [f[j]for j in [4,10,16,22]]==[136.5,197.5,136.5,197.5]
             assert [f[j]for j in [5,11,17,23]]==[344.5,344.5,405.5,405.5]
         for p,size in allocations.items():assert bytes(u.mem_read(p+size,16))==b'\xa5'*16,('native draw-cache overflow',hex(p))

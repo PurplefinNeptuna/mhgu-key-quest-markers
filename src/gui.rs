@@ -304,10 +304,12 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
         word(object + 0x78, row.resource);
         // PosX/PosY setters use the game's VFP scalar ABI. Their verified scalar
         // fields plus dirty bit give the same result without a float-call shim.
-        bits(object + 0x80, 369.0);
-        bits(object + 0x84, 8.0);
-        bits(object + 0xb4, 24.0);
-        bits(object + 0xb8, 24.0);
+        // Match the request slot's 32px size. Y=3 lifts the emblem's visible
+        // centre into the white band; the quad stays within the 40px row.
+        bits(object + 0x80, 365.0);
+        bits(object + 0x84, 3.0);
+        bits(object + 0xb4, 32.0);
+        bits(object + 0xb8, 32.0);
         word(
             object + 0x54,
             memory::word(object + 0x54).ok_or(4u32)? | 0x20000,
@@ -511,7 +513,7 @@ impl Decoration {
     /// Reserve four pixels before each badge; fit only badge-bearing titles.
     pub fn set(self, badge: Badge) {
         if badge != Badge::Hidden {
-            let x: f32 = if self.request_visible { 337.0 } else { 369.0 };
+            let x: f32 = if self.request_visible { 329.0 } else { 365.0 };
             fit_title(self.title, x - 62.0 - 4.0, true);
             if memory::word(self.object + 0x80) != Some(x.to_bits()) {
                 unsafe {

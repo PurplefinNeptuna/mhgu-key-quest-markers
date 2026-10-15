@@ -1,8 +1,8 @@
-# Native implementation audit — r11 Message binding correction
+# Native implementation audit — r12 badge size and alignment
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r11
+The blanket r1 disable gate and unresolved-state placeholders are removed. r12
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -469,3 +469,28 @@ continue working. Original r9 and r10 payloads are preserved; r11 is a new
 DEVELOPMENT candidate, requiring separate manual acceptance. This evidence
 establishes the pre-render rejection, not the absence of every possible later
 clipping or layering problem.
+
+
+## r11 acceptance and r12 badge geometry — 2026-10-15
+
+The user confirmed r11 works and supplied a screenshot showing red/grey badges,
+request bubbles and a completion ribbon. The installed NRO matches r11 SHA
+`12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48`;
+the fresh Eden log identifies r11, both hooks and visible native GUI flags.
+Details and preserved screenshot/log hashes are in [RUNTIME_R11.json](RUNTIME_R11.json).
+This accepts the binding correction on Eden/Linux without exhaustive coverage.
+
+The screenshot's visible red mark is about32px square, versus a request bubble
+about39×37px. Its white row spans Y222..270 while the red pixels span231..263,
+putting the visible centre slightly low. These are screenshot pixel measurements,
+not native GUI units. r12 uses the native request slot's 32×32 quad size, raised
+to row-local Y=3. The full quad fits Y3..35 within the native 40px row envelope;
+its visible emblem content remains inset by the atlas shape. Exact pixels and
+clipping still require a manual r12 trial.
+
+Free-slot X365..397 matches the request slot width. With a bubble, X329..361
+preserves four pixels before X365. The title widths become299/263 rather than
+303/271. Existing geometry fixtures verify all four native quad vertices, both
+positions, source UVs, colours, title sizing/restoration and row-height bounds.
+The accepted r11 payload is unchanged; no new objects, cache/map capacity or
+hooks are introduced. Layer priority and native Message bindings stay intact.

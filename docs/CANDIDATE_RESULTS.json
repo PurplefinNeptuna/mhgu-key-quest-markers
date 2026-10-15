@@ -1,5 +1,5 @@
 {
-  "version": "r11",
+  "version": "r12",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
@@ -10,15 +10,15 @@
   "runtime_gui": "Existing native child, request visibility, title AutoScale and game-owned maps/caches",
   "layout": {
     "badge_size": [
-      24,
-      24
+      32,
+      32
     ],
-    "y": 8,
-    "request_hidden_x": 369,
-    "request_visible_x": 337,
+    "y": 3,
+    "request_hidden_x": 365,
+    "request_visible_x": 329,
     "title_widths": [
-      303,
-      271
+      299,
+      263
     ],
     "restored_title_size": [
       355,
@@ -27,7 +27,8 @@
     "request_objects_unchanged": true,
     "native_cached_layout_refresh": true,
     "native_autoscale_dispatch_and_clamp": true,
-    "glyph_measurement_and_scaling": "Supplied fixture bounds and scaler double; actual pixels require a manual trial"
+    "glyph_measurement_and_scaling": "Supplied fixture bounds and scaler double; actual pixels require a manual trial",
+    "native_row_height": 40
   },
   "resource_checks": {
     "status": "PASSED",
@@ -48,8 +49,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48",
-    "elf_sha256": "064f691798a2a3892d895d5682b8db27f70bc7812d1dd2ea74544e41d4f530e4",
+    "nro_sha256": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64",
+    "elf_sha256": "a06112a8893ec362ed47d20fd444f9e252fe8251a0c38f72f96c2f08bbbfc772",
     "exports": [
       "fini",
       "forge_onInit",
@@ -138,15 +139,15 @@
   },
   "candidate_manifest": {
     "mod": "key-quest-markers-rs",
-    "version": "r11",
+    "version": "r12",
     "status": "DEVELOPMENT",
     "runtime_test": "NOT RUN",
     "runtime_active": true,
     "package_name": "key-quest-markers-rs",
     "payloads": {
-      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48"
+      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64"
     },
-    "archive_sha256": "958593abfdb5a77ba037ef3b20ce48e649c3f641e04c11012db5c6256a9323eb"
+    "archive_sha256": "791f828878083e0b56cc8f83578f3e75c563e0cc89a418d212d49b4614ddad3b"
   },
   "prior_accepted_r9": {
     "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
@@ -155,10 +156,9 @@
     "runtime_changed_for_this_record": false
   },
   "limits": [
-    "r11 was not installed or launched.",
-    "r10 was tested in Eden and rejected all native title bindings before drawing.",
-    "Eden/Ryujinx clipping and new placement still need r11 manual acceptance.",
-    "r9 user acceptance remains scoped to the unchanged r9 payload."
+    "r12 was not installed or launched.",
+    "32px size, visible centring and white-band clipping need a manual r12 trial.",
+    "r11 was user-confirmed working on Eden/Linux; other platforms and exhaustive cases remain unconfirmed."
   ],
   "fix": {
     "cause": "r10 required cGUIObjText, but native title binding4/ID6 is cGUIObjMessage",
@@ -170,5 +170,19 @@
     "wrong_subclass_negative_case": true,
     "fixture_type_from_resource": true,
     "layer_priority_changed": false
+  },
+  "geometry_change": {
+    "previous_size": [
+      24,
+      24
+    ],
+    "previous_y": 8,
+    "new_size_matches_native_request_slot": true,
+    "quad_vertical_bounds": [
+      3,
+      35
+    ],
+    "accepted_r11": "docs/RUNTIME_R11.json",
+    "r11_bytes_preserved": true
   }
 }

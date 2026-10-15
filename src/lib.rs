@@ -27,7 +27,7 @@ pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
         return;
     }
     let mut name = [0; 64];
-    let label = b"Native Quest Badges r11";
+    let label = b"Native Quest Badges r12";
     name[..label.len()].copy_from_slice(label);
     // The pinned Forge loader provides the complete writable 70-byte record.
     // This narrow ABI extension leaves vendored bindings and their pins intact.
@@ -50,7 +50,7 @@ fn start() {
             // DEVELOPMENT diagnostics use ERROR so the user's existing error-only
             // Forge filter records this result without changing their settings.
             log::error!(
-                "Native quest badges r11 diagnostic: hooks installed; waiting for quest counter"
+                "Native quest badges r12 diagnostic: hooks installed; waiting for quest counter"
             );
         }
         Err(reason) => log::error!("Native quest badges: {reason}"),
@@ -64,7 +64,7 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
     let previous = REPORTED_ENTRIES.fetch_or(entered, Ordering::Relaxed);
     for (bit, label) in [(1, "urgent parent"), (2, "quest row")] {
         if entered & !previous & bit != 0 {
-            log::error!("Native quest badges r11 diagnostic: entered {label} hook");
+            log::error!("Native quest badges r12 diagnostic: entered {label} hook");
         }
     }
     native::report_diagnostics();

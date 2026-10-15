@@ -34,7 +34,10 @@ assert info['title_class']=='cGUIObjMessage' and info['title_bytes']==352
 assert struct.unpack_from('<I',objects[3])[0]==20 and struct.unpack_from('<I',objects[4])[0]==6
 assert (request['PosX'],request['PosY'],request['Size'][:2])==(365.,2.,(32.,32.))
 assert (title['PosX'],title['Size'][:2],title['AutoScale'],title['AutoWrap'])==(62.,(355.,38.),0,0)
-assert 369+12==365+16 and 337+24+4==365
-assert 62+303+4==369 and 62+271+4==337
+assert 365+32/2==request['PosX']+request['Size'][0]/2
+assert 329+32+4==request['PosX']
+assert 62+299+4==365 and 62+263+4==329
+background=gui.props(struct.unpack_from('<I',objects[6],24)[0],objects[6][4])
+assert 0 <= 3 and 3+32 <= background['Size'][1] # Native row envelope.
 assert not list((BUILD_ROOT/'package').rglob('*.arc'))
 print('PASS: native row/atlas fixture, resource bounds, all 15 original sequences and zero ARC payloads')
