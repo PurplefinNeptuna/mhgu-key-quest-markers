@@ -541,3 +541,14 @@ Static ARM cases
 exercise all eight real ID/category/flag records, missing offer context, availability,
 independent pair completion and native drawing/cleanup in both emblem builds.
 See SPECIAL_URGENTS.json for hashes, URLs, user-report evidence and runtime limits.
+
+
+## r14: urgent colour — 2026-10-15
+
+Only the active urgent colour changes: native packed RGBA0xffca4d9b gives
+bytes155,77,202,255 (#9B4DCA). The badge state remains ordinal3, now named Purple
+in source and startup diagnostics. Both original/small emblem builds use the
+same mapping. Needed keys remain #E74725 and completed/inactive badges #808080.
+The game's yellow request objects are untouched. r13 special-urgent semantics,
+all native calls, hooks, row geometry and ownership remain unchanged. Existing
+exact-byte host assertions and every coloured native quad check cover this change.

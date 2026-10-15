@@ -94,7 +94,7 @@ static FIRST_VISIBLE: Snapshot = Snapshot::new();
 pub fn report_diagnostics() {
     FIRST_PAGE.report("first classified page");
     FIRST_VISIBLE.report(
-        "first visible badges; badge 0=hidden, 1=red, 2=grey, 3=yellow; group 255=unresolved",
+        "first visible badges; badge 0=hidden, 1=red, 2=grey, 3=purple; group 255=unresolved",
     );
 }
 pub fn take_errors() -> u32 {

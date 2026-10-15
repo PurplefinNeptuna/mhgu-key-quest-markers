@@ -13,7 +13,7 @@ pub enum Badge {
     Hidden,
     Red,
     Grey,
-    Yellow,
+    Purple,
 }
 impl Badge {
     /// Native polygon setters consume four RGBA bytes packed into an ARM word.
@@ -22,7 +22,7 @@ impl Badge {
             Self::Hidden => 0,
             Self::Red => 0xff2547e7,
             Self::Grey => 0xff808080,
-            Self::Yellow => 0xff39d2ff,
+            Self::Purple => 0xffca4d9b,
         }
     }
 }
@@ -79,7 +79,7 @@ pub fn needed_key(group: Group, village: u16, hub: u16) -> Option<bool> {
 }
 /// Rank-up identity requires the native group and urgency flag; the separate
 /// Village encounter groups use their native availability and pair completion.
-/// Completion and satisfied alternatives cannot turn red/yellow. An unresolved
+/// Completion and satisfied alternatives cannot turn red/purple. An unresolved
 /// unfinished quest stays hidden instead of assuming that its rank is current.
 pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
     if group.id == 0 {
@@ -98,7 +98,7 @@ pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
                 if special_urgent(group.category)
                     || (state.prerequisites_done && state.urgent_listed) =>
             {
-                Badge::Yellow
+                Badge::Purple
             }
             _ => Badge::Grey,
         };
@@ -152,7 +152,7 @@ mod tests {
         for category in [24, 25, 29, 33, 34, 35, 43, 46] {
             let g = group(category);
             let mut s = state();
-            assert_eq!(decide(g, true, s), Badge::Yellow);
+            assert_eq!(decide(g, true, s), Badge::Purple);
             s.urgent_listed = false;
             assert_eq!(decide(g, true, s), Badge::Grey);
             s.urgent_listed = true;
@@ -187,7 +187,7 @@ mod tests {
             let mut s = state();
             s.urgent_listed = false;
             s.prerequisites_done = false; // Rank-up requirements do not gate these.
-            assert_eq!(decide(g, false, s), Badge::Yellow);
+            assert_eq!(decide(g, false, s), Badge::Purple);
             s.alternative_done = true;
             assert_eq!(decide(g, false, s), Badge::Grey);
             s.alternative_done = false;
@@ -243,7 +243,7 @@ mod tests {
                     true,
                     s
                 ),
-                Badge::Yellow
+                Badge::Purple
             );
         }
         s.completed = true;
@@ -269,7 +269,7 @@ mod tests {
                 true,
                 state()
             ),
-            Badge::Yellow
+            Badge::Purple
         );
     }
     #[test]
@@ -339,7 +339,7 @@ mod tests {
             draw(page),
             [
                 Badge::Red,
-                Badge::Yellow,
+                Badge::Purple,
                 Badge::Hidden,
                 Badge::Hidden,
                 Badge::Hidden,
@@ -355,6 +355,6 @@ mod tests {
     fn exact_opaque_colors() {
         assert_eq!(Badge::Red.rgba().to_le_bytes(), [231, 71, 37, 255]);
         assert_eq!(Badge::Grey.rgba().to_le_bytes(), [128, 128, 128, 255]);
-        assert_eq!(Badge::Yellow.rgba().to_le_bytes(), [255, 210, 57, 255]);
+        assert_eq!(Badge::Purple.rgba().to_le_bytes(), [155, 77, 202, 255]);
     }
 }

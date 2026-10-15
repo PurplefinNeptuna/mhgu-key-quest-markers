@@ -28,7 +28,7 @@ Run from any directory:
 
 `prepare` verifies inputs and the read-only native GUI layout fixture. All commands are offline;
 there is no download, install, game launch or settings command. Outputs use the
-workspace's `build/key-quest-markers-rs/candidates/r13/` and matching `work/` folder,
+workspace's `build/key-quest-markers-rs/candidates/r14/` and matching `work/` folder,
 or the independent checkout's own `build/` and `work/` folders after export.
 
 The workspace coordinator also supports
@@ -141,3 +141,14 @@ offered set or rank-key prerequisites. Completion
 of either record in a native family makes both grey. Detailed resources, native
 functions, live URLs and limits are in docs/SPECIAL_URGENTS.json. No new hooks,
 resources, pointers, native signatures or save writes are introduced.
+
+
+## r14: purple active urgents
+
+The default and `KQM_SMALL_MARK=1` commands now build r14 and r14-small.
+Active urgent badges change from yellow #FFD239 to purple #9B4DCA, packed as
+0xffca4d9b so little-endian bytes are155,77,202,255. The internal state remains
+ordinal3 and is named Purple in core and diagnostics. Native request objects,
+key/grey colours, classification and layout are unchanged. Existing exact-RGBA
+and compiled native quad checks validate the new colour in both builds.
+Original r13/r13-small packages remain byte-for-byte preserved.

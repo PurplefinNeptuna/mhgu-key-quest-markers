@@ -123,8 +123,9 @@
   },
   "policy": {
     "identity": "Special groups47..54 bypass only the rank-up urgency bit requirement. Other categories keep existing validation.",
-    "yellow": "Full native counter availability true, this record unfinished and neither record in its native family completed; no rank-up pool or rank-key prerequisite requirement.",
     "grey": "Record or companion completed, or native availability false.",
-    "limits": "Full counter availability code and enabled-bit tests execute in compiled ARM fixtures; scene-query and completion values are doubles. New in-game acceptance required on Eden and Ryujinx."
+    "limits": "Full counter availability code and enabled-bit tests execute in compiled ARM fixtures; scene-query and completion values are doubles. New in-game acceptance required on Eden and Ryujinx.",
+    "active_urgent": "Full native counter availability true, this record unfinished and neither record in its native family completed; no rank-up pool or rank-key prerequisite requirement.",
+    "active_urgent_colour": "#9B4DCA (r14; r13 used #FFD239)"
   }
 }

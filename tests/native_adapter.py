@@ -428,12 +428,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if invalid_info or ordinary or bad_count:assert states==dict.fromkeys(range(8),0) and not colors
         elif special:
             assert states==dict.fromkeys(range(8),1)
-            assert colors=={i:(0xff808080 if not available or i not in special_enabled or any(id in completed for id in ids[(i//2)*2:(i//2)*2+2]) else 0xff39d2ff) for i in range(8)}
+            assert colors=={i:(0xff808080 if not available or i not in special_enabled or any(id in completed for id in ids[(i//2)*2:(i//2)*2+2]) else 0xffca4d9b) for i in range(8)}
         else:
             assert states=={i:v for i,v in enumerate([1,1,1,1,1,0,0,0]) if not(i==0 and (invalid_request or invalid_title))}
-            urgency=0xff39d2ff if 303 in offered and available and prerequisites else 0xff808080
+            urgency=0xffca4d9b if 303 in offered and available and prerequisites else 0xff808080
             expected_colors={0:0xff808080 if 207 in completed or alternative_done else 0xff2547e7,1:0xff808080,
-                           2:0xff808080 if 303 in completed else urgency,3:0xff39d2ff if simultaneous and 206 in offered else 0xff808080,4:0xff808080}
+                           2:0xff808080 if 303 in completed else urgency,3:0xffca4d9b if simultaneous and 206 in offered else 0xff808080,4:0xff808080}
             if invalid_request or invalid_title:expected_colors.pop(0)
             assert colors==expected_colors
         request_bytes=[]
@@ -549,7 +549,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
 results=[test_case('all eight special urgents outside rank-up offer pool',special=True,offered=(),prerequisites=False,requests=(0,2,4,6),repeat=True),
-         test_case('only enabled special records become yellow',special=True,offered=(),special_enabled=(0,2,4,6),prerequisites=False),
+         test_case('only enabled special records become purple',special=True,offered=(),special_enabled=(0,2,4,6),prerequisites=False),
          test_case('disabled special records remain grey despite scene availability',special=True,offered=(),special_enabled=(),prerequisites=False),
          test_case('special pair completed by first-run quest',special=True,offered=(),completed=(308,),prerequisites=False),
          test_case('special pair completed by repeat quest',special=True,offered=(),completed=(309,),prerequisites=False),

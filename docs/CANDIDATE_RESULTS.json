@@ -1,5 +1,5 @@
 {
-  "version": "r13",
+  "version": "r14",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
@@ -49,8 +49,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308",
-    "elf_sha256": "c330f44e003f1d570791d9c8e34a35c4f9f5aeb46ff066246b6061c97deeae42",
+    "nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65",
+    "elf_sha256": "a5e9476cd23751b3ed3d67d05e58a00f55b4d4f31e445970e17294f8a3c93d91",
     "exports": [
       "fini",
       "forge_onInit",
@@ -139,15 +139,15 @@
   },
   "candidate_manifest": {
     "mod": "key-quest-markers-rs",
-    "version": "r13",
+    "version": "r14",
     "status": "DEVELOPMENT",
     "runtime_test": "NOT RUN",
     "runtime_active": true,
     "package_name": "key-quest-markers-rs",
     "payloads": {
-      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308"
+      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
     },
-    "archive_sha256": "8b1551986252a7fa929ba448ed95bc30fbe551e7aaab880a9d43a5924ba23557"
+    "archive_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db"
   },
   "prior_accepted_r9": {
     "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
@@ -156,9 +156,9 @@
     "runtime_changed_for_this_record": false
   },
   "limits": [
-    "Neither r13 variant was installed or launched.",
-    "Special-urgent availability and pair completion require a new in-game trial; scene-query and completion values in host ARM fixtures are doubles.",
-    "Both emblem variants retain r12 geometry; actual clipping and Ryujinx gameplay remain unconfirmed."
+    "Neither r14 variant was installed or launched.",
+    "Purple colour appearance requires a manual in-game trial.",
+    "Special-urgent activation coverage and Ryujinx gameplay remain unconfirmed; r13 semantics are unchanged."
   ],
   "fix": {
     "cause": "r10 required cGUIObjText, but native title binding4/ID6 is cGUIObjMessage",
@@ -216,37 +216,71 @@
     "crosscheck": "docs/SPECIAL_URGENTS.json"
   },
   "variants": {
-    "r13": {
+    "r14": {
       "manifest": {
         "mod": "key-quest-markers-rs",
-        "version": "r13",
+        "version": "r14",
         "status": "DEVELOPMENT",
         "runtime_test": "NOT RUN",
         "runtime_active": true,
         "package_name": "key-quest-markers-rs",
         "payloads": {
-          "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308"
+          "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
         },
-        "archive_sha256": "8b1551986252a7fa929ba448ed95bc30fbe551e7aaab880a9d43a5924ba23557"
+        "archive_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db"
       },
       "native_adapter_cases": 40,
       "tests": "PASSED"
     },
-    "r13-small": {
+    "r14-small": {
       "manifest": {
         "mod": "key-quest-markers-rs",
-        "version": "r13-small",
+        "version": "r14-small",
         "status": "DEVELOPMENT",
         "runtime_test": "NOT RUN",
         "runtime_active": true,
         "package_name": "key-quest-markers-rs",
         "payloads": {
-          "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "24ac1f474113e8bd91cccf7c9229c52af4649ef81a150392941b7b32d87f541d"
+          "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "95d39fab4e403405b4dc1e4cd89a3d2ad63c830d710d841f0c3b4a41a1cf812e"
         },
-        "archive_sha256": "b36e925edaf25b9501482e988814972e88faccc1196f32a29e4a84e037128a1c"
+        "archive_sha256": "ece9431459f0a0a0752a61ce75a95c0766edb4dae249b72600bac276387f4465"
       },
       "native_adapter_cases": 40,
       "tests": "PASSED"
     }
+  },
+  "previous_r13_variants": {
+    "r13": {
+      "mod": "key-quest-markers-rs",
+      "version": "r13",
+      "status": "DEVELOPMENT",
+      "runtime_test": "NOT RUN",
+      "runtime_active": true,
+      "package_name": "key-quest-markers-rs",
+      "payloads": {
+        "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308"
+      },
+      "archive_sha256": "8b1551986252a7fa929ba448ed95bc30fbe551e7aaab880a9d43a5924ba23557"
+    },
+    "r13-small": {
+      "mod": "key-quest-markers-rs",
+      "version": "r13-small",
+      "status": "DEVELOPMENT",
+      "runtime_test": "NOT RUN",
+      "runtime_active": true,
+      "package_name": "key-quest-markers-rs",
+      "payloads": {
+        "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "24ac1f474113e8bd91cccf7c9229c52af4649ef81a150392941b7b32d87f541d"
+      },
+      "archive_sha256": "b36e925edaf25b9501482e988814972e88faccc1196f32a29e4a84e037128a1c"
+    }
+  },
+  "color_change": {
+    "active_urgent": "#9B4DCA",
+    "previous_active_urgent": "#FFD239",
+    "needed_key": "#E74725",
+    "inactive_completed": "#808080",
+    "request_bubble_unchanged": true,
+    "classification_unchanged": true
   }
 }

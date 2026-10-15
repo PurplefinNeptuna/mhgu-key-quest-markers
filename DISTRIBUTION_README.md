@@ -1,4 +1,4 @@
-# Native Quest Badges — Rust r13 candidate
+# Native Quest Badges — Rust r14 candidate
 
 **DEVELOPMENT build; in-game acceptance pending.** Rise-style quest badges for
 English HD MHGU 1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching
@@ -10,7 +10,7 @@ English HD MHGU 1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching
 | --- | --- |
 | Key still needed for current progression | Red |
 | Completed or obsolete key | Grey |
-| Currently needed, offered and available urgent | Yellow |
+| Currently needed, offered and available urgent | Purple |
 | Completed, old or inactive urgent | Grey |
 | Ordinary or unresolved quest | Hidden |
 
@@ -37,7 +37,7 @@ The runtime folder contains:
 romfs/nativeNX/plugins/key_quest_markers_rs.nro
 ```
 
-Forge's Loaded Plugins list shows **Native Quest Badges r13**. This plugin has no
+Forge's Loaded Plugins list shows **Native Quest Badges r14**. This plugin has no
 settings panel. Initialization and GUI failures are logged once at ERROR level.
 
 To remove it, close the game and disable/remove its folder.
