@@ -7,9 +7,9 @@ emulators. Requires a compatible Forge 1.5.1 loader and the English MHGU HD Proj
 
 | Quest state | Badge |
 | --- | --- |
-| Key still needed for current progression | Gathering green |
+| Key still needed for current progression | Green |
 | Completed or obsolete key | Grey |
-| Currently needed and available urgent | Objective red |
+| Currently needed and available urgent | Red |
 | Completed, old or inactive urgent | Grey |
 | Ordinary quest | No badge |
 
