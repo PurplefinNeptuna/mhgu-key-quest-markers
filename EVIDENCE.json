@@ -3041,6 +3041,13 @@
     }
   },
   "current": {
+    "base_game_confirmation": {
+      "date": "2026-10-15",
+      "source": "Direct user report in this chat",
+      "user_confirmation": "for quest marker mod, i also check no hd mod and it works, so it works for all",
+      "result": "Works without the MHGU HD Project. HD is optional.",
+      "runtime_changed": false
+    },
     "version": "r17",
     "date": "2026-10-15",
     "scope": "Unchanged r17 accepted by the user on Eden/Linux and promoted locally; no rebuild, installation or publication.",

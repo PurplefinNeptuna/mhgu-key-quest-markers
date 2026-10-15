@@ -3,7 +3,8 @@
 - forge-rs 1.5.0, revision `d1865b68e9b194eb3eacc8bd71bbf601a5fac63e`,
   https://github.com/Fexty12573/forge-rs. Vendored source and MIT license are unchanged.
 - Forge native Hook declaration matches the maintained 1.5.0 ordinary-hook API;
-  https://github.com/jeffi6375/forge. Its copied header supplies the independent
+  https://github.com/Fexty12573/forge, Fexty's fork of Jeffi's original Forge.
+  Its copied header supplies the independent
   compiler layout fixture, not a second hook implementation.
 - `src/svc.S` derives from libnx ARM32 syscall wrappers, licensed MIT by the
   Hydrosphere Developers; https://github.com/switchbrew/libnx. Three private

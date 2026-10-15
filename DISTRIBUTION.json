@@ -29,9 +29,9 @@
     "credits": [
       {
         "name": "Forge",
-        "author": "Jeffi / Skyline Project",
-        "url": "https://github.com/jeffi6375/forge",
-        "scope": "Loader API and native hooks."
+        "author": "Fexty, Jeffi and the Skyline Project",
+        "url": "https://github.com/Fexty12573/forge",
+        "scope": "Fexty's MHGU fork of Jeffi's original Forge. Loader API and native hooks."
       },
       {
         "name": "forge-rs",
@@ -49,7 +49,7 @@
         "name": "MHGU HD Project",
         "author": "Monkbreh / Monke",
         "url": "https://github.com/Monkbreh/MHGU-HD-Project",
-        "scope": "External English HD dependency supplying the already-loaded lobby emblem. No HD files are included in this plugin."
+        "scope": "Optional HD replacement for game UI resources. No HD assets are included in this plugin."
       },
       {
         "name": "Monster Hunter Generations Ultimate",
@@ -59,7 +59,7 @@
       }
     ]
   },
-  "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. English HD Project required.",
+  "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
     "User accepted r17 on Eden/Linux; individual settings, persistence, ranks, quest states and transitions were not separately enumerated.",
     "Ryujinx and native Switch gameplay remain unconfirmed."
@@ -83,17 +83,13 @@
       "mods/key-quest-markers/EVIDENCE.json"
     ],
     "static_summary": "r17: host configuration/classification fixtures, compiled ARM settings/save-failure/native GUI fixtures, ABI/state/import/resource checks; details in EVIDENCE.json.",
-    "manual_summary": "User-confirmed Eden/Linux r17 acceptance with matching installed/candidate hash and a preserved fresh log. Detailed scenario coverage and other platforms remain unconfirmed."
+    "manual_summary": "User-confirmed Eden/Linux r17 acceptance with matching installed/candidate hash and a preserved fresh log. User also confirmed operation without the HD Project on 2026-10-15. Detailed scenario coverage and other platforms remain unconfirmed."
   },
   "dependencies": [
     {
       "name": "Forge",
       "version": "1.5.1",
       "scope": "External unmodified upstream Switch loader; not bundled."
-    },
-    {
-      "name": "English MHGU HD Project",
-      "scope": "External already-loaded lobby emblem and layout; no HD assets bundled."
     }
   ],
   "support": {

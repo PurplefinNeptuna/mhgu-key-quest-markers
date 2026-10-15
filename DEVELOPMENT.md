@@ -1,5 +1,10 @@
 # r17 game UI colours and quiet logs — READY_TO_DISTRIBUTE
 
+The user confirmed on 2026-10-15 that r17 also works without the HD Project.
+HD is optional. The copied English HD archive remains a build-time fixture,
+not a runtime dependency. Earlier sections describe the HD resources used for
+those dated investigations.
+
 The reported Eden r16 log contains21 false ERROR diagnostics: successful hook
 installation, two hook-entry notices and two nine-line snapshots. Its NRO hash
 matches the preserved r16 candidate. `research/log-cleanup.json` records the
