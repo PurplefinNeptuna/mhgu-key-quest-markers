@@ -17,5 +17,14 @@ try:Gui(bytes(bad))
 except ValueError:pass
 else:raise AssertionError('Out-of-bounds object table accepted')
 assert info['existing_sequences']==15 and info['existing_objects']==12
+# These constants live directly in INIT_PARAM.value, unlike Visible's byte-table
+# reference. Reading them as byte offsets made almost every field appear as 1.
+gui=Gui(source);icon=gui.table(48,172,36)[32]
+props=gui.props(struct.unpack_from('<I',icon,24)[0],icon[4])
+assert {k:props[k]for k in ['ControlPoint','FixFrame','Mask','ReferenceScaleX','ReferenceScaleY',
+                          'ReferenceScaleZ','Reverse','SamplerState']}=={
+    'ControlPoint':0,'FixFrame':0,'Mask':0,'ReferenceScaleX':3,'ReferenceScaleY':3,
+    'ReferenceScaleZ':3,'Reverse':0,'SamplerState':0}
+assert props['Visible']==1 and props['BlendState']==1 and props['Priority']==2
 assert not list((BUILD_ROOT/'package').rglob('*.arc'))
 print('PASS: native row/atlas fixture, resource bounds, all 15 original sequences and zero ARC payloads')

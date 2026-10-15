@@ -1,6 +1,6 @@
-# Native Quest Badges — Rust r8 candidate
+# Native Quest Badges — Rust r9 candidate
 
-**DEVELOPMENT diagnostic build. r7 was reported invisible; r8 is not a confirmed visibility fix.** Implements Rise-style native badges for English HD MHGU
+**DEVELOPMENT build; in-game acceptance pending.** Implements Rise-style native badges for English HD MHGU
 1.4.0 on Eden/Ryujinx. Requires Forge 1.5.0 with the matching 24-byte Hook ABI.
 
 ## Badges
@@ -21,7 +21,7 @@ progression changes. The game draws the badges and releases them with the menu.
 ## Installation
 
 Close the game first. Back up and disable/remove the old Rust badge candidate
-folder as a whole; do not copy r8 over it and leave its old `common_eng.arc` behind.
+folder as a whole; do not copy r9 over it and leave its old `common_eng.arc` behind.
 Keep that backup outside the emulator's enabled mod directory.
 
 Extract the ZIP and put its `key-quest-markers-rs` folder in the emulator's MHGU mod
@@ -37,7 +37,7 @@ so `[KEY]` disappears from list/detail titles. Only one Rust badge candidate sho
 be enabled. The ZIP does not include or replace Forge; confirm Ryujinx's loader is
 also 1.5.0 before testing.
 
-Forge's Loaded Plugins list should show **Native Quest Badges r8**. There is no
+Forge's Loaded Plugins list should show **Native Quest Badges r9**. There is no
 Plugin UI settings panel. Earlier forge-rs entries omitted the name, so a loaded
 plugin could be missing from that list. This candidate reports actual initialization
 or GUI failures once at ERROR level, without requiring a loader config change.
@@ -45,18 +45,20 @@ or GUI failures once at ERROR level, without requiring a loader config change.
 To remove it, close the game and disable/remove its folder. Restore previous
 packages from your backups if desired. No saves or game archives need changing.
 
-r8 retains the r7 object-map lifetime correction. It records installation and first
-hook entries, then the first classified page and first page with visible decisions.
-These bounded diagnostic lines use ERROR severity so the existing Forge filter
-captures them; they are labeled diagnostic and do not imply a failure. Quest IDs,
-progression tiers, native groups, quest flags, badge decisions and GUI flags are
-logged as copied scalars. No game pointers survive callbacks. ARC files remain untouched.
+r9 corrects the badge's native rendering settings. It uses the normal colour pass,
+top-left anchor, reference scales, orientation and sampler from the game's quest
+icon. The 24×24 badge spans row-local X=-28..-4, leaving the intended four-pixel gap.
+
+Bounded diagnostic lines still record hook entry and classification. They use ERROR
+severity so the existing Forge filter captures them and are explicitly labeled
+diagnostic. No loader settings or archives are changed.
 
 ## Validation limits
 
 Host policy/rollback checks, ARM argument forwarding and named registration,
 native imports, runtime GUI insertion, allocation failure cleanup, unchanged
-original lookup bindings, and native draw-list/destructor execution pass automated fixtures.
+original lookup bindings, and native draw-list/destructor execution pass automated fixtures. Native prepaint
+dispatch, texture drawing and quad generation also run with GPU commands mocked.
 These checks do not establish actual in-game pixels or gameplay acceptance.
 
 Manual English HD acceptance remains pending on Eden and Ryujinx: Village/Hub/G,

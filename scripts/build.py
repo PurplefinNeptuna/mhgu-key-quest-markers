@@ -93,7 +93,7 @@ def package():
     if previous-payloads.keys(): raise ValueError('Preserving unexpected previous candidate files')
     shutil.copytree(source,named,dirs_exist_ok=True)
     guide=(MOD/'DISTRIBUTION_README.md').read_bytes();(dest/'README.md').write_bytes(guide)
-    archive=dest/'key-quest-markers-rs-r8-candidate.zip'
+    archive=dest/'key-quest-markers-rs-r9-candidate.zip'
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
         z.writestr('README.md',guide)
         for n in sorted(payloads): z.write(source/n,package_name+'/'+n)
@@ -105,7 +105,7 @@ def package():
     (dest/'NOTICES.txt').write_text(notices);(dest/'NOTICES.html').write_text('<pre>'+escape(notices)+'</pre>\n')
     evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','native-adapter','verify','tests']}
     (dest/'VALIDATION.json').write_text(json.dumps(evidence,indent=2)+'\n')
-    manifest={'mod':'key-quest-markers-rs','version':'r8','status':'DEVELOPMENT','runtime_test':'NOT RUN',
+    manifest={'mod':'key-quest-markers-rs','version':'r9','status':'DEVELOPMENT','runtime_test':'NOT RUN',
               'runtime_active':True,'package_name':package_name,'payloads':payloads,'archive_sha256':digest(archive)}
     (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (dest/'SHA256SUMS').write_text(''.join(digest(p)+'  '+str(p.relative_to(dest))+'\n'

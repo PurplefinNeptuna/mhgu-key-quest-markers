@@ -1,8 +1,8 @@
-# Native implementation audit — diagnostic r8
+# Native implementation audit — r9 material correction
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r8
+The blanket r1 disable gate and unresolved-state placeholders are removed. r9
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -128,7 +128,7 @@ The row prologue displaces `e92d4ff0` (PUSH r4-r11,lr), `e24dd004` (SUB sp,sp,#4
 The parent uses the same PUSH followed by `e24dd06c` (SUB sp,sp,#108). Both are
 position independent and contain no GE/NZCVQ operations. Each Forge trampoline
 must contain its original eight bytes, `e51ff004` literal LDR pc, and target+8.
-All thirty-six support windows are checked against original executable bytes.
+All forty supporting windows are checked against original executable bytes.
 Installation validates both trampolines and redirects, flushes code caches and
 publishes active state only after both hooks succeed. The hooks use two 16-byte
 slots in Forge's shared 16 KiB CodeMemory pool. No additional hook engine exists.
@@ -191,12 +191,12 @@ badge state. Protected quest/completion/progression records remain unchanged.
 Pixel rendering and the game's actual query results still require a manual trial.
 
 No emulator was launched, package installed, save modified or loader replaced by
-this implementation. r8 is active DEVELOPMENT, with manual acceptance pending on
+this implementation. r9 is active DEVELOPMENT, with manual acceptance pending on
 English HD Eden and Ryujinx: Village/Hub/G progression, alternative groups,
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
 Disable the old prefix plugin during a trial; preserve accepted releases and
-installed rollback payloads. Live resource load and gameplay remain untested.
+installed rollback payloads. r9 visible output and gameplay acceptance remain untested.
 
 ## r3 runtime failure and r4 correction
 
@@ -316,3 +316,54 @@ They still do not execute the actual GPU geometry/draw path or establish pixels.
 The next manual trial must open a page containing a key and retain its Eden log;
 these records will separate absent hooks, all-hidden decisions and a rendering
 failure before another functional change is proposed.
+
+## r8 runtime trace and r9 material correction
+
+The user's completed r8 Eden run (log mtime 2026-10-15 07:15:34 +0700)
+confirmed installation, both hook entries, Village stage4 and Hub/G stage2.
+Quest402 received grey (badge2); quest409 received red (badge1), both with the
+native Visible bit set. No guest exception or badge rejection was logged.
+Installed r8 SHA: `d06c32389f39f2e227d9e7fad4dc926c5d07b26ac525f6d721a152d8e8aa4d4d`.
+This establishes callback/classification execution, not visible pixels.
+
+The source of the incorrect material was the read-only GUI decoder. It treated
+INIT_PARAM types17/18 as offsets into kv8. The native loader at main+0xb7f988
+leaves these two immediate types unrelocated. The dispatcher at 0xb344f4 reads
+kind17 as the low byte of value (bool), and kind18 as the value word itself.
+Only kind3 references kv8; kinds1/2/7 and others use kv32, while kind4 uses kv128.
+The first kv8 bytes happen to be 1, masking the parsing error.
+
+The original Tex_icon's actual settings and r9's native setters are:
+
+| Setting | Actual value | Setter (main-relative) |
+| --- | --- | --- |
+| BlendState | 1 | 0xa4dc24 |
+| ControlPoint | 0 (top-left) | 0xa4a9f4 |
+| FixFrame | 0 | 0xa47a94 |
+| Mask | 0 (ordinary colour drawing) | 0xa4dca0 |
+| Priority | 2 | 0xa47a04 |
+| ReferencePosition / Rotation | 1 / 1 | 0xa4aa24 / 0xa4aa5c |
+| ReferenceScale X/Y/Z | 3 / 3 / 3 | 0xa4aa94 / 0xa4aac8 / 0xa4aafc |
+| Reverse | 0 | 0xa4dc54 |
+| SamplerState | 0 | 0xa4fa5c |
+
+r8 incorrectly used Mask1, a centre anchor, fixed-frame mode, scale mode1 and
+horizontal reversal. Its unchanged NRO reproduces entry from the real native
+prepaint function 0xa4e628 into mask setup 0xb375c4. This reproduction bypasses
+the style-table assertion, so it checks the native dispatch rather than merely
+comparing constants. No r8 package/receipt is overwritten.
+
+r9 corrects the decoder and setter values. Resource checks assert the actual
+immediates; the compiled adapter's setter arguments must agree with those decoded
+source properties. The fixture now executes native prepaint dispatch, Texture
+Draw0xa4fc9c, quad generation0xa4feb4 and postpaint through the real draw walker.
+GPU allocation/binding/submission are doubles; bounding-box calculation is marked
+already complete to isolate material dispatch. The fixture rejects every native
+mask-pass entry and checks emitted 24x24 colour vertices, all four opaque state
+colours and logical atlas UVs. With top-left anchoring, row-local X=-28 plus
+quad X=0..24 leaves the requested four-pixel gap.
+
+The host fixture does not establish actual clipping, world transforms or visible
+GPU pixels. r9 remains an active DEVELOPMENT candidate awaiting manual acceptance;
+no emulator launch, install, archive replacement, settings or save change is part
+of this repair.

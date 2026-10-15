@@ -2,7 +2,8 @@
 """Execute the shipped ARM callbacks, native draw walker and native ownership cleanup.
 
 Forge/kernel/MT factories and GPU commands are doubles; game archive bytes are
-unchanged. This checks object insertion and real draw-list traversal, not pixels.
+unchanged. Native prepaint dispatch, texture draw and quad generation execute;
+world transforms, bounding-box calculation and actual pixels are not simulated.
 """
 import json,struct,subprocess,sys,re
 from pathlib import Path
@@ -35,6 +36,9 @@ INSTANCE_ARRAY=DATA+0x27000
 REGS=[getattr(arm,'UC_ARM_REG_R'+str(i))for i in range(13)]
 BADGE_ID=0x4b514d33
 STYLE=[0xa4dc24,0xa4a9f4,0xa47a94,0xa4dca0,0xa47a04,0xa4aa24,0xa4aa5c,0xa4aa94,0xa4aac8,0xa4aafc,0xa4dc54,0xa4fa5c]
+icon_props=gui.props(struct.unpack_from('<I',row_objects[2],24)[0],row_objects[2][4])
+SOURCE_STYLE=dict(zip(STYLE,(icon_props[k]for k in ['BlendState','ControlPoint','FixFrame','Mask','Priority',
+    'ReferencePosition','ReferenceRotation','ReferenceScaleX','ReferenceScaleY','ReferenceScaleZ','Reverse','SamplerState'])))
 CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
@@ -154,7 +158,13 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
     constructing=None;factory_index=0
     plugin_heap=DATA+0x120000;hook_count=0;startup_logs=[]
-    allocations={};freed=[];created=[];drawn=[];object_attempts=0;mapping_allocations=[]
+    allocations={};freed=[];created=[];drawn=[];object_attempts=0;mapping_allocations=[];styles={};quads=[]
+    # Isolate native colour/mask dispatch and geometry from GPU command encoding.
+    # Model an active vertex-buffer frame and an already-bound texture shader.
+    pool=DATA+0xf0300;context=DATA+0x150000;commands=DATA+0x151000
+    vertices=DATA+0x160000;buffer=DATA+0x152000;draw_object=0;vertex_offset=0
+    word(pool+0x90,1);word(pool+0x94,0);word(pool+0x98,1);word(pool+0xa4,buffer);word(pool+0xb0,vertices)
+    word(context+4,commands);word(context+8,0x1000);word(commands+0x124,buffer);u.mem_write(commands+0x134,b'\x18')
     def allocate(size):
         nonlocal heap
         p=heap;heap=(p+size+31)&~15;allocations[p]=size;u.mem_write(p+size,b'\xa5'*16);return p
@@ -173,7 +183,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             out+=c
         raise AssertionError('unterminated string')
     def trace(cpu,address,size,_):
-        nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index,hook_count
+        nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index,hook_count,draw_object,vertex_offset
         r=[cpu.reg_read(x)for x in REGS[:4]]
         if address==RETURN:cpu.emu_stop();return
         if address==MODULE+names['mwc_svc_get_info']:
@@ -267,6 +277,18 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         # Style calls execute the original game instructions.
         if address==GAME+0xa4faf0:assert r[1]==22
         if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==(136.,344.,198.,406.)
+        if address-GAME in STYLE:styles.setdefault(r[0],{})[address-GAME]=r[1]
+        if address==GAME+0xba2280:
+            assert r[:3]==[pool,draw_object+0xbc,96]
+            word(r[1],vertex_offset);word(r[1]+4,0x01800060);vertex_offset+=96
+            word(commands+0x138,read(r[1]));ret(cpu,1);return
+        if address in [GAME+0xa4eb9c,GAME+0xa3e3b0,GAME+0x541624,GAME+0x541844,GAME+0x542aa0,
+                       GAME+0x8826fc,GAME+0x882760]:ret(cpu);return
+        if address==GAME+0x93eff4:
+            quads.append((draw_object,bytes(cpu.mem_read(vertices+read(draw_object+0xbc),96))))
+            ret(cpu);return
+        if address in [GAME+0xb375c4,GAME+0xb37dcc,GAME+0xb38004,GAME+0xb3880c]:
+            raise AssertionError(('badge entered native mask pass instead of colour rendering',hex(address)))
         if address==GAME+0xa47950:
             row=next(i for i,p in enumerate(parents) if read(r[0]+0x70)==p) if read(r[0]+0x70) else None
             if row is not None:states[row]=r[1]
@@ -274,8 +296,13 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             row=next(i for i,p in enumerate(parents) if read(r[0]+0x70)==p);assert r[2]<4
             colors[row]=read(r[1])
         if address in [GAME+0x1050,GAME+0x1054,GAME+0x1058,GAME+0xa4e628,GAME+0xa4fc9c,GAME+0xa4eddc]:
-            if address in [GAME+0x1054,GAME+0xa4fc9c] and read(r[0]+0x50)==BADGE_ID:drawn.append(r[0])
-            ret(cpu);return
+            if address in [GAME+0xa4e628,GAME+0xa4fc9c,GAME+0xa4eddc] and read(r[0]+0x50)==BADGE_ID:
+                if address==GAME+0xa4e628:
+                    # Bounding-box calculation precedes this dispatch in the game;
+                    # suppress that separate stage, without changing material mode.
+                    word(r[0]+0xd0,read(r[0]+0xd0)&~1)
+                if address==GAME+0xa4fc9c:drawn.append(r[0]);draw_object=r[0]
+            else:ret(cpu);return
         if address==GAME+0x523da4:assert r[0]==PROFILE+0x42c;ret(cpu,int(r[1]in completed));return
         if address==GAME+0x3b1a18:assert r[:2]==[QUEST,2];ret(cpu,int(prerequisites));return
         if address==GAME+0x3b2174:assert r[0]==QUEST;ret(cpu,int(available));return
@@ -357,6 +384,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert colors=={0:0xff808080 if 207 in completed or alternative_done else 0xff2547e7,1:0xff808080,
                            2:0xff808080 if 303 in completed else urgency,3:0xff39d2ff if simultaneous and 206 in offered else 0xff808080,4:0xff808080}
         for p in created:
+            assert styles[p]==SOURCE_STYLE,('runtime style differs from actual GUI constants',styles[p],SOURCE_STYLE)
             assert read(p+0x74)==GUI_OWNER
             i=next(i for i,parent in enumerate(parents) if read(p+0x70)==parent)
             assert read(p+0x54)&1==states[i]
@@ -365,8 +393,17 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==(136.,344.,198.,406.)
             assert struct.unpack('<2f',u.mem_read(p+0x80,8))==(-28.,8.)
             assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(24.,24.)
-        for root in roots:call(GAME+0xa494a0,root,0x12345678)
+        for root in roots:call(GAME+0xa494a0,root,context)
         assert len(drawn)==sum(states.values()),('native draw walker omitted badge',drawn,states)
+        assert len(quads)==len(drawn),('no native colour quad emitted',len(quads),len(drawn))
+        for p,quad in quads:
+            f=struct.unpack('<24f',quad);words=struct.unpack('<24I',quad)
+            i=next(i for i,parent in enumerate(parents)if read(p+0x70)==parent)
+            assert [words[j]for j in [3,9,15,21]]==[colors[i]]*4
+            assert [f[j]for j in [0,6,12,18]]==[0.,24.,0.,24.]
+            assert [f[j]for j in [1,7,13,19]]==[0.,0.,24.,24.]
+            assert [f[j]for j in [4,10,16,22]]==[136.5,197.5,136.5,197.5]
+            assert [f[j]for j in [5,11,17,23]]==[344.5,344.5,405.5,405.5]
         for p,size in allocations.items():assert bytes(u.mem_read(p+size,16))==b'\xa5'*16,('native draw-cache overflow',hex(p))
         # Run the actual root and base-container destructors; the mocked MT free
         # records ownership, while their real ARM loops destroy the new children.
@@ -392,6 +429,7 @@ results=[test_case('first malformed trampoline rolls back',fail_hook=1),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
           'error_only_filter_diagnostic_snapshots':True,'deduplicated_scalar_snapshots':True,
+          'resource_inline_constants':SOURCE_STYLE,'native_prepaint_and_texture_draw':True,'native_quad_geometry':True,
           'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')

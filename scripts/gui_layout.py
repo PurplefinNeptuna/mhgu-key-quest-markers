@@ -35,7 +35,12 @@ class Gui:
         for i in range(first, first+count):
             at = self.word(180)+i*20
             name = self.text(self.word(at+12)); kind = self.data[at+4]; value = self.word(at+16)
-            if kind in (3,17,18):
+            # Native rGUI::setData fixes up section offsets for kinds 1..16,
+            # but leaves immediate bool/u32 kinds 17/18 as the value itself.
+            if kind in (17,18):
+                result[name] = int(value & 255 != 0) if kind == 17 else value
+                continue
+            if kind == 3:
                 pos = self.word(268)+value; size = 1; fmt = "<B"
             elif kind in (2,15):
                 pos = self.word(272)+value; size = 4; fmt = "<f"

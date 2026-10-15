@@ -297,21 +297,22 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
             memory::word(object + 0x54).ok_or(4u32)? | 0x20000,
         );
     }
-    // Match the native Tex_icon's static style; each of these setters has a
-    // two-integer ABI. No sequence records or shared resource bytes are changed.
+    // Match Tex_icon's decoded static style. GUI kinds 17/18 store immediate
+    // values: Mask=0 draws colour; Mask=1 enters the native mask-writing pass.
+    // Each setter has a two-integer ABI; resource/sequence bytes stay untouched.
     for (offset, value) in [
         (0xa4dc24, 1),
-        (0xa4a9f4, 1),
-        (0xa47a94, 1),
-        (0xa4dca0, 1),
+        (0xa4a9f4, 0),
+        (0xa47a94, 0),
+        (0xa4dca0, 0),
         (0xa47a04, 2),
         (0xa4aa24, 1),
         (0xa4aa5c, 1),
-        (0xa4aa94, 1),
-        (0xa4aac8, 1),
-        (0xa4aafc, 1),
-        (0xa4dc54, 1),
-        (0xa4fa5c, 1),
+        (0xa4aa94, 3),
+        (0xa4aac8, 3),
+        (0xa4aafc, 3),
+        (0xa4dc54, 0),
+        (0xa4fa5c, 0),
     ] {
         integer(offset, object, value);
     }
