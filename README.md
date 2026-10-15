@@ -13,9 +13,9 @@ emulators. Requires a compatible Forge 1.5.1 loader and the English MHGU HD Proj
 | Completed, old or inactive urgent | Grey |
 | Ordinary quest | No badge |
 
-The 32×32 badge appears in the quest row's request-mark slot. When a quest also
-has a yellow request bubble, the badge appears four pixels to its left. Long
-quest names automatically shrink to fit before the badge.
+The badge appears in the quest row's request bubble slot. When a quest also
+has a yellow request bubble, the badge appears beside it. Long quest names
+automatically shrink to fit before the badge.
 
 ## Installation
 
@@ -42,11 +42,11 @@ its picker, or enter a hexadecimal RGB value.
 | Urgent | `A30000` | Currently needed and available urgent quests |
 | Completed | `808080` | Completed, obsolete or inactive key/urgent quests |
 
-Edits stay pending until you press **Save & apply**. Saved colours take effect
+Press **Save & apply** to use and save your chosen colours. They take effect
 without restarting or reopening the quest counter. **Reset defaults** fills in
-the default colours; press Save & apply to use and retain them. Updates preserve
-existing saved choices; use Reset defaults and Save & apply to adopt the new
-game-matched defaults.
+the default colours, which match the game's UI. Press Save & apply afterward
+to apply them. Updating the mod keeps your saved colours, so use these two
+buttons if you want to switch to the current defaults.
 
 Colours are saved in `key_quest_markers.ini` in MHGU's save folder:
 
@@ -57,9 +57,9 @@ urgent = A30000
 completed = 808080
 ```
 
-All colours stay opaque. If saving fails, load a player save and retry; the
-previously applied colours remain in use and your pending choices remain in the
-panel. Missing or invalid configuration uses defaults.
+All colours stay opaque. If saving fails, the previous colours stay in use and
+your pending choices remain in the panel. Load a player save and try saving
+again. Missing or invalid configuration uses defaults.
 
 ## Compatibility
 
