@@ -1,9 +1,25 @@
 # Key Quest Markers
 
-Rise-style quest badges for Monster Hunter Generations Ultimate 1.4.0 on Switch
-emulators. Requires [Fexty's Forge 1.5.1](https://github.com/Fexty12573/forge/releases/tag/v1.5.1).
+Adds Rise-style badges to key and urgent quests, with colours that show
+whether you still need them for progression.
 
-## Badges
+## Requirements
+
+- MHGU 1.4.0 for Nintendo Switch.
+- [Fexty's Forge 1.5.1](https://github.com/Fexty12573/forge/releases/tag/v1.5.1).
+
+## Installation
+
+1. Close the emulator.
+2. Extract `key-quest-markers-r17.zip`.
+3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
+   - Eden: `~/.local/share/eden/load/0100770008DD8000/`
+   - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
+4. Enable `key-quest-markers` and launch MHGU.
+
+## Usage
+
+Badges appear automatically when you open the quest counter.
 
 | Quest state | Badge |
 | --- | --- |
@@ -17,34 +33,25 @@ The badge appears in the quest row's request bubble slot. When a quest also
 has a yellow request bubble, the badge appears beside it. Long quest names
 automatically shrink to fit before the badge.
 
-## Installation
+### Settings
 
-1. Close the game and extract the ZIP.
-2. Copy the `key-quest-markers` folder into your emulator's MHGU mod directory,
-   beside Forge, then enable it. Replace the whole
-   folder when updating.
+Open **Plugin UI > Key Quest Markers** in Forge's overlay. Click a colour
+swatch to open its picker, or enter a hexadecimal RGB value.
 
-Forge's Loaded Plugins list shows **Key Quest Markers r17**. The badges work
-automatically when you open the quest counter.
-
-To remove the mod, close the game and disable or remove its folder.
-
-## Colour settings
-
-Open Forge's **Plugin UI → Key Quest Markers**. Click a colour swatch to open
-its picker, or enter a hexadecimal RGB value.
-
-| Setting | Default | Meaning |
+| Setting | Default | Effect |
 | --- | --- | --- |
-| Key | `006305` | Currently needed key quests |
-| Urgent | `A30000` | Currently needed and available urgent quests |
-| Completed | `808080` | Completed, obsolete or inactive key/urgent quests |
+| Key | `006305` | Colour for currently needed key quests. |
+| Urgent | `A30000` | Colour for currently needed and available urgent quests. |
+| Completed | `808080` | Colour for completed, obsolete or inactive key/urgent quests. |
 
-Press **Save & apply** to use and save your chosen colours. They take effect
-without restarting or reopening the quest counter. **Reset defaults** fills in
-the default colours, which match the game's UI. Press Save & apply afterward
-to apply them. Updating the mod keeps your saved colours, so use these two
-buttons if you want to switch to the current defaults.
+Edits stay pending until you press **Save & apply**. The colours then take
+effect without restarting or reopening the quest counter. **Reset defaults**
+fills in the default colours. Press Save & apply afterward to use and save them.
+
+Updates keep your saved colours. To use the current defaults, press Reset
+defaults followed by Save & apply. All colours stay opaque.
+
+### INI settings
 
 Colours are saved in `key_quest_markers.ini` in MHGU's save folder:
 
@@ -55,11 +62,17 @@ urgent = A30000
 completed = 808080
 ```
 
-All colours stay opaque. If saving fails, the previous colours stay in use and
-your pending choices remain in the panel. Load a player save and try saving
-again. Missing or invalid configuration uses defaults.
+Missing or invalid configuration uses defaults. If saving fails, the previous
+colours stay in use and your pending choices remain in the panel. Load a player
+save and try saving again.
 
-## Compatibility
+## Update and removal
+
+Close the emulator before updating or removing the mod. To update, replace
+its `key-quest-markers` folder with the one from the new ZIP. To remove it,
+disable the package or delete its folder from the emulator's mod directory.
+
+## Compatibility and known issues
 
 Works with the base game and the MHGU HD Project. HD is optional.
 

@@ -37,3 +37,10 @@ r17 works with the base game and optional MHGU HD Project (user-confirmed
 runtime requirement. See EVIDENCE.json. User guides call badge colours Green,
 Red and Grey. Keep Gathering/objective source labels in research records.
 Omit advice about disabling the old prefix plugin from the release README.
+
+Release READMEs address mod users. Use Requirements, Installation, Usage,
+Update and removal, then Compatibility and known issues when relevant.
+Put Settings/INI subsections under Usage. Settings tables use Setting/Default/Effect,
+controls use Action/Input, and installation includes exact platform paths.
+Apply the full Humanizer process, use plain colour names, and omit maintainer
+history/testing/approval material and unrelated-mod advice.
