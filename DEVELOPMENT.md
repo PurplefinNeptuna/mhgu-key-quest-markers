@@ -28,7 +28,7 @@ Run from any directory:
 
 `prepare` verifies inputs and the read-only native GUI layout fixture. All commands are offline;
 there is no download, install, game launch or settings command. Outputs use the
-workspace's `build/key-quest-markers-rs/candidates/r12/` and matching `work/` folder,
+workspace's `build/key-quest-markers-rs/candidates/r12-small/` and matching `work/` folder,
 or the independent checkout's own `build/` and `work/` folders after export.
 
 The workspace coordinator also supports
@@ -105,3 +105,15 @@ widths become299/263 with the same four-pixel gap and restoration rules. The
 screenshot shows r11's visible emblem lower and smaller than the bubble; r12's
 appearance still requires a new in-game check. No extra hooks, objects, resources,
 map/cache capacity or renderer changes are needed for this size adjustment.
+
+
+## r12-small comparison variant
+
+Only the source UV and build identity differ from r12. The smaller outlined top
+emblem occupies logical `(342,0,372,30)` in texture22, equivalent to physical
+`(1368,0,1488,120)` in the 2048² HD atlas. It is drawn at the same 32×32 size.
+Native compiled fixtures check the rectangle setter, stored UV and all four
+half-texel-inset UV corners, along with the unchanged layout and cleanup cases.
+The original r12 delivery remains untouched; its complete file hashes are in
+`docs/R12_COMPARISON.json`. Independent source exports and output paths use
+`r12-small`, so neither build nor package commands overwrite original r12.

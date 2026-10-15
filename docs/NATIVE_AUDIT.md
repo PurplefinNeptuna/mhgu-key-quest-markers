@@ -494,3 +494,17 @@ preserves four pixels before X365. The title widths become299/263 rather than
 positions, source UVs, colours, title sizing/restoration and row-height bounds.
 The accepted r11 payload is unchanged; no new objects, cache/map capacity or
 hooks are introduced. Layer priority and native Message bindings stay intact.
+
+
+## r12-small atlas comparison — 2026-10-15
+
+This variant preserves r12 geometry and native calls, changing the source UV
+from `(136,344,198,406)` to `(342,0,372,30)` on existing texture22. The new region
+is the smaller outlined top emblem, matching the 32px orange preview. In the
+2048² HD atlas the crop is `(1368,0,1488,120)`; coordinates divide by four for
+the native 512² logical atlas. Its black outline remains in the source pixels.
+The compiled native fixture checks the UV setter and stored rectangle, then
+quad UV corners at X342.5/371.5 and Y0.5/29.5. The quad remains 32×32 at Y3
+and X365/329. No resources, ownership, hooks, title fitting or classification
+change. Original r12 delivery hashes are retained in `R12_COMPARISON.json`.
+Actual sampling and visual preference require the user's in-game comparison.

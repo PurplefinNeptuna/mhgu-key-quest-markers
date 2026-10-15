@@ -25,6 +25,7 @@
     "dependencies.lock.json",
     "docs/CANDIDATE_RESULTS.json",
     "docs/NATIVE_AUDIT.md",
+    "docs/R12_COMPARISON.json",
     "docs/RUNTIME_R11.json",
     "docs/RUNTIME_RESULTS.json",
     "licenses/COMPILER_BUILTINS.txt",

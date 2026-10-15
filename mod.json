@@ -2,6 +2,6 @@
   "schema_version": 1,
   "mod": "key-quest-markers-rs",
   "kind": "plugin",
-  "version": "r12",
+  "version": "r12-small",
   "runtime_platform": "forge-switch"
 }

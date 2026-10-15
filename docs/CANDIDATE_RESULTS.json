@@ -1,5 +1,5 @@
 {
-  "version": "r12",
+  "version": "r12-small",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
@@ -49,8 +49,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64",
-    "elf_sha256": "a06112a8893ec362ed47d20fd444f9e252fe8251a0c38f72f96c2f08bbbfc772",
+    "nro_sha256": "2a4338ec773e28a1c0bb60fd498ea6e24a697056991a0cee647e6c345a582f5f",
+    "elf_sha256": "90b46c0ded260b820ecbaf1c57763bc0e6c2a0cde10197b43459b8683fe3c99e",
     "exports": [
       "fini",
       "forge_onInit",
@@ -139,15 +139,15 @@
   },
   "candidate_manifest": {
     "mod": "key-quest-markers-rs",
-    "version": "r12",
+    "version": "r12-small",
     "status": "DEVELOPMENT",
     "runtime_test": "NOT RUN",
     "runtime_active": true,
     "package_name": "key-quest-markers-rs",
     "payloads": {
-      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64"
+      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "2a4338ec773e28a1c0bb60fd498ea6e24a697056991a0cee647e6c345a582f5f"
     },
-    "archive_sha256": "791f828878083e0b56cc8f83578f3e75c563e0cc89a418d212d49b4614ddad3b"
+    "archive_sha256": "ce76daa54389a772f82baba013cd199e245294a54d3c70f33752b45e684d7d8e"
   },
   "prior_accepted_r9": {
     "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
@@ -156,8 +156,8 @@
     "runtime_changed_for_this_record": false
   },
   "limits": [
-    "r12 was not installed or launched.",
-    "32px size, visible centring and white-band clipping need a manual r12 trial.",
+    "r12-small was not installed or launched.",
+    "Small-emblem UV sampling, visible centring and clipping require a manual comparison against the preserved original r12.",
     "r11 was user-confirmed working on Eden/Linux; other platforms and exhaustive cases remain unconfirmed."
   ],
   "fix": {
@@ -184,5 +184,22 @@
     ],
     "accepted_r11": "docs/RUNTIME_R11.json",
     "r11_bytes_preserved": true
+  },
+  "atlas_variant": {
+    "texture_id": 22,
+    "source_rect": [
+      342,
+      0,
+      372,
+      30
+    ],
+    "original_r12_rect": [
+      136,
+      344,
+      198,
+      406
+    ],
+    "comparison_record": "docs/R12_COMPARISON.json",
+    "geometry_and_classification_unchanged": true
   }
 }

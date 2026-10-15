@@ -302,7 +302,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==GAME+0x1040:release(r[0]);ret(cpu);return
         # Style calls execute the original game instructions.
         if address==GAME+0xa4faf0:assert r[1]==22
-        if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==(136.,344.,198.,406.)
+        if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==(342.,0.,372.,30.)
         if address-GAME in STYLE:styles.setdefault(r[0],{})[address-GAME]=r[1]
         if address==GAME+0xba2280:
             assert r[:3]==[pool,draw_object+0xbc,96]
@@ -457,7 +457,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(p+0x54)&1==states[i]
             if i in colors:assert struct.unpack('<4I',u.mem_read(p+0xa4,16))==(colors[i],)*4
             assert read(p+0x104)==ATLAS
-            assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==(136.,344.,198.,406.)
+            assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==(342.,0.,372.,30.)
             assert struct.unpack('<2f',u.mem_read(p+0x80,8))==((329. if i in requests and states.get(i) else 365.),3.)
             assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(32.,32.)
         if late_invalid:
@@ -519,8 +519,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert [words[j]for j in [3,9,15,21]]==[colors[i]]*4
             assert [f[j]for j in [0,6,12,18]]==[0.,32.,0.,32.]
             assert [f[j]for j in [1,7,13,19]]==[0.,0.,32.,32.]
-            assert [f[j]for j in [4,10,16,22]]==[136.5,197.5,136.5,197.5]
-            assert [f[j]for j in [5,11,17,23]]==[344.5,344.5,405.5,405.5]
+            assert [f[j]for j in [4,10,16,22]]==[342.5,371.5,342.5,371.5]
+            assert [f[j]for j in [5,11,17,23]]==[0.5,0.5,29.5,29.5]
         for p,size in allocations.items():assert bytes(u.mem_read(p+size,16))==b'\xa5'*16,('native draw-cache overflow',hex(p))
         # Run the actual root and base-container destructors; the mocked MT free
         # records ownership, while their real ARM loops destroy the new children.

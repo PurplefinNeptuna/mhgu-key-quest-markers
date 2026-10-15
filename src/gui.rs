@@ -338,7 +338,9 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
     if memory::word(object + 0x104).ok_or(5u32)? == 0 {
         return Err(5);
     }
-    let rect = [136f32, 344., 198., 406.];
+    // r12-small selects the outlined top emblem; its 30px atlas region is
+    // drawn in the same 32px quad as r12 for an isolated in-game comparison.
+    let rect = [342f32, 0., 372., 30.];
     let f: unsafe extern "C" fn(u32, *const f32) =
         unsafe { core::mem::transmute((base() + 0xa4fb58) as usize) };
     unsafe { f(object, rect.as_ptr()) };

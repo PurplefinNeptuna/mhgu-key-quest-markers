@@ -1,0 +1,59 @@
+{
+  "comparison": "r12 original versus r12-small alternate",
+  "original": {
+    "version": "r12",
+    "source_commit": "fbd8647",
+    "delivery": "build/key-quest-markers-rs/candidates/r12/delivery",
+    "sha256": {
+      "GAMEBANANA_README.html": "7ffef39cd4c64e96eb16315ce83dd9f84927e92a0fe1fc79c116a9a6df77424b",
+      "NOTICES.html": "7b5d43479a48fb0f83c1d2052972f65c24b6ecb6701a21e7b3464fccfb519987",
+      "NOTICES.txt": "8bb45779ee915d62944acd8792ea2d5f5b0b55f308d346e36118ca986636f70c",
+      "README.html": "afb9d4cc1f13585bf585bd3b6c3693837cb4b0c6c78d34b4dafe643ded9a05fe",
+      "README.md": "5e2e5be40f4ad1507333fe0599831a04d2b81df2b55a087ef6d6c240224e1313",
+      "SHA256SUMS": "298129e3b6743a6665ace57d53f13a6e940338b083d06360e227a58c2d7b6055",
+      "VALIDATION.json": "1f15f84726fbe0a5aca05f8e006da8c32f4f4a456dfffd3a2db35e508c765097",
+      "key-quest-markers-rs/romfs/nativeNX/plugins/key_quest_markers_rs.nro": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64",
+      "key-quest-markers-rs-r12-candidate.zip": "791f828878083e0b56cc8f83578f3e75c563e0cc89a418d212d49b4614ddad3b",
+      "manifest.json": "9ca50490690b8571a9806fe2b41db6f665b91b85774586c6d2d0e17e00609b9f"
+    }
+  },
+  "alternate": {
+    "version": "r12-small",
+    "runtime_test": "NOT RUN",
+    "texture_id": 22,
+    "logical_atlas_size": [
+      512,
+      512
+    ],
+    "source_rect": [
+      342,
+      0,
+      372,
+      30
+    ],
+    "physical_hd_atlas_size": [
+      2048,
+      2048
+    ],
+    "physical_source_rect": [
+      1368,
+      0,
+      1488,
+      120
+    ],
+    "research_png_sha256": "2aba7168427ee790935bede595e13fcfe74c20d59aecebeddf133ed4b8c55ecf",
+    "appearance": "Smaller top emblem with continuous black outline, matching the orange comparison preview.",
+    "unchanged": [
+      "32x32 native quad",
+      "Y=3",
+      "X=365 or 329",
+      "state colours and classification",
+      "request bubble and title fitting",
+      "native ownership, hooks and resource validation"
+    ],
+    "packaging": "Same runtime folder and NRO filename for replacement between trials; separately versioned ZIP and Forge label.",
+    "nro_sha256": "2a4338ec773e28a1c0bb60fd498ea6e24a697056991a0cee647e6c345a582f5f",
+    "archive_sha256": "ce76daa54389a772f82baba013cd199e245294a54d3c70f33752b45e684d7d8e",
+    "static_checks": "10 host tests, 16 ARM ABI/GE patterns, 32 compiled native adapter cases passed"
+  }
+}
