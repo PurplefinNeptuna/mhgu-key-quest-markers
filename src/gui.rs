@@ -347,7 +347,7 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
     let f: unsafe extern "C" fn(u32, *const f32) =
         unsafe { core::mem::transmute((base() + 0xa4fb58) as usize) };
     unsafe { f(object, rect.as_ptr()) };
-    set(object, Badge::Hidden);
+    set(object, Badge::Hidden, 0);
 
     let mut mapping = Allocation::mapping().ok_or(9u32)?;
     // Preserve every resource/sequence binding at its original index. The native
@@ -446,7 +446,7 @@ pub fn objects(ui: u32) -> Result<[Option<Decoration>; 8], u32> {
     .ok_or(1u32)?;
     for row in rows.iter().flatten() {
         if row.badge != 0 {
-            set(row.badge, Badge::Hidden);
+            set(row.badge, Badge::Hidden, 0);
         }
         // Restore a valid title even when the request binding is missing. Only
         // rows with our child could have been fitted by a previous callback.
@@ -516,7 +516,7 @@ pub struct Decoration {
 impl Decoration {
     /// The original builder has already set request visibility for this row.
     /// Reserve four pixels before each badge; fit only badge-bearing titles.
-    pub fn set(self, badge: Badge) {
+    pub fn set(self, badge: Badge, color: u32) {
         if badge != Badge::Hidden {
             let x: f32 = if self.request_visible { 329.0 } else { 365.0 };
             fit_title(self.title, x - 62.0 - 4.0, true);
@@ -534,12 +534,11 @@ impl Decoration {
                 }
             }
         }
-        set(self.object, badge);
+        set(self.object, badge, color);
     }
 }
-pub fn set(object: u32, badge: Badge) {
+pub fn set(object: u32, badge: Badge, value: u32) {
     if badge != Badge::Hidden {
-        let value = badge.rgba();
         let color: unsafe extern "C" fn(u32, *const u32, u32) =
             unsafe { core::mem::transmute((base() + 0xa4e0b8) as usize) };
         for vertex in 0..4 {

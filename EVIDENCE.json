@@ -783,12 +783,1162 @@
         "pretrial_package_manifest_preserved": true,
         "note": "The candidate manifest/validation describe the pretrial build and retain runtime_test=NOT RUN. This later evidence record documents the user trial. No release promotion, installation, launch, settings/save edit, push or publication was performed."
       }
+    },
+    "r15-before-configurable-colours": {
+      "version": "r15",
+      "date": "2026-10-15",
+      "scope": "Approved workspace rename/upstream-loader maintenance; no gameplay run.",
+      "forge": {
+        "version": "1.5.1",
+        "commit": "b23e114a23f41c9a8e2fd34b2f4df2a2102d0ee1",
+        "url": "https://github.com/Fexty12573/forge/releases/tag/v1.5.1",
+        "archive_sha256": "9c9a04d5d4d842e71b6ed05b85612cea7a1c7dfedb4a8d2e23eb9870211300dd",
+        "path": "work/shared/forge-1.5.1",
+        "nso_sha256": "469f425dd02a37b7a5d84ddde5f769922bc5e0d5fbc8adb0ca270e2c0773cd7d"
+      },
+      "reports": {
+        "resource": {
+          "status": "PASSED",
+          "source_sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
+          "source_gui_sha256": "95730f3adbaf2c017968cb0079a0caa666de541cecd66ff8ad223e1137b30c5a",
+          "row_animation": 20,
+          "existing_objects": 12,
+          "existing_drawables": 9,
+          "existing_sequences": 15,
+          "instances": 63,
+          "texture_id": 22,
+          "archive_replacements": 0,
+          "title_class": "cGUIObjMessage",
+          "title_type_crc": 800599726,
+          "title_bytes": 352,
+          "new_atlas": false,
+          "runtime_test": "NOT RUN"
+        },
+        "build": {
+          "version": "r15",
+          "status": "BUILT",
+          "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+          "forge_rs_revision": "d1865b68e9b194eb3eacc8bd71bbf601a5fac63e",
+          "runtime_active": true,
+          "source_sha256": {
+            "Cargo.toml": "c7edd4b6dc28a09167a189dfdfd22bcf6a464ae653005b2f8911732ce29d6429",
+            "Cargo.lock": "dcbbd074896b1c59bff34fa50ce2b6adad6e9a77f72c7cb7f1d55051e94962a5",
+            ".cargo/config.toml": "f6a8921cede665cd4d67f8da70ef86bcf78700371a84216bb6b0fc036c3e442b",
+            "armv7a-none-eabi.json": "d2be3e33facf2d2da75a5cb64029ee8e617f406e1dd9767e3063aee76292f7d5",
+            "build.rs": "295e23e5c1b5c6df7410f49017285dd7d612ea6ef0ea716c99ae622a35518484",
+            "scripts/gui_layout.py": "aeb3c044b33393adf50e475883275c7547460281c8419f34c93f03332ac742c6",
+            "src/gui.rs": "a19dfa1cc7fe912a2773608e218d0f48b31b00b213f114b2e160da90fac76b2b",
+            "src/hooks.rs": "b70c40abee00782b0c7bbc18a1ca8f924e736b06ef25995b6af0a21c43c67c9f",
+            "src/lib.rs": "a4b4c66e0dd5ebad527402f38c8f5a246fbf375c5ae750caedf69693a159fd0d",
+            "src/memory.rs": "c191f6a5be4a38a5bafe94626d0783976080fa1650d6fd96f2e83804915d154f",
+            "src/native.rs": "8ba43540352e6397b43afab254be3dc528a881a00331091216d17a1ed8b7d291",
+            "src/offers.rs": "49e101abec86ca8de0ee8923ee2923d2b6f445ddea1530cc734ea6512ce2eabe",
+            "src/signatures.rs": "64ef009630b99fc3b2dd2983e7718088c37af7645d06f6a8555f7ce9928d47fb",
+            "src/svc.S": "ad8af8eadfe25a122ee2f0e4e5b1722a947b7d0747f52f30ac9373190fc7ac2c",
+            "core/src/lib.rs": "7991ed8d0fc5728dff361d9b105691a47ba2fbf8357100a57bee870a4107c773",
+            "link/exported.txt": "50cb9c9e65b083a73a3cc08700f259c7fef253d7dbc5cadd78132d7e9b623461",
+            "link/switch32.ld": "dfa3102bf0a910ad89aaa60e286153a087f44d74cb19c5f694a9542866540aa5"
+          },
+          "runtime_test": "NOT RUN"
+        },
+        "arm": {
+          "status": "PASSED",
+          "typed_detour_cases": 16,
+          "forwarded_integer_arguments": 7,
+          "registered_name": "Key Quest Markers r15",
+          "metadata_bytes": 70,
+          "hook_abi_bytes": 24,
+          "minimum_forge_version": "1.5.1",
+          "GE": "unchanged before original in all 16 patterns; no restoration required at audited direct continuations",
+          "preserved": [
+            "r4-r11",
+            "d8-d15",
+            "sp",
+            "incoming stack words"
+          ],
+          "direct_caller_windows": {
+            "0x616c00": "00616c00 <.data+0x616c00>:\n  616c00:\te7961104 \tldr\tr1, [r6, r4, lsl #2]\n  616c04:\te3510000 \tcmp\tr1, #0\n  616c08:\t0a000011 \tbeq\t0x616c54\n  616c0c:\te59f0094 \tldr\tr0, [pc, #148]\t@ 0x616ca8\n  616c10:\te3a02000 \tmov\tr2, #0\n  616c14:\te3a03001 \tmov\tr3, #1\n  616c18:\te79f0000 \tldr\tr0, [pc, r0]\n  616c1c:\te5900000 \tldr\tr0, [r0]\n  616c20:\te58d2000 \tstr\tr2, [sp]\n  616c24:\te3a02000 \tmov\tr2, #0\n  616c28:\tebf693e3 \tbl\t0x3bbbbc\n  616c2c:\te3500001 \tcmp\tr0, #1",
+            "0x618bc0": "00618bc0 <.data+0x618bc0>:\n  618bc0:\te59f0088 \tldr\tr0, [pc, #136]\t@ 0x618c50\n  618bc4:\te59d1030 \tldr\tr1, [sp, #48]\t@ 0x30\n  618bc8:\te79f0000 \tldr\tr0, [pc, r0]\n  618bcc:\te3510012 \tcmp\tr1, #18\n  618bd0:\te3a01017 \tmov\tr1, #23\n  618bd4:\t13a02002 \tmovne\tr2, #2\n  618bd8:\t03a02001 \tmoveq\tr2, #1\n  618bdc:\te5900000 \tldr\tr0, [r0]\n  618be0:\tebfd0c25 \tbl\t0x55bc7c\n  618be4:\te1a03000 \tmov\tr3, r0",
+            "0x618cbc": "00618cbc <.data+0x618cbc>:\n  618cbc:\te59f0048 \tldr\tr0, [pc, #72]\t@ 0x618d0c\n  618cc0:\te3a01017 \tmov\tr1, #23\n  618cc4:\te3a02003 \tmov\tr2, #3\n  618cc8:\te79f0000 \tldr\tr0, [pc, r0]\n  618ccc:\te5900000 \tldr\tr0, [r0]\n  618cd0:\tebfd0be9 \tbl\t0x55bc7c\n  618cd4:\te1a03000 \tmov\tr3, r0",
+            "0x782bb4": "00782bb4 <.data+0x782bb4>:\n  782bb4:\tea000092 \tb\t0x782e04",
+            "0x782e04": "00782e04 <.data+0x782e04>:\n  782e04:\te1a00004 \tmov\tr0, r4\n  782e08:\te3a01000 \tmov\tr1, #0\n  782e0c:\tebfb674a \tbl\t0x65cb3c\n  782e10:\te5d4103c \tldrb\tr1, [r4, #60]\t@ 0x3c\n  782e14:\te351000f \tcmp\tr1, #15\n  782e18:\t8a000011 \tbhi\t0x782e64\n  782e1c:\te3a02001 \tmov\tr2, #1\n  782e20:\te30d3080 \tmovw\tr3, #53376\t@ 0xd080",
+            "0x6e3f68": "006e3f68 <.data+0x6e3f68>:\n  6e3f68:\te30e0c7d \tmovw\tr0, #60541\t@ 0xec7d\n  6e3f6c:\te34f0fff \tmovt\tr0, #65535\t@ 0xffff\n  6e3f70:\te7d50000 \tldrb\tr0, [r5, r0]\n  6e3f74:\te3500001 \tcmp\tr0, #1\n  6e3f78:\t0a0000d0 \tbeq\t0x6e42c0\n  6e3f7c:\te3500000 \tcmp\tr0, #0\n  6e3f80:\t1a00002a \tbne\t0x6e4030"
+          },
+          "live_flags": "Row and parent direct callers replace NZCVQ before conditional use or make an unconditional next call; no incoming GE consumer",
+          "runtime_test": "NOT RUN",
+          "resource_attachment": "NOT VERIFIED"
+        },
+        "native-adapter": {
+          "status": "PASSED",
+          "compiled_nro": true,
+          "cases": 40,
+          "results": [
+            {
+              "case": "all eight special urgents outside rank-up offer pool",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4291448219,
+                "1": 4291448219,
+                "2": 4291448219,
+                "3": 4291448219,
+                "4": 4291448219,
+                "5": 4291448219,
+                "6": 4291448219,
+                "7": 4291448219
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "only enabled special records become purple",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4291448219,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4291448219,
+                "5": 4286611584,
+                "6": 4291448219,
+                "7": 4286611584
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "disabled special records remain grey despite scene availability",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584,
+                "5": 4286611584,
+                "6": 4286611584,
+                "7": 4286611584
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special pair completed by first-run quest",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4291448219,
+                "4": 4291448219,
+                "5": 4291448219,
+                "6": 4291448219,
+                "7": 4291448219
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special pair completed by repeat quest",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4291448219,
+                "4": 4291448219,
+                "5": 4291448219,
+                "6": 4291448219,
+                "7": 4291448219
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special pairs complete independently",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4291448219,
+                "4": 4286611584,
+                "5": 4286611584,
+                "6": 4291448219,
+                "7": 4291448219
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "unavailable special urgents are grey",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1,
+                "6": 1,
+                "7": 1
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584,
+                "5": 4286611584,
+                "6": 4286611584,
+                "7": 4286611584
+              },
+              "native_draws": 8,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "special urgency does not bypass invalid offer context",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "Text subclass is rejected for the Message resource",
+              "visible": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 4,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "invalid request on a fitted row restores its title",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "request shares the key slot without overwriting bubble",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "selected row uses the same request-relative layout",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "missing request binding leaves other badges working",
+              "visible": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 4,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "missing title binding leaves other badges working",
+              "visible": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 4,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "scrolling and early-return restore title fitting",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "first malformed trampoline rolls back",
+              "startup_rollback": true,
+              "failed_hook": 1
+            },
+            {
+              "case": "second malformed trampoline rolls back both targets",
+              "startup_rollback": true,
+              "failed_hook": 2
+            },
+            {
+              "case": "all badge states and native draw traversal",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent inactive",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent unavailable",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent prerequisites incomplete",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "viewing still red",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "key completion",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "urgent completion",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4286611584,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "resource object mismatch",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "animation address is not the GUI owner",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "no offer context",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "ordinary rows",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "invalid offer count",
+              "visible": {
+                "0": 0,
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "different GUI",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "satisfied alternative",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4286611584,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "simultaneous urgents",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4291448219,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "secondary table",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "both tables",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "primary table empty",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "object allocation failure",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "cache allocation failure",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "map allocation failure",
+              "visible": {},
+              "colors": {},
+              "native_draws": 0,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "repeated row update reuses native children",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            },
+            {
+              "case": "partial allocation failure recovers without duplicate children",
+              "visible": {
+                "0": 1,
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0
+              },
+              "colors": {
+                "0": 4280633319,
+                "1": 4286611584,
+                "2": 4291448219,
+                "3": 4286611584,
+                "4": 4286611584
+              },
+              "native_draws": 5,
+              "ownership_cleanup": true,
+              "saved_records_unchanged": true
+            }
+          ],
+          "error_only_filter_diagnostic_snapshots": true,
+          "deduplicated_scalar_snapshots": true,
+          "title_resource_class_crc": 800599726,
+          "native_message_type_getter": true,
+          "resource_inline_constants": {
+            "10804260": 1,
+            "10791412": 0,
+            "10779284": 0,
+            "10804384": 0,
+            "10779140": 2,
+            "10791460": 1,
+            "10791516": 1,
+            "10791572": 3,
+            "10791624": 3,
+            "10791676": 3,
+            "10804308": 0,
+            "10811996": 0
+          },
+          "native_prepaint_and_texture_draw": true,
+          "native_quad_geometry": true,
+          "native_autoscale_dispatch_and_clamp": true,
+          "request_visibility_placement": true,
+          "title_restoration": true,
+          "actual_forge_lifecycle_and_installer": true,
+          "installed_entry_branches": true,
+          "native_resource_cleanup": true,
+          "expanded_object_map_and_native_instance_clear": true,
+          "support_signatures_precede_hook_signatures": true,
+          "native_animation_constructor": true,
+          "native_texture_constructor": true,
+          "native_style_texture_color_visibility_setters": true,
+          "null_dti_placement_slot": true,
+          "native_cache_allocator_and_free": true,
+          "distinct_gui_owner": true,
+          "native_draw_walker": true,
+          "native_root_destructors": true,
+          "archive_replacements": 0,
+          "thread_context_restored": true,
+          "runtime_test": "NOT RUN",
+          "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d"
+        },
+        "verify": {
+          "status": "PASSED",
+          "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+          "elf_sha256": "82b2f132fe7dc22501b27c0f8b975f83e902d1128a7e02b6a60880b182386bde",
+          "exports": [
+            "fini",
+            "forge_onInit",
+            "forge_onLoad",
+            "forge_onUpdate",
+            "init"
+          ],
+          "strong_imports": [
+            "__aeabi_unwind_cpp_pr0",
+            "forge_hook_create",
+            "forge_log",
+            "forge_log_getLevel",
+            "forge_mem_getMainTextAddr",
+            "forge_patch_create",
+            "forge_patch_destroy",
+            "forge_patch_disable",
+            "forge_patch_enable",
+            "forge_singleton_getInstanceByName",
+            "free",
+            "malloc",
+            "nnosAllocateTlsSlot",
+            "nnosGetTlsValue",
+            "nnosSetTlsValue"
+          ],
+          "signature_windows": [
+            "0xa53324",
+            "0xa53348",
+            "0xa53528",
+            "0xa5350c",
+            "0xa53aa8",
+            "0xa56ab8",
+            "0x5456e4",
+            "0xa38ffc",
+            "0xa47d2c",
+            "0xa38b58",
+            "0xa4f60c",
+            "0xa4d0d8",
+            "0x616cb0",
+            "0x54d030",
+            "0x523da4",
+            "0x3b1a18",
+            "0x3b1d70",
+            "0x50cbd0",
+            "0x3b57d0",
+            "0x7aef68",
+            "0x3b2174",
+            "0x546f28",
+            "0x54af8c",
+            "0x7aa47c",
+            "0x540c08",
+            "0x540c38",
+            "0xa4faf0",
+            "0xa4fb58",
+            "0xa4e0b8",
+            "0xa47950",
+            "0xa4844c",
+            "0xa48668",
+            "0xa4f6a4",
+            "0xa4f77c",
+            "0xa494a0",
+            "0xa4964c",
+            "0xa4dc24",
+            "0xa4a9f4",
+            "0xa47a94",
+            "0xa4dca0",
+            "0xa47a04",
+            "0xa4aa24",
+            "0xa4aa5c",
+            "0xa4aa94",
+            "0xa4aac8",
+            "0xa4aafc",
+            "0xa4dc54",
+            "0xa4fa5c"
+          ],
+          "hook_abi_bytes": 24,
+          "ordinary_hook_slots": 2,
+          "texture_constructor": "0xa4f60c",
+          "texture_dti_placement_virtual": false,
+          "forge_trampoline_bytes": 32,
+          "forge_pool_chunk_bytes": 16384,
+          "compiled_status_writes": [],
+          "runtime_active": true,
+          "gui_attachment": "Game-owned native children and expanded draw caches",
+          "progression_semantics": "Native stages, alternatives and offered urgent IDs",
+          "runtime_test": "NOT RUN"
+        },
+        "tests": {
+          "status": "PASSED",
+          "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+          "archive_replacements": 0,
+          "host": true,
+          "resource": true,
+          "arm": true,
+          "runtime_test": "NOT RUN"
+        }
+      },
+      "manual_test": "NOT RUN"
+    },
+    "r15-distribution-before-configurable-colours": {
+      "schema_version": 1,
+      "mod": "key-quest-markers",
+      "status": "READY_TO_DISTRIBUTE",
+      "runtime_platform": "switch",
+      "reason": "User explicitly approved the workspace compaction and distribution of the renamed/upstream-maintenance builds after static validation.",
+      "publication": {
+        "published": false,
+        "url": null,
+        "date": null
+      },
+      "version": "r15",
+      "package_name": "key-quest-markers",
+      "archive": "key-quest-markers-r15.zip",
+      "runtime_test": "NOT_RUN",
+      "runtime_active": true,
+      "gamebanana": {
+        "ai_code": {
+          "used": true,
+          "software": [
+            {
+              "name": "OpenAI Codex",
+              "url": "https://openai.com/codex/"
+            }
+          ],
+          "scope": "Implementing Rust native callbacks, runtime GUI insertion and allocation cleanup, progression classification, tests, standalone build/package tooling and explanatory comments."
+        },
+        "ai_assets": [],
+        "credits": [
+          {
+            "name": "Forge",
+            "author": "Jeffi / Skyline Project",
+            "url": "https://github.com/jeffi6375/forge",
+            "scope": "Loader API and native hooks."
+          },
+          {
+            "name": "forge-rs",
+            "author": "Fexty",
+            "url": "https://github.com/Fexty12573/forge-rs",
+            "scope": "Rust runtime, callbacks, allocation, singleton lookup and patch bindings."
+          },
+          {
+            "name": "libnx",
+            "author": "Hydrosphere Developers",
+            "url": "https://github.com/switchbrew/libnx",
+            "scope": "MIT-licensed ARM32 syscall wrappers."
+          },
+          {
+            "name": "MHGU HD Project",
+            "author": "Monkbreh / Monke",
+            "url": "https://github.com/Monkbreh/MHGU-HD-Project",
+            "scope": "External English HD dependency supplying the already-loaded lobby emblem. No HD files are included in this plugin."
+          },
+          {
+            "name": "Monster Hunter Generations Ultimate",
+            "author": "Capcom",
+            "url": "https://www.monsterhunter.com/",
+            "scope": "Native GUI and quest APIs and the original emblem loaded from the user supplied game; no game asset files are shipped."
+          }
+        ]
+      },
+      "approval": {
+        "date": "2026-10-15",
+        "basis": "User approved implementation of the full compaction plan, including renamed ready releases and stock Forge maintenance. Earlier gameplay acceptance remains attached to the original hashes."
+      },
+      "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. English HD Project required.",
+      "limitations": [
+        "This maintenance build has no new gameplay run. Earlier user acceptance applies only to the preserved original binaries; Ryujinx/native Switch coverage remains unconfirmed.",
+        "User accepted the unchanged original-emblem r14 on Eden/Linux; individual ranks, colours, scrolling, request overlaps, long titles and transitions were not separately enumerated.",
+        "Ryujinx and native Switch gameplay remain unconfirmed.",
+        "The accepted r14 binary retains bounded startup and first-page diagnostic logs at ERROR level; no per-frame logging."
+      ],
+      "readme": "mods/key-quest-markers/README.md",
+      "notices": [
+        "mods/key-quest-markers/DISTRIBUTION_NOTICES.md",
+        "mods/key-quest-markers/LICENSE",
+        "mods/key-quest-markers/vendor/forge-rs/LICENSE",
+        "mods/key-quest-markers/vendor/libnx/LICENSE-MIT",
+        "mods/key-quest-markers/licenses/FORGE-MIT.txt",
+        "mods/key-quest-markers/vendor/crates/log-0.4.34/LICENSE-MIT",
+        "mods/key-quest-markers/licenses/RUST-MIT.txt",
+        "mods/key-quest-markers/licenses/COMPILER_BUILTINS.txt"
+      ],
+      "payloads": {
+        "romfs/nativeNX/plugins/key_quest_markers.nro": {
+          "source": "build/key-quest-markers/candidates/r15/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+          "sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d"
+        }
+      },
+      "evidence": {
+        "static": [
+          "mods/key-quest-markers/EVIDENCE.json"
+        ],
+        "manual": [
+          "mods/key-quest-markers/EVIDENCE.json"
+        ],
+        "static_summary": "Current host/native/build evidence and original dated results are recorded in EVIDENCE.json.",
+        "manual_summary": "No new gameplay run. The user approved distribution of this maintenance build; historical gameplay reports and exact hashes remain under EVIDENCE.json historical records."
+      },
+      "dependencies": [
+        {
+          "name": "Forge",
+          "version": "1.5.1",
+          "scope": "External unmodified upstream Switch loader; not bundled."
+        },
+        {
+          "name": "English MHGU HD Project",
+          "scope": "External already-loaded lobby emblem and layout; no HD assets bundled."
+        }
+      ],
+      "support": {
+        "DEVELOPMENT.md": "mods/key-quest-markers/DEVELOPMENT.md",
+        "EVIDENCE.json": "mods/key-quest-markers/EVIDENCE.json"
+      }
+    },
+    "r15-release-preservation": {
+      "directory": "backups/accepted/key-quest-markers/r15-before-colours",
+      "files": {
+        "README.html": "aab46310b7c18feed804b83629ddbc3319a4a1dcb51aed059378a99e300e058a",
+        "GAMEBANANA_README.html": "d55ac38d53f07fd67d528c932386cb01c4d50d4833161c9562d2d0dfe063b04a",
+        "key-quest-markers-r15.zip": "93149c9048b836979d5b91b0b3eaf02ec6e2e30bc59e336d17adf568c70e922c",
+        "DEVELOPMENT.md": "5904ccbdc129ece328060fd103727cd08b6f528e3d7bc8defaf7a1dccc7129db",
+        "SHA256SUMS": "6752f3d8f1f9dc003d8a10372687e3a6010e95b22139d5d31d15df6b7364c6c6",
+        "NOTICES.html": "d674e45124631c3fa8bf40e56046082286dd991a2a5d44cac72e18620c4d7c5d",
+        "EVIDENCE.json": "c91cfb22a6ebe5beeba55064e3d113a7711ce019980da8c58bc10029ccdd6465",
+        "release-manifest.json": "3e135c7b974cebd568078e4b933fafa6eb5965dabb40c5837baf8146c8cc2449",
+        "NOTICES.txt": "7437e2022b9a16ae2cba1c620a555653ae6e540bb72b1b7d90c9a3e140339e2d",
+        "README.md": "1704d5964b62a7840290d71fc31a7c14d6a398f756803bdd5711710aa73b21a8",
+        "key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d"
+      },
+      "runtime_bytes_changed": false
     }
   },
   "current": {
-    "version": "r15",
+    "version": "r16",
     "date": "2026-10-15",
-    "scope": "Approved workspace rename/upstream-loader maintenance; no gameplay run.",
+    "scope": "DEVELOPMENT: configurable key/urgent/completed colours with explicit Save & apply; no installation or gameplay run.",
     "forge": {
       "version": "1.5.1",
       "commit": "b23e114a23f41c9a8e2fd34b2f4df2a2102d0ee1",
@@ -796,6 +1946,12 @@
       "archive_sha256": "9c9a04d5d4d842e71b6ed05b85612cea7a1c7dfedb4a8d2e23eb9870211300dd",
       "path": "work/shared/forge-1.5.1",
       "nso_sha256": "469f425dd02a37b7a5d84ddde5f769922bc5e0d5fbc8adb0ca270e2c0773cd7d"
+    },
+    "runtime_test": "NOT RUN",
+    "manual": {
+      "Eden": "NOT RUN",
+      "Ryujinx": "NOT RUN",
+      "native Switch": "NOT RUN"
     },
     "reports": {
       "resource": {
@@ -816,28 +1972,31 @@
         "runtime_test": "NOT RUN"
       },
       "build": {
-        "version": "r15",
+        "version": "r16",
         "status": "BUILT",
-        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
         "forge_rs_revision": "d1865b68e9b194eb3eacc8bd71bbf601a5fac63e",
         "runtime_active": true,
         "source_sha256": {
-          "Cargo.toml": "c7edd4b6dc28a09167a189dfdfd22bcf6a464ae653005b2f8911732ce29d6429",
+          "Cargo.toml": "a320bde7df53d7682ad98884dac4ea7bbfdb5421257673098ea59ce80cdc848d",
           "Cargo.lock": "dcbbd074896b1c59bff34fa50ce2b6adad6e9a77f72c7cb7f1d55051e94962a5",
           ".cargo/config.toml": "f6a8921cede665cd4d67f8da70ef86bcf78700371a84216bb6b0fc036c3e442b",
           "armv7a-none-eabi.json": "d2be3e33facf2d2da75a5cb64029ee8e617f406e1dd9767e3063aee76292f7d5",
           "build.rs": "295e23e5c1b5c6df7410f49017285dd7d612ea6ef0ea716c99ae622a35518484",
           "scripts/gui_layout.py": "aeb3c044b33393adf50e475883275c7547460281c8419f34c93f03332ac742c6",
-          "src/gui.rs": "a19dfa1cc7fe912a2773608e218d0f48b31b00b213f114b2e160da90fac76b2b",
+          "src/config.rs": "048c07da98739923abfe7434082ba13df30683fea0432089ca9683d55977c6cc",
+          "src/gui.rs": "15a82264d797d696a229f70704e950e5e814f0d02dce0300191321886bf7bb59",
           "src/hooks.rs": "b70c40abee00782b0c7bbc18a1ca8f924e736b06ef25995b6af0a21c43c67c9f",
-          "src/lib.rs": "a4b4c66e0dd5ebad527402f38c8f5a246fbf375c5ae750caedf69693a159fd0d",
+          "src/lib.rs": "50fa75e769de347171cf03e53dcfb98aa2231a5141c4da2d5189553f7db182c8",
           "src/memory.rs": "c191f6a5be4a38a5bafe94626d0783976080fa1650d6fd96f2e83804915d154f",
-          "src/native.rs": "8ba43540352e6397b43afab254be3dc528a881a00331091216d17a1ed8b7d291",
+          "src/native.rs": "5ca12c77149088cf66dd27cde63c9058395bf80047ed84dd38a2344dd3b813db",
           "src/offers.rs": "49e101abec86ca8de0ee8923ee2923d2b6f445ddea1530cc734ea6512ce2eabe",
+          "src/settings.rs": "8fefc338497af9bfb9d2c71de1643c0f10c202350ce5b44bd83b1803fd2dc0a3",
           "src/signatures.rs": "64ef009630b99fc3b2dd2983e7718088c37af7645d06f6a8555f7ce9928d47fb",
           "src/svc.S": "ad8af8eadfe25a122ee2f0e4e5b1722a947b7d0747f52f30ac9373190fc7ac2c",
-          "core/src/lib.rs": "7991ed8d0fc5728dff361d9b105691a47ba2fbf8357100a57bee870a4107c773",
-          "link/exported.txt": "50cb9c9e65b083a73a3cc08700f259c7fef253d7dbc5cadd78132d7e9b623461",
+          "core/src/colors.rs": "82fd0d2f9e68471f234134843da5a5ea864e054f9ac20c1e45a689148a8a3303",
+          "core/src/lib.rs": "760523cebe61f051fd8e1b1708d16894b7f1fbd62862771c0a9250008b362773",
+          "link/exported.txt": "bc8ae60be80bf5472c8afd251d6a5b4eaf2aa51be703674f54f7569a17f7ef5c",
           "link/switch32.ld": "dfa3102bf0a910ad89aaa60e286153a087f44d74cb19c5f694a9542866540aa5"
         },
         "runtime_test": "NOT RUN"
@@ -846,7 +2005,7 @@
         "status": "PASSED",
         "typed_detour_cases": 16,
         "forwarded_integer_arguments": 7,
-        "registered_name": "Key Quest Markers r15",
+        "registered_name": "Key Quest Markers r16",
         "metadata_bytes": 70,
         "hook_abi_bytes": 24,
         "minimum_forge_version": "1.5.1",
@@ -872,8 +2031,31 @@
       "native-adapter": {
         "status": "PASSED",
         "compiled_nro": true,
-        "cases": 40,
+        "cases": 41,
         "results": [
+          {
+            "case": "settings pending save failure apply reset and native custom colours",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4283839506,
+              "1": 4286607456,
+              "2": 4281492648,
+              "3": 4286607456,
+              "4": 4286607456
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
           {
             "case": "all eight special urgents outside rank-up offer pool",
             "visible": {
@@ -887,21 +2069,21 @@
               "7": 1
             },
             "colors": {
-              "0": 4291448219,
-              "1": 4291448219,
-              "2": 4291448219,
-              "3": 4291448219,
-              "4": 4291448219,
-              "5": 4291448219,
-              "6": 4291448219,
-              "7": 4291448219
+              "0": 4282733526,
+              "1": 4282733526,
+              "2": 4282733526,
+              "3": 4282733526,
+              "4": 4282733526,
+              "5": 4282733526,
+              "6": 4282733526,
+              "7": 4282733526
             },
             "native_draws": 8,
             "ownership_cleanup": true,
             "saved_records_unchanged": true
           },
           {
-            "case": "only enabled special records become purple",
+            "case": "only enabled special records become urgent",
             "visible": {
               "0": 1,
               "1": 1,
@@ -913,13 +2095,13 @@
               "7": 1
             },
             "colors": {
-              "0": 4291448219,
+              "0": 4282733526,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
-              "4": 4291448219,
+              "4": 4282733526,
               "5": 4286611584,
-              "6": 4291448219,
+              "6": 4282733526,
               "7": 4286611584
             },
             "native_draws": 8,
@@ -967,12 +2149,12 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4291448219,
-              "3": 4291448219,
-              "4": 4291448219,
-              "5": 4291448219,
-              "6": 4291448219,
-              "7": 4291448219
+              "2": 4282733526,
+              "3": 4282733526,
+              "4": 4282733526,
+              "5": 4282733526,
+              "6": 4282733526,
+              "7": 4282733526
             },
             "native_draws": 8,
             "ownership_cleanup": true,
@@ -993,12 +2175,12 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4291448219,
-              "3": 4291448219,
-              "4": 4291448219,
-              "5": 4291448219,
-              "6": 4291448219,
-              "7": 4291448219
+              "2": 4282733526,
+              "3": 4282733526,
+              "4": 4282733526,
+              "5": 4282733526,
+              "6": 4282733526,
+              "7": 4282733526
             },
             "native_draws": 8,
             "ownership_cleanup": true,
@@ -1019,12 +2201,12 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4291448219,
-              "3": 4291448219,
+              "2": 4282733526,
+              "3": 4282733526,
               "4": 4286611584,
               "5": 4286611584,
-              "6": 4291448219,
-              "7": 4291448219
+              "6": 4282733526,
+              "7": 4282733526
             },
             "native_draws": 8,
             "ownership_cleanup": true,
@@ -1086,7 +2268,7 @@
             },
             "colors": {
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1107,9 +2289,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1130,9 +2312,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1153,9 +2335,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1176,7 +2358,7 @@
             },
             "colors": {
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1197,7 +2379,7 @@
             },
             "colors": {
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1218,9 +2400,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1251,9 +2433,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1274,7 +2456,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -1297,7 +2479,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -1320,7 +2502,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -1331,7 +2513,7 @@
             "saved_records_unchanged": true
           },
           {
-            "case": "viewing still red",
+            "case": "viewing does not complete key",
             "visible": {
               "0": 1,
               "1": 1,
@@ -1343,9 +2525,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1368,7 +2550,7 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1389,7 +2571,7 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
               "2": 4286611584,
               "3": 4286611584,
@@ -1489,7 +2671,7 @@
             "colors": {
               "0": 4286611584,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1510,10 +2692,10 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
-              "3": 4291448219,
+              "2": 4282733526,
+              "3": 4282733526,
               "4": 4286611584
             },
             "native_draws": 5,
@@ -1533,9 +2715,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1556,9 +2738,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1579,9 +2761,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1626,9 +2808,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1649,9 +2831,9 @@
               "7": 0
             },
             "colors": {
-              "0": 4280633319,
+              "0": 4284648015,
               "1": 4286611584,
-              "2": 4291448219,
+              "2": 4282733526,
               "3": 4286611584,
               "4": 4286611584
             },
@@ -1697,37 +2879,80 @@
         "native_draw_walker": true,
         "native_root_destructors": true,
         "archive_replacements": 0,
+        "settings_save_apply_existing_rows": true,
+        "settings_checked_arm32_sdk": true,
+        "settings_imGui_init_and_panel": true,
+        "settings_failures": [
+          "mount",
+          "create",
+          "open",
+          "resize",
+          "write",
+          "flush",
+          "size",
+          "read",
+          "verify",
+          "commit"
+        ],
         "thread_context_restored": true,
         "runtime_test": "NOT RUN",
-        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d"
+        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8"
       },
       "verify": {
         "status": "PASSED",
-        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
-        "elf_sha256": "82b2f132fe7dc22501b27c0f8b975f83e902d1128a7e02b6a60880b182386bde",
+        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
+        "elf_sha256": "f997195a97b86cf880050c9447f3361895db388468e93be947e7d4ccfde42055",
         "exports": [
           "fini",
+          "forge_onImGuiInit",
+          "forge_onImGuiRender",
           "forge_onInit",
           "forge_onLoad",
           "forge_onUpdate",
           "init"
         ],
         "strong_imports": [
+          "_ZN2nn2fs10CreateFileEPKcx",
+          "_ZN2nn2fs11GetFileSizeEPxNS0_10FileHandleE",
+          "_ZN2nn2fs11SetFileSizeENS0_10FileHandleEx",
+          "_ZN2nn2fs14CommitSaveDataEPKc",
+          "_ZN2nn2fs23ScopedAutoAbortDisablerC1Ev",
+          "_ZN2nn2fs25SetCurrentThreadFsContextEPKNS0_9FsContextE",
+          "_ZN2nn2fs8OpenFileEPNS0_10FileHandleEPKci",
+          "_ZN2nn2fs8ReadFileENS0_10FileHandleExPvj",
+          "_ZN2nn2fs9CloseFileENS0_10FileHandleE",
+          "_ZN2nn2fs9FlushFileENS0_10FileHandleE",
+          "_ZN2nn2fs9WriteFileENS0_10FileHandleExPKvjRKNS0_11WriteOptionE",
           "__aeabi_unwind_cpp_pr0",
+          "forge_fs_mountSaveData",
+          "forge_fs_unmountSaveData",
           "forge_hook_create",
           "forge_log",
           "forge_log_getLevel",
           "forge_mem_getMainTextAddr",
+          "forge_nnosSignalLightEvent",
+          "forge_nnosWaitLightEvent",
           "forge_patch_create",
           "forge_patch_destroy",
           "forge_patch_disable",
           "forge_patch_enable",
           "forge_singleton_getInstanceByName",
           "free",
+          "igButton",
+          "igColorEdit3",
+          "igSetAllocatorFunctions",
+          "igSetCurrentContext",
+          "igTextUnformatted",
+          "igTreeNode_Str",
+          "igTreePop",
           "malloc",
           "nnosAllocateTlsSlot",
           "nnosGetTlsValue",
-          "nnosSetTlsValue"
+          "nnosInitializeMutex",
+          "nnosLockMutex",
+          "nnosSetTlsValue",
+          "nnosUnlockMutex",
+          "realloc"
         ],
         "signature_windows": [
           "0xa53324",
@@ -1793,7 +3018,7 @@
       },
       "tests": {
         "status": "PASSED",
-        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+        "nro_sha256": "81757bcd024ec3f53edf06a50cdf45ca05cfbe457bfad573ac43dcfbe487ace8",
         "archive_replacements": 0,
         "host": true,
         "resource": true,
@@ -1801,6 +3026,18 @@
         "runtime_test": "NOT RUN"
       }
     },
-    "manual_test": "NOT RUN"
+    "host_tests": 15,
+    "hook_host_tests": 1,
+    "standalone": {
+      "status": "PASSED",
+      "directory": "work/key-quest-markers/candidates/r16/standalone-source",
+      "build": "PASSED",
+      "tests": "15 core + 1 rollback, 16 ARM ABI/GE cases, 41 native adapter cases",
+      "package": "PASSED",
+      "full_distribution_check": "PASS: 1 mod record",
+      "nro_sha256": "22552451fee3284314c7fb4ddeef37aa32f0e04b2574be31fe711cdf74fb2163",
+      "note": "Separate build paths change embedded source-location bytes; independently built/exported runtime passed its own complete verification."
+    },
+    "workspace_distribution_check": "PASS: 11 mod records"
   }
 }

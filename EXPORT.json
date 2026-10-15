@@ -2122,6 +2122,9 @@
     "vendor/forge-rs/forge-sys/src/socket.rs",
     "vendor/forge-rs/release.sh",
     "vendor/forge-rs/rustfmt.toml",
-    "vendor/libnx/LICENSE-MIT"
+    "vendor/libnx/LICENSE-MIT",
+    "core/src/colors.rs",
+    "src/config.rs",
+    "src/settings.rs"
   ]
 }

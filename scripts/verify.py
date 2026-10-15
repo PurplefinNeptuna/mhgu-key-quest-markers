@@ -22,7 +22,7 @@ def verify():
     if receipt.get('version')!=VERSION or receipt['nro_sha256']!=digest(nro_path) or receipt.get('source_sha256')!=source_hashes():
         raise ValueError('Build receipt differs from staged NRO/current sources')
     exports={n.decode() for n,e,*_ in nro.symbols if n and e[5] and e[3]>>4==1}
-    if exports!={'forge_onLoad','forge_onInit','forge_onUpdate','init','fini'}:raise ValueError('Unexpected plugin exports: '+str(exports))
+    if exports!={'forge_onLoad','forge_onInit','forge_onUpdate','forge_onImGuiInit','forge_onImGuiRender','init','fini'}:raise ValueError('Unexpected plugin exports: '+str(exports))
     imports={n.decode() for n,e,*_ in nro.symbols if n and not e[5] and e[3]>>4==1}
     available=set().union(*(nso_exports(input_path(n)) for n in ['main','sdk','forge']))
     if imports-available:raise ValueError('Unresolved native imports: '+str(imports-available))
@@ -41,8 +41,11 @@ def verify():
     disasm=subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-objdump','-d',elf],text=True)
     writes=[line for line in disasm.splitlines() if '\tmsr\t' in line]
     if writes:raise ValueError('Unexpected processor status writes: '+str(writes))
-    if imports&{'igBegin','igTreeNode_Str','forge_graphics_getContext','forge_config_create'}:
+    if imports&{'igBegin','forge_graphics_getContext','forge_config_create'}:
         raise ValueError('Unrequested settings/overlay dependency')
+    if not {'igTreeNode_Str','igTreePop','igColorEdit3','forge_fs_mountSaveData','forge_fs_unmountSaveData'} <= imports:
+        raise ValueError('Settings/config integration imports missing')
+    if 'forge_onImGuiFreeRender' in exports: raise ValueError('Native badges must not use free rendering')
     expected={'romfs/nativeNX/plugins/key_quest_markers.nro'}
     source=BUILD_ROOT/'package';actual={str(p.relative_to(source)) for p in source.rglob('*') if p.is_file()}
     if actual!=expected:raise ValueError('Unexpected runtime payload files')

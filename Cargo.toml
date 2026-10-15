@@ -7,7 +7,7 @@ crate-type = ["cdylib"]
 test = false
 doctest = false
 [dependencies]
-forge = { package = "mhgu-forge", path = "vendor/forge-rs/forge" }
+forge = { package = "mhgu-forge", path = "vendor/forge-rs/forge", features = ["imgui"] }
 quest-badges-core = { path = "core" }
 log = { version = "0.4", default-features = false }
 [workspace]

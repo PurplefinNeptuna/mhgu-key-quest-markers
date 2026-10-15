@@ -94,7 +94,7 @@ static FIRST_VISIBLE: Snapshot = Snapshot::new();
 pub fn report_diagnostics() {
     FIRST_PAGE.report("first classified page");
     FIRST_VISIBLE.report(
-        "first visible badges; badge 0=hidden, 1=red, 2=grey, 3=purple; group 255=unresolved",
+        "first visible badges; badge 0=hidden, 1=key, 2=completed, 3=urgent; group 255=unresolved",
     );
 }
 pub fn take_errors() -> u32 {
@@ -217,14 +217,16 @@ fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
             && completed(profile, other.id)
     })
 }
-fn set(object: Option<gui::Decoration>, badge: Badge) {
+fn set(object: Option<gui::Decoration>, badge: Badge, palette: quest_badges_core::colors::Palette) {
     if let Some(object) = object {
-        object.set(badge);
+        object.set(badge, palette.color(badge));
     }
 }
 /// Apply the copied decision after the normal game row update. Hide first so
 /// invalid metadata cannot leave yesterday's quest badge on a newly reused row.
 pub fn update(ui: u32, quests: u32) {
+    // Copy only scalar colours; no settings lock or I/O enters the native hook.
+    let palette = crate::settings::palette();
     let objects = match gui::objects(ui) {
         Ok(objects) => objects,
         Err(flags) => {
@@ -236,7 +238,7 @@ pub fn update(ui: u32, quests: u32) {
         error(128);
     }
     for object in objects {
-        set(object, Badge::Hidden);
+        set(object, Badge::Hidden, palette);
     }
     let Some(quest) = singleton(c"sQuest") else {
         error(2);
@@ -330,7 +332,7 @@ pub fn update(ui: u32, quests: u32) {
         return;
     }
     for (i, badge) in badges.into_iter().enumerate() {
-        set(objects[i], badge);
+        set(objects[i], badge, palette);
     }
     let progress = u32::from(village) | (u32::from(hub) << 16);
     let objects = objects.map(|object| object.map_or(0, |object| object.object));

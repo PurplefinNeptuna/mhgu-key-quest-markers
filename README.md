@@ -7,9 +7,9 @@ emulators. Requires a compatible Forge 1.5.1 loader and the English MHGU HD Proj
 
 | Quest state | Badge |
 | --- | --- |
-| Key still needed for current progression | Orange-red |
+| Key still needed for current progression | Forest green |
 | Completed or obsolete key | Grey |
-| Currently needed and available urgent | Purple |
+| Currently needed and available urgent | Warm red |
 | Completed, old or inactive urgent | Grey |
 | Ordinary quest | No badge |
 
@@ -26,10 +26,38 @@ quest names automatically shrink to fit before the badge.
 3. Keep the English HD Project enabled. Disable the original Key Quest Markers
    prefix plugin to remove `[KEY]` from quest titles.
 
-Forge's Loaded Plugins list shows **Key Quest Markers r15**. The badges work
+Forge's Loaded Plugins list shows **Key Quest Markers r16**. The badges work
 automatically when you open the quest counter.
 
 To remove the mod, close the game and disable or remove its folder.
+
+## Colour settings
+
+Open Forge's **Plugin UI → Key Quest Markers**. Click a colour swatch to open
+its picker, or enter a hexadecimal RGB value.
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| Key | `4F8A62` | Currently needed key quests |
+| Urgent | `D65345` | Currently needed and available urgent quests |
+| Completed | `808080` | Completed, obsolete or inactive key/urgent quests |
+
+Edits stay pending until you press **Save & apply**. Saved colours take effect
+without restarting or reopening the quest counter. **Reset defaults** fills in
+the default colours; press Save & apply to use and retain them.
+
+Colours are saved in `key_quest_markers.ini` in MHGU's save folder:
+
+```ini
+[Colors]
+key = 4F8A62
+urgent = D65345
+completed = 808080
+```
+
+All colours stay opaque. If saving fails, load a player save and retry; the
+previously applied colours remain in use and your pending choices remain in the
+panel. Missing or invalid configuration uses defaults.
 
 ## Compatibility
 

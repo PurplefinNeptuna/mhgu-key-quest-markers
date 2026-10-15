@@ -1,5 +1,6 @@
 //! Plain badge decisions. Native offsets, pointers and calls stay in the adapter.
 #![no_std]
+pub mod colors;
 
 /// The native group record's category is key tier or urgent tier, not quest type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -11,20 +12,9 @@ pub struct Group {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Badge {
     Hidden,
-    Red,
-    Grey,
-    Purple,
-}
-impl Badge {
-    /// Native polygon setters consume four RGBA bytes packed into an ARM word.
-    pub const fn rgba(self) -> u32 {
-        match self {
-            Self::Hidden => 0,
-            Self::Red => 0xff2547e7,
-            Self::Grey => 0xff808080,
-            Self::Purple => 0xffca4d9b,
-        }
-    }
+    Key,
+    Completed,
+    Urgent,
 }
 /// None means the adapter could not prove relevance/availability. These facts
 /// must come from native progression, never from the page currently being viewed.
@@ -79,7 +69,7 @@ pub fn needed_key(group: Group, village: u16, hub: u16) -> Option<bool> {
 }
 /// Rank-up identity requires the native group and urgency flag; the separate
 /// Village encounter groups use their native availability and pair completion.
-/// Completion and satisfied alternatives cannot turn red/purple. An unresolved
+/// Completion and satisfied alternatives cannot turn key/urgent. An unresolved
 /// unfinished quest stays hidden instead of assuming that its rank is current.
 pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
     if group.id == 0 {
@@ -90,7 +80,7 @@ pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
             return Badge::Hidden;
         }
         if state.completed || (special_urgent(group.category) && state.alternative_done) {
-            return Badge::Grey;
+            return Badge::Completed;
         }
         return match state.active_urgent {
             None => Badge::Hidden,
@@ -98,21 +88,21 @@ pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
                 if special_urgent(group.category)
                     || (state.prerequisites_done && state.urgent_listed) =>
             {
-                Badge::Purple
+                Badge::Urgent
             }
-            _ => Badge::Grey,
+            _ => Badge::Completed,
         };
     }
     if urgent_flag || !key(group.category) {
         return Badge::Hidden;
     }
     if state.completed || state.alternative_done {
-        return Badge::Grey;
+        return Badge::Completed;
     }
     match state.needed_key {
         None => Badge::Hidden,
-        Some(true) => Badge::Red,
-        Some(false) => Badge::Grey,
+        Some(true) => Badge::Key,
+        Some(false) => Badge::Completed,
     }
 }
 #[cfg(test)]
@@ -139,12 +129,12 @@ mod tests {
     fn current_completed_and_obsolete_keys() {
         for category in [1, 10, 11, 17, 19, 22] {
             let mut s = state();
-            assert_eq!(decide(group(category), false, s), Badge::Red);
+            assert_eq!(decide(group(category), false, s), Badge::Key);
             s.completed = true;
-            assert_eq!(decide(group(category), false, s), Badge::Grey);
+            assert_eq!(decide(group(category), false, s), Badge::Completed);
             s.completed = false;
             s.needed_key = Some(false);
-            assert_eq!(decide(group(category), false, s), Badge::Grey);
+            assert_eq!(decide(group(category), false, s), Badge::Completed);
         }
     }
     #[test]
@@ -152,18 +142,18 @@ mod tests {
         for category in [24, 25, 29, 33, 34, 35, 43, 46] {
             let g = group(category);
             let mut s = state();
-            assert_eq!(decide(g, true, s), Badge::Purple);
+            assert_eq!(decide(g, true, s), Badge::Urgent);
             s.urgent_listed = false;
-            assert_eq!(decide(g, true, s), Badge::Grey);
+            assert_eq!(decide(g, true, s), Badge::Completed);
             s.urgent_listed = true;
             s.prerequisites_done = false;
-            assert_eq!(decide(g, true, s), Badge::Grey);
+            assert_eq!(decide(g, true, s), Badge::Completed);
             s = state();
             s.completed = true;
-            assert_eq!(decide(g, true, s), Badge::Grey);
+            assert_eq!(decide(g, true, s), Badge::Completed);
             s.completed = false;
             s.active_urgent = Some(false);
-            assert_eq!(decide(g, true, s), Badge::Grey);
+            assert_eq!(decide(g, true, s), Badge::Completed);
         }
     }
     #[test]
@@ -187,23 +177,23 @@ mod tests {
             let mut s = state();
             s.urgent_listed = false;
             s.prerequisites_done = false; // Rank-up requirements do not gate these.
-            assert_eq!(decide(g, false, s), Badge::Purple);
+            assert_eq!(decide(g, false, s), Badge::Urgent);
             s.alternative_done = true;
-            assert_eq!(decide(g, false, s), Badge::Grey);
+            assert_eq!(decide(g, false, s), Badge::Completed);
             s.alternative_done = false;
             s.active_urgent = Some(false);
-            assert_eq!(decide(g, false, s), Badge::Grey);
+            assert_eq!(decide(g, false, s), Badge::Completed);
             s.active_urgent = None;
             assert_eq!(decide(g, false, s), Badge::Hidden);
             s.completed = true;
-            assert_eq!(decide(g, false, s), Badge::Grey);
+            assert_eq!(decide(g, false, s), Badge::Completed);
         }
     }
     #[test]
     fn alternatives_and_unresolved_records() {
         let mut s = state();
         s.alternative_done = true;
-        assert_eq!(decide(group(1), false, s), Badge::Grey);
+        assert_eq!(decide(group(1), false, s), Badge::Completed);
         s = state();
         s.needed_key = None;
         s.active_urgent = None;
@@ -243,7 +233,7 @@ mod tests {
                     true,
                     s
                 ),
-                Badge::Purple
+                Badge::Urgent
             );
         }
         s.completed = true;
@@ -257,7 +247,7 @@ mod tests {
                 true,
                 s
             ),
-            Badge::Grey
+            Badge::Completed
         );
         assert_eq!(
             decide(
@@ -269,7 +259,7 @@ mod tests {
                 true,
                 state()
             ),
-            Badge::Purple
+            Badge::Urgent
         );
     }
     #[test]
@@ -282,7 +272,7 @@ mod tests {
         assert_eq!(decide(group(0), false, state()), Badge::Hidden);
         let mut s = state();
         s.completed = true;
-        assert_eq!(decide(g, false, s), Badge::Grey);
+        assert_eq!(decide(g, false, s), Badge::Completed);
     }
     #[test]
     fn duplicate_missing_and_conflicting_metadata() {
@@ -338,8 +328,8 @@ mod tests {
         assert_eq!(
             draw(page),
             [
-                Badge::Red,
-                Badge::Purple,
+                Badge::Key,
+                Badge::Urgent,
                 Badge::Hidden,
                 Badge::Hidden,
                 Badge::Hidden,
@@ -349,12 +339,23 @@ mod tests {
             ]
         );
         assert_eq!(draw([None; 8]), [Badge::Hidden; 8]);
-        assert_eq!(draw(page)[0], Badge::Red);
+        assert_eq!(draw(page)[0], Badge::Key);
     }
     #[test]
     fn exact_opaque_colors() {
-        assert_eq!(Badge::Red.rgba().to_le_bytes(), [231, 71, 37, 255]);
-        assert_eq!(Badge::Grey.rgba().to_le_bytes(), [128, 128, 128, 255]);
-        assert_eq!(Badge::Purple.rgba().to_le_bytes(), [155, 77, 202, 255]);
+        assert_eq!(
+            colors::Palette::DEFAULT.color(Badge::Key).to_le_bytes(),
+            [79, 138, 98, 255]
+        );
+        assert_eq!(
+            colors::Palette::DEFAULT
+                .color(Badge::Completed)
+                .to_le_bytes(),
+            [128, 128, 128, 255]
+        );
+        assert_eq!(
+            colors::Palette::DEFAULT.color(Badge::Urgent).to_le_bytes(),
+            [214, 83, 69, 255]
+        );
     }
 }

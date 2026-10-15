@@ -1,11 +1,13 @@
 //! Native quest-row candidate. Forge supplies lifecycle, allocation and logging.
 #![no_std]
 extern crate alloc;
+mod config;
 mod gui;
 mod hooks;
 mod memory;
 mod native;
 mod offers;
+mod settings;
 mod signatures;
 use core::sync::atomic::{AtomicU32, Ordering};
 static REPORTED: AtomicU32 = AtomicU32::new(0);
@@ -33,7 +35,11 @@ pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
     // This narrow ABI extension leaves vendored bindings and their pins intact.
     unsafe {
         params.cast::<PluginMetadata>().write(PluginMetadata {
-            version: forge::ForgeVersion { major: 1, minor: 5, patch: 1 },
+            version: forge::ForgeVersion {
+                major: 1,
+                minor: 5,
+                patch: 1,
+            },
             name,
         });
     }
@@ -41,6 +47,7 @@ pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
 #[unsafe(no_mangle)]
 pub extern "C" fn forge_onInit() {
     forge::log::init().expect("Failed to initialize Forge logger");
+    settings::init();
     start();
 }
 fn start() {
@@ -59,9 +66,10 @@ fn start() {
     }
 }
 /// Hot hooks publish only bit flags. Deduplicated diagnostics run in Forge's
-/// regular lifecycle callback without a settings panel or config file.
+/// regular lifecycle callback. Config I/O stays outside native game hooks.
 #[unsafe(no_mangle)]
-pub extern "C" fn forge_onUpdate(_delta: f32) {
+pub extern "C" fn forge_onUpdate(delta: f32) {
+    settings::update(delta);
     let entered = hooks::entered();
     let previous = REPORTED_ENTRIES.fetch_or(entered, Ordering::Relaxed);
     for (bit, label) in [(1, "urgent parent"), (2, "quest row")] {
@@ -107,4 +115,28 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
             }
         }
     }
+}
+
+/// Forge supplies the live ImGui context and its matching allocator pair. They
+/// remain loader-owned; no game GUI pointers enter the settings interface.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn forge_onImGuiInit(
+    ctx: *mut core::ffi::c_void,
+    alloc: *mut core::ffi::c_void,
+    free: *mut core::ffi::c_void,
+) {
+    if ctx.is_null() || alloc.is_null() || free.is_null() {
+        return;
+    }
+    unsafe {
+        forge::imgui::set_current_context(&mut *ctx.cast());
+        forge::imgui::set_allocator_functions(
+            core::mem::transmute(alloc),
+            core::mem::transmute(free),
+        );
+    }
+}
+#[forge::imgui_render]
+fn panel() {
+    settings::panel();
 }

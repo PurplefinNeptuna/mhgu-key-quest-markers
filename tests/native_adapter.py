@@ -45,12 +45,14 @@ assert TITLE_CRC==0x2fb82eae # Derive the fixture's title class from the real re
 UNUSED_TEXT_DTI=DATA+0x25800
 UV=(342.,0.,372.,30.) if SMALL_MARK=='1' else (136.,344.,198.,406.)
 CASES=0
+KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=0xff628a4f,0xff4553d6,0xff808080
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
               simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False,
-              requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
+              custom_palette=False,requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
     global CASES
+    KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=(0xff563412,0xff3264a8,0xff807060) if custom_palette else (0xff628a4f,0xff4553d6,0xff808080)
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
     u.mem_map(ENGINE,4096);u.mem_map(0x41000000,0x20000);u.mem_map(GAME,0x2000000)
@@ -186,6 +188,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
     constructing=None;factory_index=0
     plugin_heap=DATA+0x120000;hook_count=0;startup_logs=[]
+    picker_values=None; save_clicked=False;reset_clicked=False; panel_open=True;tree_balance=0
+    disk=None;handles={};next_handle=1;mounted=0;contexts=0;fs_ready=False;fs_fail='';commits=0
     allocations={};freed=[];created=[];drawn=[];object_attempts=0;mapping_allocations=[];styles={};quads=[];fitting=False;fit_factors=[]
     # Isolate native colour/mask dispatch and geometry from GPU command encoding.
     # Model an active vertex-buffer frame and an already-bound texture shader.
@@ -212,6 +216,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         raise AssertionError('unterminated string')
     def trace(cpu,address,size,_):
         nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index,hook_count,draw_object,vertex_offset
+        nonlocal disk,next_handle,mounted,contexts,commits,tree_balance
         r=[cpu.reg_read(x)for x in REGS[:4]]
         if address==RETURN or (fitting and address==GAME+0xa423cc):cpu.emu_stop();return
         if fitting and address==GAME+0xa45b58:
@@ -222,6 +227,60 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==MODULE+names['mwc_svc_get_info']:
             assert r[1]==18;cpu.mem_write(r[0],struct.pack('<Q',0x0100770008dd8000));ret(cpu);return
         if address==MODULE+names['mwc_svc_flush']:ret(cpu);return
+        # Run actual compiled settings/persistence code against narrow SDK and
+        # ImGui doubles. AAPCS i64 offsets occupy r2/r3; buffer/count use stack.
+        imported=next((name for name,at in imports.items() if at==address),None)
+        if imported in ['nnosInitializeMutex','nnosLockMutex','nnosUnlockMutex','forge_nnosSignalLightEvent']:
+            ret(cpu);return
+        if imported=='forge_fs_mountSaveData':
+            if fs_ready and fs_fail!='mount':mounted+=1
+            ret(cpu,int(fs_ready and fs_fail!='mount'));return
+        if imported=='forge_fs_unmountSaveData':assert mounted>0;mounted-=1;ret(cpu);return
+        if imported=='_ZN2nn2fs23ScopedAutoAbortDisablerC1Ev':word(r[0],0x123);contexts+=1;ret(cpu);return
+        if imported=='_ZN2nn2fs25SetCurrentThreadFsContextEPKNS0_9FsContextE':assert r[0]==0x123;contexts-=1;ret(cpu);return
+        if imported=='_ZN2nn2fs8OpenFileEPNS0_10FileHandleEPKci':
+            assert text(cpu,r[1])=='savedata:/key_quest_markers.ini' and mounted>0
+            if disk is None or fs_fail=='open':ret(cpu,0x202);return
+            handle=next_handle;next_handle+=1;handles[handle]=r[2];word(r[0],handle);ret(cpu);return
+        if imported=='_ZN2nn2fs9CloseFileENS0_10FileHandleE':assert r[0] in handles;del handles[r[0]];ret(cpu);return
+        if imported=='_ZN2nn2fs11GetFileSizeEPxNS0_10FileHandleE':
+            assert r[1] in handles
+            if fs_fail=='size':ret(cpu,1);return
+            cpu.mem_write(r[0],struct.pack('<q',len(disk)));ret(cpu);return
+        if imported=='_ZN2nn2fs10CreateFileEPKcx':
+            if disk is not None or fs_fail=='create':ret(cpu,1);return
+            disk=b'';ret(cpu);return
+        if imported=='_ZN2nn2fs11SetFileSizeENS0_10FileHandleEx':
+            assert r[0] in handles and r[3]==0
+            if fs_fail=='resize':ret(cpu,1);return
+            disk=(disk+bytes(r[2]))[:r[2]];ret(cpu);return
+        if imported in ['_ZN2nn2fs8ReadFileENS0_10FileHandleExPvj','_ZN2nn2fs9WriteFileENS0_10FileHandleExPKvjRKNS0_11WriteOptionE']:
+            assert r[0] in handles and r[2:]==[0,0];sp=cpu.reg_read(arm.UC_ARM_REG_SP)
+            buffer,length=struct.unpack('<2I',cpu.mem_read(sp,8))
+            if 'ReadFile' in imported:
+                if fs_fail=='read':ret(cpu,1);return
+                content=disk[:length]
+                if fs_fail=='verify':content=b'!'+content[1:]
+                cpu.mem_write(buffer,content);ret(cpu);return
+            assert read(read(sp+8))==1
+            if fs_fail=='write':ret(cpu,1);return
+            disk=bytes(cpu.mem_read(buffer,length));ret(cpu);return
+        if imported=='_ZN2nn2fs9FlushFileENS0_10FileHandleE':ret(cpu,int(fs_fail=='flush'));return
+        if imported=='_ZN2nn2fs14CommitSaveDataEPKc':assert not handles;commits+=1;ret(cpu,int(fs_fail=='commit'));return
+        if imported in ['igSetCurrentContext','igSetAllocatorFunctions']:ret(cpu);return
+        if imported=='igTreeNode_Str':
+            assert text(cpu,r[0])=='Key Quest Markers###key-quest-markers'
+            tree_balance+=int(panel_open);ret(cpu,int(panel_open));return
+        if imported=='igTreePop':assert tree_balance==1;tree_balance-=1;ret(cpu);return
+        if imported=='igColorEdit3':
+            label=text(cpu,r[0]);index=['Key##kqm-key','Urgent##kqm-urgent','Completed##kqm-completed'].index(label)
+            assert r[2]&(4194304|8388608)==4194304|8388608
+            if picker_values is not None:
+                rgb=picker_values[index];cpu.mem_write(r[1],struct.pack('<3f',*((rgb>>shift&255)/255 for shift in (16,8,0))))
+            ret(cpu,int(picker_values is not None));return
+        if imported=='igButton':
+            label=text(cpu,r[0]);ret(cpu,int(save_clicked if label.startswith('Save & apply') else reset_clicked));return
+        if imported=='igTextUnformatted':ret(cpu);return
         if address==imports.get('nnosAllocateTlsSlot'):word(r[0],1);ret(cpu);return
         if address==imports.get('forge_log_getLevel'):ret(cpu,3);return # User's unchanged ERROR-only filter.
         if address==imports.get('forge_log'):startup_logs.append(text(cpu,r[2]));ret(cpu);return
@@ -347,8 +406,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==GAME+0x3b2174:assert r[0]==QUEST;ret(cpu,int(available));return
         if ENGINE+0x300<=address<ENGINE+4096:raise AssertionError(('unexpected import',hex(address)))
     u.hook_add(unicorn.UC_HOOK_CODE,trace)
-    def call(address,a=0,b=0):
-        u.reg_write(arm.UC_ARM_REG_SP,STACK);u.reg_write(arm.UC_ARM_REG_LR,RETURN);u.reg_write(arm.UC_ARM_REG_R0,a);u.reg_write(arm.UC_ARM_REG_R1,b)
+    def call(address,a=0,b=0,c=0):
+        u.reg_write(arm.UC_ARM_REG_SP,STACK);u.reg_write(arm.UC_ARM_REG_LR,RETURN);u.reg_write(arm.UC_ARM_REG_R0,a);u.reg_write(arm.UC_ARM_REG_R1,b);u.reg_write(arm.UC_ARM_REG_R2,c)
         try:u.emu_start(address,RETURN+4,count=1000000)
         except unicorn.UcError as error:
             raise AssertionError((str(error),hex(u.reg_read(arm.UC_ARM_REG_PC)),hex(u.reg_read(arm.UC_ARM_REG_LR)),[hex(u.reg_read(r))for r in REGS[:8]])) from error
@@ -368,6 +427,31 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     assert hook_count==2 and read(MODULE+names['kqm_original'])==ENGINE+0x800
     assert read(MODULE+names['kqm_parent_original'])==ENGINE+0x810
     assert any('installed' in message for message in startup_logs)
+    if custom_palette:
+        fs_ready=True
+        call(MODULE+names['forge_onImGuiInit'],DATA+0x180000,ENGINE+0x100,ENGINE+0x104)
+        call(MODULE+names['forge_onImGuiRender'])
+        before=bytes(u.mem_read(MODULE+names['kqm_palette'],12))
+        picker_values=(0x123456,0xA86432,0x607080)
+        call(MODULE+names['forge_onImGuiRender'])
+        assert bytes(u.mem_read(MODULE+names['kqm_palette'],12))==before and disk is None
+        picker_values=None;save_clicked=True
+        for fs_fail in ['mount','create','open','resize','write','flush','size','read','verify','commit']:
+            disk=None
+            call(MODULE+names['forge_onImGuiRender'])
+            assert bytes(u.mem_read(MODULE+names['kqm_palette'],12))==before,fs_fail
+            assert not handles and mounted==contexts==tree_balance==0,fs_fail
+        previous_commits=commits
+        fs_fail='';call(MODULE+names['forge_onImGuiRender'])
+        assert struct.unpack('<3I',u.mem_read(MODULE+names['kqm_palette'],12))==(0x123456,0xA86432,0x607080)
+        assert disk==b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\n'
+        assert not handles and mounted==contexts==tree_balance==0 and commits==previous_commits+1
+        save_clicked=False;reset_clicked=True
+        call(MODULE+names['forge_onImGuiRender'])
+        assert struct.unpack('<3I',u.mem_read(MODULE+names['kqm_palette'],12))==(0x123456,0xA86432,0x607080)
+        reset_clicked=False;panel_open=False
+        call(MODULE+names['forge_onImGuiRender'])
+        # Native tests below expect the chosen custom palette throughout draw/cleanup.
     # Run both real ARM constructor functions. a38828 supplies the GUI owner;
     # a38bc0 writes each object's owner/resource and links the original ARC tree.
     # Factories and property initialization are doubles, not the ownership path.
@@ -395,6 +479,22 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     if invalid_object:word(read(DATA+0x2a000+7*0x100+8)+0x50,99)
     call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO)
     assert tls_value==0 and calls==['parent','row-original']
+    if custom_palette:
+        # Reset is still a pending draft. Saving it must recolour the existing
+        # children on the next normal update with identical UI/page/selection.
+        panel_open=True;save_clicked=True
+        before_objects=tuple(created);before_allocations=dict(allocations)
+        call(MODULE+names['forge_onImGuiRender'])
+        assert colors[0]==0xff563412 # Saving does not write game GUI from ImGui.
+        call(GAME+0x54d030,CONTROLLER,INFO)
+        assert colors[0]==0xff628a4f and colors[2]==0xff4553d6 and colors[1]==0xff808080
+        assert tuple(created)==before_objects and allocations==before_allocations
+        picker_values=(0x123456,0xA86432,0x607080)
+        call(MODULE+names['forge_onImGuiRender'])
+        call(GAME+0x54d030,CONTROLLER,INFO)
+        assert colors[0]==0xff563412 and colors[2]==0xff3264a8 and colors[1]==0xff807060
+        picker_values=None;save_clicked=False;panel_open=False
+        assert not handles and mounted==contexts==tree_balance==0
     call(MODULE+names['forge_onUpdate'])
     assert any('entered urgent parent hook' in s for s in startup_logs)
     assert any('entered quest row hook' in s for s in startup_logs)
@@ -428,12 +528,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if invalid_info or ordinary or bad_count:assert states==dict.fromkeys(range(8),0) and not colors
         elif special:
             assert states==dict.fromkeys(range(8),1)
-            assert colors=={i:(0xff808080 if not available or i not in special_enabled or any(id in completed for id in ids[(i//2)*2:(i//2)*2+2]) else 0xffca4d9b) for i in range(8)}
+            assert colors=={i:(COMPLETED_COLOR if not available or i not in special_enabled or any(id in completed for id in ids[(i//2)*2:(i//2)*2+2]) else URGENT_COLOR) for i in range(8)}
         else:
             assert states=={i:v for i,v in enumerate([1,1,1,1,1,0,0,0]) if not(i==0 and (invalid_request or invalid_title))}
-            urgency=0xffca4d9b if 303 in offered and available and prerequisites else 0xff808080
-            expected_colors={0:0xff808080 if 207 in completed or alternative_done else 0xff2547e7,1:0xff808080,
-                           2:0xff808080 if 303 in completed else urgency,3:0xffca4d9b if simultaneous and 206 in offered else 0xff808080,4:0xff808080}
+            urgency=URGENT_COLOR if 303 in offered and available and prerequisites else COMPLETED_COLOR
+            expected_colors={0:COMPLETED_COLOR if 207 in completed or alternative_done else KEY_COLOR,1:COMPLETED_COLOR,
+                           2:COMPLETED_COLOR if 303 in completed else urgency,3:URGENT_COLOR if simultaneous and 206 in offered else COMPLETED_COLOR,4:COMPLETED_COLOR}
             if invalid_request or invalid_title:expected_colors.pop(0)
             assert colors==expected_colors
         request_bytes=[]
@@ -548,8 +648,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(instance+0xd8)==read(instance+0xdc)==0
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
-results=[test_case('all eight special urgents outside rank-up offer pool',special=True,offered=(),prerequisites=False,requests=(0,2,4,6),repeat=True),
-         test_case('only enabled special records become purple',special=True,offered=(),special_enabled=(0,2,4,6),prerequisites=False),
+results=[test_case('settings pending save failure apply reset and native custom colours',custom_palette=True,repeat=True,requests=(0,2)),test_case('all eight special urgents outside rank-up offer pool',special=True,offered=(),prerequisites=False,requests=(0,2,4,6),repeat=True),
+         test_case('only enabled special records become urgent',special=True,offered=(),special_enabled=(0,2,4,6),prerequisites=False),
          test_case('disabled special records remain grey despite scene availability',special=True,offered=(),special_enabled=(),prerequisites=False),
          test_case('special pair completed by first-run quest',special=True,offered=(),completed=(308,),prerequisites=False),
          test_case('special pair completed by repeat quest',special=True,offered=(),completed=(309,),prerequisites=False),
@@ -567,7 +667,7 @@ results=[test_case('all eight special urgents outside rank-up offer pool',specia
          test_case('second malformed trampoline rolls back both targets',fail_hook=2),
          test_case('all badge states and native draw traversal'),test_case('urgent inactive',offered=()),
          test_case('urgent unavailable',available=False),test_case('urgent prerequisites incomplete',prerequisites=False),
-         test_case('viewing still red'),test_case('key completion',completed=(207,213)),test_case('urgent completion',completed=(303,213)),
+         test_case('viewing does not complete key'),test_case('key completion',completed=(207,213)),test_case('urgent completion',completed=(303,213)),
          test_case('resource object mismatch',invalid_object=True),test_case('animation address is not the GUI owner',invalid_owner=True),test_case('no offer context',invalid_info=True),
          test_case('ordinary rows',ordinary=True),test_case('invalid offer count',bad_count=True),test_case('different GUI',gui_identity=4),
          test_case('satisfied alternative',alternative_done=True),test_case('simultaneous urgents',simultaneous=True,offered=(303,206)),
@@ -580,5 +680,5 @@ record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASE
           'title_resource_class_crc':TITLE_CRC,'native_message_type_getter':True,
           'resource_inline_constants':SOURCE_STYLE,'native_prepaint_and_texture_draw':True,'native_quad_geometry':True,'native_autoscale_dispatch_and_clamp':True,'request_visibility_placement':True,'title_restoration':True,
           'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
-          'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro')})
+          'settings_save_apply_existing_rows':True,'settings_checked_arm32_sdk':True,'settings_imGui_init_and_panel':True,'settings_failures':['mount','create','open','resize','write','flush','size','read','verify','commit'],'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')

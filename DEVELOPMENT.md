@@ -1,4 +1,40 @@
-# Development and research
+# r16 configurable colours — DEVELOPMENT
+
+The current candidate targets stock Forge 1.5.1 and preserves r15's original
+32×32 native emblem, placement, title fitting and quest classification. The
+settings panel uses Forge ImGui only; badges still use the game renderer.
+
+`core/src/colors.rs` owns bounded RGB INI parsing, formatting and the tested
+mount/write/readback/commit policy. Key/Urgent/Completed preserve badge ordinals
+1/3/2. Configuration keys are exactly `key`, `urgent`, `completed`; all values
+are six hexadecimal RGB digits and native alpha remains255.
+
+`src/settings.rs` protects UI drafts and load state with a Forge mutex. Three
+independent atomic RGB settings are copied once per native row update, avoiding
+settings locks or file I/O in game hooks. Editing/resetting marks loading complete
+so delayed storage availability cannot overwrite choices. Save publishes only
+after write, flush, readback and checked commit all succeed. Failures preserve
+the pending and previously applied palettes; prior disk bytes are not guaranteed.
+
+`src/config.rs` reuses Forge's counted save mount and the checked ARM32 SDK file
+ABI established by the maintained preferences implementation. Narrow SDK calls
+are necessary because stock forge-rs ScopedMount panics on mount failure,
+Reader asserts on short reads, Writer ignores short writes, and checked flush
+and commit are absent. Handles and filesystem abort context use scoped guards.
+Forge's unmount performs its normal additional commit; the plugin checks an
+explicit commit before reporting success. Only the plugin's primary INI is used.
+
+Manual r16 acceptance remains NOT RUN. Check picker/hex edits, pending/reset,
+Save & apply without scrolling or counter reopening, restart persistence, all
+three badge states, request overlap, selection, confirmation, scrolling and menu
+transitions. Record Eden and Ryujinx separately. No installation or launch is
+part of candidate preparation.
+
+r15's complete release was preserved byte-for-byte at
+`backups/accepted/key-quest-markers/r15-before-colours/`; its hashes are adjacent.
+Earlier implementation records follow with their original historical scope.
+
+## Earlier development and research
 
 Current Switch build: r15 with upstream Forge 1.5.1. Earlier version claims below retain their recorded scope.
 
