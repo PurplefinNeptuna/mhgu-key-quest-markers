@@ -1,11 +1,11 @@
 {
-  "version": "r12-small",
+  "version": "r13",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
-  "host_tests": 10,
+  "host_tests": 11,
   "typed_arm_cases": 16,
-  "compiled_active_adapter_cases": 32,
+  "compiled_active_adapter_cases": 40,
   "archive_replacements": 0,
   "runtime_gui": "Existing native child, request visibility, title AutoScale and game-owned maps/caches",
   "layout": {
@@ -49,8 +49,8 @@
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "2a4338ec773e28a1c0bb60fd498ea6e24a697056991a0cee647e6c345a582f5f",
-    "elf_sha256": "90b46c0ded260b820ecbaf1c57763bc0e6c2a0cde10197b43459b8683fe3c99e",
+    "nro_sha256": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308",
+    "elf_sha256": "c330f44e003f1d570791d9c8e34a35c4f9f5aeb46ff066246b6061c97deeae42",
     "exports": [
       "fini",
       "forge_onInit",
@@ -139,15 +139,15 @@
   },
   "candidate_manifest": {
     "mod": "key-quest-markers-rs",
-    "version": "r12-small",
+    "version": "r13",
     "status": "DEVELOPMENT",
     "runtime_test": "NOT RUN",
     "runtime_active": true,
     "package_name": "key-quest-markers-rs",
     "payloads": {
-      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "2a4338ec773e28a1c0bb60fd498ea6e24a697056991a0cee647e6c345a582f5f"
+      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308"
     },
-    "archive_sha256": "ce76daa54389a772f82baba013cd199e245294a54d3c70f33752b45e684d7d8e"
+    "archive_sha256": "8b1551986252a7fa929ba448ed95bc30fbe551e7aaab880a9d43a5924ba23557"
   },
   "prior_accepted_r9": {
     "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
@@ -156,9 +156,9 @@
     "runtime_changed_for_this_record": false
   },
   "limits": [
-    "r12-small was not installed or launched.",
-    "Small-emblem UV sampling, visible centring and clipping require a manual comparison against the preserved original r12.",
-    "r11 was user-confirmed working on Eden/Linux; other platforms and exhaustive cases remain unconfirmed."
+    "Neither r13 variant was installed or launched.",
+    "Special-urgent availability and pair completion require a new in-game trial; scene-query and completion values in host ARM fixtures are doubles.",
+    "Both emblem variants retain r12 geometry; actual clipping and Ryujinx gameplay remain unconfirmed."
   ],
   "fix": {
     "cause": "r10 required cGUIObjText, but native title binding4/ID6 is cGUIObjMessage",
@@ -187,19 +187,66 @@
   },
   "atlas_variant": {
     "texture_id": 22,
-    "source_rect": [
-      342,
-      0,
-      372,
-      30
-    ],
-    "original_r12_rect": [
+    "default_rect": [
       136,
       344,
       198,
       406
     ],
+    "small_rect": [
+      342,
+      0,
+      372,
+      30
+    ],
     "comparison_record": "docs/R12_COMPARISON.json",
-    "geometry_and_classification_unchanged": true
+    "geometry_unchanged": true,
+    "classifier_shared": true
+  },
+  "special_urgents": {
+    "records": 8,
+    "families": 4,
+    "groups": [
+      47,
+      54
+    ],
+    "full_native_availability": "0x54af8c",
+    "enabled_table_executed": true,
+    "native_first_run_repeat_bits_tested": true,
+    "crosscheck": "docs/SPECIAL_URGENTS.json"
+  },
+  "variants": {
+    "r13": {
+      "manifest": {
+        "mod": "key-quest-markers-rs",
+        "version": "r13",
+        "status": "DEVELOPMENT",
+        "runtime_test": "NOT RUN",
+        "runtime_active": true,
+        "package_name": "key-quest-markers-rs",
+        "payloads": {
+          "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308"
+        },
+        "archive_sha256": "8b1551986252a7fa929ba448ed95bc30fbe551e7aaab880a9d43a5924ba23557"
+      },
+      "native_adapter_cases": 40,
+      "tests": "PASSED"
+    },
+    "r13-small": {
+      "manifest": {
+        "mod": "key-quest-markers-rs",
+        "version": "r13-small",
+        "status": "DEVELOPMENT",
+        "runtime_test": "NOT RUN",
+        "runtime_active": true,
+        "package_name": "key-quest-markers-rs",
+        "payloads": {
+          "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "24ac1f474113e8bd91cccf7c9229c52af4649ef81a150392941b7b32d87f541d"
+        },
+        "archive_sha256": "b36e925edaf25b9501482e988814972e88faccc1196f32a29e4a84e037128a1c"
+      },
+      "native_adapter_cases": 40,
+      "tests": "PASSED"
+    }
   }
 }

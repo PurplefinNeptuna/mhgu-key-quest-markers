@@ -8,7 +8,7 @@ world transforms, bounding-box calculation and actual pixels are not simulated.
 import json,struct,subprocess,sys,re
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from paths import MOD,BUILD_ROOT,CONFIG,input_path
+from paths import MOD,BUILD_ROOT,CONFIG,SMALL_MARK,input_path
 from verify import symbols
 from mhgu_binary import Nro,main_image
 from build import record,digest
@@ -43,12 +43,13 @@ SOURCE_STYLE=dict(zip(STYLE,(icon_props[k]for k in ['BlendState','ControlPoint',
 TITLE_CRC=struct.unpack_from('<I',row_objects[4],20)[0]
 assert TITLE_CRC==0x2fb82eae # Derive the fixture's title class from the real resource.
 UNUSED_TEXT_DTI=DATA+0x25800
+UV=(342.,0.,372.,30.) if SMALL_MARK=='1' else (136.,344.,198.,406.)
 CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
               simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False,
-              requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0):
+              requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
     global CASES
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
@@ -57,7 +58,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     for first,last in [(0xa494a0,0xa4964c),(0xa48668,0xa486fc),(0xa475e0,0xa47648),
                        (0xa38828,0xa38944),(0xa38bc0,0xa38e50),(0xa49b28,0xa49bac),(0xa4844c,0xa48470),(0x540c08,0x540c64),
                        (0xa4d0d8,0xa4d32c),(0xa4f60c,0xa4f840),
-                       (0xa42374,0xa423cc),(0xa449c0,0xa44e0c),(0xa38b58,0xa38bc0),(0xa38ffc,0xa39020),(0x5456e4,0x545930)]:
+                       (0x54af8c,0x54b0d4),(0x3b9870,0x3b98a4),(0xa42374,0xa423cc),(0xa449c0,0xa44e0c),(0xa38b58,0xa38bc0),(0xa38ffc,0xa39020),(0x5456e4,0x545930)]:
         u.mem_write(GAME+first,native_image[first:last])
     # Exercise the actual texture setters too, including their dirty propagation.
     u.mem_write(GAME+0xa47000,native_image[0xa47000:0xa57000])
@@ -158,17 +159,28 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
                 u.mem_write(leaf+0xc8,struct.pack("<2f",355.,38.))
         roots.append(root);parents.append(parent);arrays.append(bytes(u.mem_read(objects,48)));original_caches.append(cache)
     word(ATLAS,22);word(ATLAS+12,0x02000200);word(ATLAS+0x28,DATA+0x64000)
+    # Execute the actual full availability predicate, its immutable 51-entry
+    # table and enabled-bit check; only the pre-existing scene query is doubled.
+    assert struct.unpack_from('<16I',native_image,0x162cde4)[::2]==(308,309,319,320,324,325,329,330)
+    u.mem_write(GAME+0x162cde4,native_image[0x162cde4:0x162cde4+51*8])
+    word(GAME+0x1838d28,DATA+0xf0800);word(DATA+0xf0800,QUEST)
+    word(GAME+0x1838d74,DATA+0xf0804);word(DATA+0xf0804,QUEST)
+    word(GAME+0x1838d88,DATA+0xf0808);word(DATA+0xf0808,PROFILE)
+    word(PROFILE+0x35d4,sum(1<<i for i in special_enabled))
     word(QUEST+0xb4,RESOURCE);word(RESOURCE+0x64,8);word(RESOURCE+0x6c,RECORDS)
     groups=[(207,2,int(alternative_done)),(105,1,0),(303,26,0),(206,26 if simultaneous else 25,0),
             (213,2,int(alternative_done)),(202,0,0),(402,27,0),(215,2,0)]
+    if special:
+        groups=[(id,47+i,i//2+1) for i,id in enumerate([308,309,319,320,324,325,329,330])]
     for i,(id,category,alt)in enumerate(groups):u.mem_write(RECORDS+i*12,struct.pack('<IIBBBB',0,id,category,alt,0,0))
     word(GAME+0x18979f0,PROGRESS);u.mem_write(PROGRESS+0x3e0,struct.pack('<HH',2,1))
     ids=[202]*8 if ordinary else [207,105,303,206,213,202,0,402]
+    if special:ids=[g[0] for g in groups]
     for i,id in enumerate(ids):
-        q=DATA+0x30000+i*0x200;word(ROWS+i*4,q if id else 0);word(q+8,id);half(q+0x10c,int(id in [303,206]))
+        q=DATA+0x30000+i*0x200;word(ROWS+i*4,q if id else 0);word(q+8,id);half(q+0x10c,(0x300 if id==308 else 0x308) if special else int(id in [303,206]))
     u.mem_write(INFO+0x1104,struct.pack('<16I',*offered,*([0]*(16-len(offered)))));word(INFO+0x1144,17 if bad_count else len(offered))
     u.mem_write(PROFILE+0x52c,b'\xff'*0x100) # New/acknowledgement bits do not complete quests.
-    protected=[(PROFILE,0x72c),(QUEST,0x100),(RESOURCE,0x100),(RECORDS,96),(PROGRESS,0x3e4),(ROWS,32),(DATA+0x30000,0x1000),(INFO+0x1104,68)]
+    protected=[(PROFILE,0x72c),(PROFILE+0x35d4,8),(QUEST,0x100),(RESOURCE,0x100),(RECORDS,96),(PROGRESS,0x3e4),(ROWS,32),(DATA+0x30000,0x1000),(INFO+0x1104,68)]
     immutable=[bytes(u.mem_read(p,n))for p,n in protected]
     u.reg_write(arm.UC_ARM_REG_C1_C0_2,0xf00000);u.reg_write(arm.UC_ARM_REG_FPEXC,0x40000000)
     tls_value=0;states={};colors={};calls=[];parent_return=0;parent_sp=0;heap=DATA+0xa0000
@@ -302,7 +314,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==GAME+0x1040:release(r[0]);ret(cpu);return
         # Style calls execute the original game instructions.
         if address==GAME+0xa4faf0:assert r[1]==22
-        if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==(342.,0.,372.,30.)
+        if address==GAME+0xa4fb58:assert tuple(struct.unpack('<4f',cpu.mem_read(r[1],16)))==UV
         if address-GAME in STYLE:styles.setdefault(r[0],{})[address-GAME]=r[1]
         if address==GAME+0xba2280:
             assert r[:3]==[pool,draw_object+0xbc,96]
@@ -330,7 +342,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
                 if address==GAME+0xa4fc9c:drawn.append(r[0]);draw_object=r[0]
             else:ret(cpu);return
         if address==GAME+0x523da4:assert r[0]==PROFILE+0x42c;ret(cpu,int(r[1]in completed));return
-        if address==GAME+0x3b1a18:assert r[:2]==[QUEST,2];ret(cpu,int(prerequisites));return
+        if address==GAME+0x3b1a18:assert not special and r[:2]==[QUEST,2];ret(cpu,int(prerequisites));return
+        if address==GAME+0x54af8c:assert special and r[:3]==[r[0],0xff,0] and r[0] in ids
         if address==GAME+0x3b2174:assert r[0]==QUEST;ret(cpu,int(available));return
         if ENGINE+0x300<=address<ENGINE+4096:raise AssertionError(('unexpected import',hex(address)))
     u.hook_add(unicorn.UC_HOOK_CODE,trace)
@@ -388,7 +401,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     if not (invalid_object or invalid_owner or invalid_info or bad_count or gui_identity!=5 or fail_object or fail_cache or fail_mapping or fail_at):
         assert any('first classified page, Village=2, Hub/G=1' in s for s in startup_logs),startup_logs
         if not ordinary:
-            assert any('row=0 quest=207 group=2 quest_flags=0x0 badge=' in s for s in startup_logs),startup_logs
+            assert any(('row=0 quest=308 group=47 quest_flags=0x300 badge=' if special else 'row=0 quest=207 group=2 quest_flags=0x0 badge=') in s for s in startup_logs),startup_logs
             assert any('first visible badges;' in s for s in startup_logs),startup_logs
         else:assert not any('first visible badges;' in s for s in startup_logs)
     log_count=len(startup_logs)
@@ -413,6 +426,9 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if repeat:
             call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8-int(bool(invalid_request or invalid_title)) and len(allocations)==3*len(created)
         if invalid_info or ordinary or bad_count:assert states==dict.fromkeys(range(8),0) and not colors
+        elif special:
+            assert states==dict.fromkeys(range(8),1)
+            assert colors=={i:(0xff808080 if not available or i not in special_enabled or any(id in completed for id in ids[(i//2)*2:(i//2)*2+2]) else 0xff39d2ff) for i in range(8)}
         else:
             assert states=={i:v for i,v in enumerate([1,1,1,1,1,0,0,0]) if not(i==0 and (invalid_request or invalid_title))}
             urgency=0xff39d2ff if 303 in offered and available and prerequisites else 0xff808080
@@ -457,7 +473,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(p+0x54)&1==states[i]
             if i in colors:assert struct.unpack('<4I',u.mem_read(p+0xa4,16))==(colors[i],)*4
             assert read(p+0x104)==ATLAS
-            assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==(342.,0.,372.,30.)
+            assert struct.unpack('<4f',u.mem_read(p+0x10c,16))==UV
             assert struct.unpack('<2f',u.mem_read(p+0x80,8))==((329. if i in requests and states.get(i) else 365.),3.)
             assert struct.unpack('<2f',u.mem_read(p+0xb4,8))==(32.,32.)
         if late_invalid:
@@ -519,8 +535,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert [words[j]for j in [3,9,15,21]]==[colors[i]]*4
             assert [f[j]for j in [0,6,12,18]]==[0.,32.,0.,32.]
             assert [f[j]for j in [1,7,13,19]]==[0.,0.,32.,32.]
-            assert [f[j]for j in [4,10,16,22]]==[342.5,371.5,342.5,371.5]
-            assert [f[j]for j in [5,11,17,23]]==[0.5,0.5,29.5,29.5]
+            assert [f[j]for j in [4,10,16,22]]==[UV[0]+.5,UV[2]-.5,UV[0]+.5,UV[2]-.5]
+            assert [f[j]for j in [5,11,17,23]]==[UV[1]+.5,UV[1]+.5,UV[3]-.5,UV[3]-.5]
         for p,size in allocations.items():assert bytes(u.mem_read(p+size,16))==b'\xa5'*16,('native draw-cache overflow',hex(p))
         # Run the actual root and base-container destructors; the mocked MT free
         # records ownership, while their real ARM loops destroy the new children.
@@ -532,7 +548,15 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(instance+0xd8)==read(instance+0xdc)==0
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
-results=[test_case('Text subclass is rejected for the Message resource',invalid_title='subclass'),
+results=[test_case('all eight special urgents outside rank-up offer pool',special=True,offered=(),prerequisites=False,requests=(0,2,4,6),repeat=True),
+         test_case('only enabled special records become yellow',special=True,offered=(),special_enabled=(0,2,4,6),prerequisites=False),
+         test_case('disabled special records remain grey despite scene availability',special=True,offered=(),special_enabled=(),prerequisites=False),
+         test_case('special pair completed by first-run quest',special=True,offered=(),completed=(308,),prerequisites=False),
+         test_case('special pair completed by repeat quest',special=True,offered=(),completed=(309,),prerequisites=False),
+         test_case('special pairs complete independently',special=True,offered=(),completed=(308,324),prerequisites=False),
+         test_case('unavailable special urgents are grey',special=True,offered=(),available=False,prerequisites=False),
+         test_case('special urgency does not bypass invalid offer context',special=True,invalid_info=True),
+         test_case('Text subclass is rejected for the Message resource',invalid_title='subclass'),
          test_case('invalid request on a fitted row restores its title',late_invalid=True),
          test_case('request shares the key slot without overwriting bubble',requests=(0,2,3,5)),
          test_case('selected row uses the same request-relative layout',requests=(0,4),selected=4),

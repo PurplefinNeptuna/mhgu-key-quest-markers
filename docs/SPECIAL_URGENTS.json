@@ -1,0 +1,130 @@
+{
+  "checked_date": "2026-10-15",
+  "live_kiranico": {
+    "all_eight_pages_label": "Urgent",
+    "records": [
+      {
+        "id": 308,
+        "title": "Tumultuous Sprouts",
+        "category": 47,
+        "family": 1,
+        "flags": 768,
+        "kiranico": "https://mhgu.kiranico.com/quest/478ad"
+      },
+      {
+        "id": 309,
+        "title": "Tumultuous Sprouts",
+        "category": 48,
+        "family": 1,
+        "flags": 776,
+        "kiranico": "https://mhgu.kiranico.com/quest/4ba6d"
+      },
+      {
+        "id": 319,
+        "title": "Into the Wyvern's Den",
+        "category": 49,
+        "family": 2,
+        "flags": 776,
+        "kiranico": "https://mhgu.kiranico.com/quest/4785d"
+      },
+      {
+        "id": 320,
+        "title": "Into the Wyvern's Den",
+        "category": 50,
+        "family": 2,
+        "flags": 776,
+        "kiranico": "https://mhgu.kiranico.com/quest/4ba3d"
+      },
+      {
+        "id": 324,
+        "title": "No Go on the Popo",
+        "category": 51,
+        "family": 3,
+        "flags": 776,
+        "kiranico": "https://mhgu.kiranico.com/quest/4970a"
+      },
+      {
+        "id": 325,
+        "title": "No Go on the Popo",
+        "category": 52,
+        "family": 3,
+        "flags": 776,
+        "kiranico": "https://mhgu.kiranico.com/quest/45063"
+      },
+      {
+        "id": 329,
+        "title": "A Forest Fracas",
+        "category": 53,
+        "family": 4,
+        "flags": 776,
+        "kiranico": "https://mhgu.kiranico.com/quest/4dd8e"
+      },
+      {
+        "id": 330,
+        "title": "A Forest Fracas",
+        "category": 54,
+        "family": 4,
+        "flags": 776,
+        "kiranico": "https://mhgu.kiranico.com/quest/478bd"
+      }
+    ]
+  },
+  "previous_kiranico_inventory": {
+    "urgent_rows": 36,
+    "unmatched_urgent_titles_after_fix": 0,
+    "scope": "Existing 944-row research snapshot; eight affected pages refreshed live in this task."
+  },
+  "native_evidence": {
+    "main_nso_sha256": "b3935415499549adaf4c0e89822831daa175cfd456a7990791c79be3997645ef",
+    "group_archive_sha256": "8b5e466ad141fcaafd187cafcf0adcf7648bca327536a722f9faa69778e27231",
+    "quest_archive_sha256": "4126956feec6ca93f3866ce6c31181f0c16c82d137ab8c9904a9e46571d45e76",
+    "special_family_getter": "0x3b21f0",
+    "special_family_table": "0x162a8a0",
+    "first_eight_family_words": [
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4
+    ],
+    "repeat_category_filter": "0x3b2214",
+    "native_counter_availability": "0x54af8c",
+    "existing_scene_availability_query": "0x3b2174",
+    "completion_reader": "0x523da4",
+    "full_availability_abi": "u32(u32 quest_id, u32 category, u32 context); category=0xff, context=0",
+    "enabled_table": {
+      "address": "0x162cde4",
+      "entries": 51,
+      "stride": 8,
+      "special_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "owner_bitfield_offset": "0x35d4"
+    },
+    "new_hooks": 0,
+    "existing_checked_function_now_called": "0x54af8c",
+    "ghidra_instruction_mismatches": 0
+  },
+  "report": {
+    "installed_version": "r12",
+    "installed_nro_sha256": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64",
+    "quest_id_in_screenshot": "308 or 309; log snapshots only record the first page, so exact visible ID is not established",
+    "log_sha256": "02c5805f102d625ba03ebc187f64709cafeaf5fe675fd039ac2ef716848b3e32"
+  },
+  "policy": {
+    "identity": "Special groups47..54 bypass only the rank-up urgency bit requirement. Other categories keep existing validation.",
+    "yellow": "Full native counter availability true, this record unfinished and neither record in its native family completed; no rank-up pool or rank-key prerequisite requirement.",
+    "grey": "Record or companion completed, or native availability false.",
+    "limits": "Full counter availability code and enabled-bit tests execute in compiled ARM fixtures; scene-query and completion values are doubles. New in-game acceptance required on Eden and Ryujinx."
+  }
+}

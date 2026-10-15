@@ -62,14 +62,23 @@ impl Snapshot {
         }
         let p = self.progress.load(Ordering::Relaxed);
         log::error!(
-            "Native quest badges r12-small diagnostic: {label}, Village={}, Hub/G={}",
+            concat!(
+                "Native quest badges ",
+                env!("KQM_VERSION"),
+                " diagnostic: {}, Village={}, Hub/G={}"
+            ),
+            label,
             p & 65535,
             p >> 16
         );
         for i in 0..8 {
             let d = self.decisions[i].load(Ordering::Relaxed);
             log::error!(
-                "Native quest badges r12-small diagnostic: row={} quest={} group={} quest_flags={:#x} badge={} gui_flags={:#x}",
+                concat!(
+                    "Native quest badges ",
+                    env!("KQM_VERSION"),
+                    " diagnostic: row={} quest={} group={} quest_flags={:#x} badge={} gui_flags={:#x}"
+                ),
                 i,
                 self.ids[i].load(Ordering::Relaxed),
                 d & 255,
@@ -171,7 +180,16 @@ fn prerequisites(quest: u32, group: Group, stage: u16) -> bool {
         total <= 4096 && done == total
     }
 }
-fn available(quest: u32, id: u32) -> bool {
+fn available(quest: u32, id: u32, special: bool) -> bool {
+    if special {
+        // The normal counter predicate additionally checks its 51-entry enabled
+        // bitfield (+0x35d4). These eight IDs are entries 0..7; scene flags alone
+        // cannot distinguish the current first-run/repeat offer. Category 0xff
+        // with null context bypasses only the unrelated DLC menu filter.
+        let f: unsafe extern "C" fn(u32, u32, u32) -> u32 =
+            unsafe { core::mem::transmute((base() + 0x54af8c) as usize) };
+        return unsafe { f(id, 0xff, 0) == 1 };
+    }
     // This is the same scene/quest-flag query used by the native counter's
     // availability predicate. It returns a bool and does not complete a quest.
     let f: unsafe extern "C" fn(u32, u32) -> u8 =
@@ -179,6 +197,16 @@ fn available(quest: u32, id: u32) -> bool {
     unsafe { f(quest, id) != 0 }
 }
 fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
+    if quest_badges_core::special_urgent(g.category) {
+        // Native family table at main+0x162a8a0 pairs 47/48, 49/50, 51/52,
+        // 53/54. Clearing either version satisfies that encounter's story event.
+        return (0..groups.count).any(|i| {
+            let other = groups.at(i);
+            quest_badges_core::special_urgent(other.category)
+                && (other.category - 47) / 2 == (g.category - 47) / 2
+                && completed(profile, other.id)
+        });
+    }
     if g.category > 10 || !(1..=11).contains(&g.alternative) {
         return false;
     }
@@ -275,9 +303,12 @@ pub fn update(ui: u32, quests: u32) {
         let done = completed(profile, id);
         let is_urgent = quest_badges_core::urgent(g.category);
         let stage = if g.category <= 33 { village } else { hub };
-        let prereq = !is_urgent || prerequisites(quest, g, stage);
+        // Encounter pairs use the full normal counter availability predicate,
+        // outside its rank-up pool and unrelated rank-key requirement.
+        let special = quest_badges_core::special_urgent(g.category);
+        let prereq = !is_urgent || special || prerequisites(quest, g, stage);
         let in_list = offered.contains(id);
-        let active = is_urgent && in_list && available(quest, id);
+        let active = is_urgent && (special || in_list) && available(quest, id, special);
         *badge = quest_badges_core::decide(
             g,
             flags & 1 != 0,

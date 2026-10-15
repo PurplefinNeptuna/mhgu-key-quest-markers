@@ -40,8 +40,13 @@ pub struct Evidence {
 pub const fn key(category: u8) -> bool {
     (category >= 1 && category <= 17) || (category >= 19 && category <= 22)
 }
+/// These four Village encounter pairs are urgent on Kiranico but do not set
+/// cQuestData's rank-up urgent bit. Consecutive categories share one story event.
+pub const fn special_urgent(category: u8) -> bool {
+    category >= 47 && category <= 54
+}
 pub const fn urgent(category: u8) -> bool {
-    category >= 24 && category <= 46
+    category >= 24 && category <= 54
 }
 /// Reject missing/conflicting metadata; identical native duplicates retain their
 /// original completion-array positions but agree on the badge's identity.
@@ -72,7 +77,8 @@ pub fn needed_key(group: Group, village: u16, hub: u16) -> Option<bool> {
     }
     Some(category == tier)
 }
-/// Identity requires agreement between the native group and urgency flag.
+/// Rank-up identity requires the native group and urgency flag; the separate
+/// Village encounter groups use their native availability and pair completion.
 /// Completion and satisfied alternatives cannot turn red/yellow. An unresolved
 /// unfinished quest stays hidden instead of assuming that its rank is current.
 pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
@@ -80,15 +86,20 @@ pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
         return Badge::Hidden;
     }
     if urgent(group.category) {
-        if !urgent_flag {
+        if !urgent_flag && !special_urgent(group.category) {
             return Badge::Hidden;
         }
-        if state.completed {
+        if state.completed || (special_urgent(group.category) && state.alternative_done) {
             return Badge::Grey;
         }
         return match state.active_urgent {
             None => Badge::Hidden,
-            Some(true) if state.prerequisites_done && state.urgent_listed => Badge::Yellow,
+            Some(true)
+                if special_urgent(group.category)
+                    || (state.prerequisites_done && state.urgent_listed) =>
+            {
+                Badge::Yellow
+            }
             _ => Badge::Grey,
         };
     }
@@ -156,6 +167,39 @@ mod tests {
         }
     }
     #[test]
+    fn special_encounters_use_availability_and_shared_completion() {
+        // Actual IDs/categories from the hashed Village quest/group resources.
+        for (id, category) in [
+            (308, 47),
+            (309, 48),
+            (319, 49),
+            (320, 50),
+            (324, 51),
+            (325, 52),
+            (329, 53),
+            (330, 54),
+        ] {
+            let g = Group {
+                id,
+                category,
+                alternative: (category - 47) / 2 + 1,
+            };
+            let mut s = state();
+            s.urgent_listed = false;
+            s.prerequisites_done = false; // Rank-up requirements do not gate these.
+            assert_eq!(decide(g, false, s), Badge::Yellow);
+            s.alternative_done = true;
+            assert_eq!(decide(g, false, s), Badge::Grey);
+            s.alternative_done = false;
+            s.active_urgent = Some(false);
+            assert_eq!(decide(g, false, s), Badge::Grey);
+            s.active_urgent = None;
+            assert_eq!(decide(g, false, s), Badge::Hidden);
+            s.completed = true;
+            assert_eq!(decide(g, false, s), Badge::Grey);
+        }
+    }
+    #[test]
     fn alternatives_and_unresolved_records() {
         let mut s = state();
         s.alternative_done = true;
@@ -167,7 +211,7 @@ mod tests {
         assert_eq!(decide(group(25), true, s), Badge::Hidden);
         assert_eq!(decide(group(1), true, s), Badge::Hidden);
         assert_eq!(decide(group(25), false, s), Badge::Hidden);
-        for category in [0, 18, 23, 47, 255] {
+        for category in [0, 18, 23, 55, 255] {
             assert_eq!(decide(group(category), false, state()), Badge::Hidden);
         }
         assert_eq!(

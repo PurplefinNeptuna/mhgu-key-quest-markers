@@ -28,6 +28,7 @@
     "docs/R12_COMPARISON.json",
     "docs/RUNTIME_R11.json",
     "docs/RUNTIME_RESULTS.json",
+    "docs/SPECIAL_URGENTS.json",
     "licenses/COMPILER_BUILTINS.txt",
     "licenses/FORGE-MIT.txt",
     "licenses/RUST-MIT.txt",

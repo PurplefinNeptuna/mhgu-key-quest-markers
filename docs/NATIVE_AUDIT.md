@@ -508,3 +508,36 @@ quad UV corners at X342.5/371.5 and Y0.5/29.5. The quad remains 32×32 at Y3
 and X365/329. No resources, ownership, hooks, title fitting or classification
 change. Original r12 delivery hashes are retained in `R12_COMPARISON.json`.
 Actual sampling and visual preference require the user's in-game comparison.
+
+
+## r13: special encounter urgent pairs — 2026-10-15
+
+The earlier historical-urgent correlation covered only rank-up groups24..46.
+It omitted groups47..54, whose eight records Kiranico labels Urgent even though
+cQuestData +0x10c bit0 is clear (flags0x300/0x308). The actual category-to-family
+getter0x3b21f0 reads main+0x162a8a0; first eight words are1,1,2,2,3,3,4,4.
+Native selector counter0x3b85d8 uses that getter and the repeat-category predicate
+0x3b2214 when distinguishing first-run/repeat versions. The patch limits this
+pair policy to47..54, leaving other family-like categories outside the feature.
+
+The native counter availability predicate0x54af8c, called with category0xff and
+null menu context, checks the scene query0x3b2174 and a 51-entry quest enabled-bit
+table. All eight
+special IDs occupy entries0..7 of the original table at0x162cde4, with stride8.
+The enabled bits are read at native flag owner+0x35d4; scene availability alone
+is insufficient to distinguish first-run/repeat offers. The separate rank-up
+pool and rank-key prerequisite count are not the special encounters' activation
+requirements. r13 calls that full three-argument availability predicate and uses
+actual completion0x523da4 plus
+completion of either record in the same family. Available unfinished unsatisfied
+pairs are yellow; completed/satisfied pairs and unavailable records are grey.
+No current rank is inferred from the viewed star page.
+
+The adapter still requires valid UI, metadata, progress and parent offer context.
+Rank-up quests keep both their urgent flag and offered/prerequisite checks.
+The full availability predicate already has a checked signature; its new call
+uses the audited three-integer ABI. No hook sites, allocation or renderer change.
+Static ARM cases
+exercise all eight real ID/category/flag records, missing offer context, availability,
+independent pair completion and native drawing/cleanup in both emblem builds.
+See SPECIAL_URGENTS.json for hashes, URLs, user-report evidence and runtime limits.

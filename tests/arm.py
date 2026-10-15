@@ -6,7 +6,7 @@ This checks the ARM calling convention, not Forge or in-game UI execution.
 import json,struct,subprocess,sys,re
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from paths import MOD,BUILD_ROOT,WORK_ROOT,CONFIG,input_path
+from paths import VERSION, MOD,BUILD_ROOT,WORK_ROOT,CONFIG,input_path
 from verify import symbols
 from mhgu_binary import Nro,main_image
 from build import record
@@ -71,7 +71,7 @@ for ge in range(16):
 u=machine();params=ENGINE+0x200;u.reg_write(arm.UC_ARM_REG_R0,params);u.mem_write(params-8,b'\xa5'*86)
 u.emu_start(MODULE+names['forge_onLoad'],RETURN,count=1000)
 assert struct.unpack('<3H',u.mem_read(params,6))==(1,5,0)
-assert bytes(u.mem_read(params+6,64)).rstrip(b'\0')==b'Native Quest Badges r12-small'
+assert bytes(u.mem_read(params+6,64)).rstrip(b'\0')==('Native Quest Badges '+VERSION).encode()
 assert bytes(u.mem_read(params-8,8))==bytes(u.mem_read(params+70,8))==b'\xa5'*8
 # Compile the native header's struct without SDK includes; compiler-derived
 # offsets independently agree with the production Rust compile-time assertions.
@@ -90,7 +90,7 @@ for at,size in [(0x616c00,48),(0x618bc0,40),(0x618cbc,28),(0x782bb4,4),(0x782e04
         '--start-address='+str(at),'--stop-address='+str(at+size),binary],text=True)
     assert '\tsel\t' not in text;windows[hex(at)]=text.split('Disassembly of section .data:')[-1].strip()
 record('arm.json',{'status':'PASSED','typed_detour_cases':checks,'forwarded_integer_arguments':7,
-        'registered_name':'Native Quest Badges r12-small','metadata_bytes':70,'hook_abi_bytes':24,'minimum_forge_version':'1.5.0','GE':'unchanged before original in all 16 patterns; no restoration required at audited direct continuations',
+        'registered_name':'Native Quest Badges '+VERSION,'metadata_bytes':70,'hook_abi_bytes':24,'minimum_forge_version':'1.5.0','GE':'unchanged before original in all 16 patterns; no restoration required at audited direct continuations',
         'preserved':['r4-r11','d8-d15','sp','incoming stack words'],'direct_caller_windows':windows,
         'live_flags':'Row and parent direct callers replace NZCVQ before conditional use or make an unconditional next call; no incoming GE consumer',
         'runtime_test':'NOT RUN','resource_attachment':'NOT VERIFIED'})

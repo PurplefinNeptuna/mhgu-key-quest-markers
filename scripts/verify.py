@@ -2,7 +2,7 @@
 """Check the staged candidate's native imports, exact code signatures and active callback path."""
 import ast,json,re,struct,subprocess
 from pathlib import Path
-from paths import MOD,CONFIG,BUILD_ROOT,CARGO_TARGET,input_path
+from paths import MOD,CONFIG,BUILD_ROOT,CARGO_TARGET,VERSION,input_path
 from build import doctor,digest,record,source_hashes
 from mhgu_binary import Nro,main_image
 from native_support import nso_exports
@@ -19,7 +19,7 @@ def verify():
     doctor();nro_path=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'
     data=nro_path.read_bytes();nro=Nro(data);elf,names=symbols()
     receipt=json.loads((BUILD_ROOT/'build.json').read_text())
-    if receipt['nro_sha256']!=digest(nro_path) or receipt.get('source_sha256')!=source_hashes():
+    if receipt.get('version')!=VERSION or receipt['nro_sha256']!=digest(nro_path) or receipt.get('source_sha256')!=source_hashes():
         raise ValueError('Build receipt differs from staged NRO/current sources')
     exports={n.decode() for n,e,*_ in nro.symbols if n and e[5] and e[3]>>4==1}
     if exports!={'forge_onLoad','forge_onInit','forge_onUpdate','init','fini'}:raise ValueError('Unexpected plugin exports: '+str(exports))

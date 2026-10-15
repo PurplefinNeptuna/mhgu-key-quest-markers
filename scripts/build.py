@@ -3,7 +3,7 @@
 import argparse, hashlib, json, os, shutil, subprocess, sys, zipfile, zlib
 from html import escape
 from pathlib import Path
-from paths import MOD, ROOT, CONFIG, BUILD_ROOT, WORK_ROOT, CARGO_TARGET, PYTHON, input_path
+from paths import MOD, ROOT, CONFIG, BUILD_ROOT, WORK_ROOT, CARGO_TARGET, PYTHON, VERSION, SMALL_MARK, input_path
 
 def digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def source_hashes():
@@ -17,7 +17,7 @@ def record(name, value):
     (BUILD_ROOT/name).write_text(json.dumps(value,indent=2)+'\n')
 def run(args, **kw): subprocess.run(list(map(str,args)),check=True,**kw)
 def environment():
-    env=os.environ.copy();runtime=ROOT/'tools/mhgu-dti-dumper'
+    env=os.environ.copy();env.update(KQM_SMALL_MARK=SMALL_MARK,KQM_VERSION=VERSION);runtime=ROOT/'tools/mhgu-dti-dumper'
     rust=Path(CONFIG.get('rust_bin',runtime/'rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin'))
     compiler=CONFIG.get('devkitarm') or env.get('DEVKITARM')
     if not compiler: raise ValueError('Set devkitarm in build.local.json or DEVKITARM')
@@ -65,7 +65,7 @@ def build():
     if digest(MOD/'Cargo.lock')!=lock: raise ValueError('Cargo.lock changed during build')
     dest=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'
     dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(CARGO_TARGET/output.name,dest)
-    record('build.json',{'status':'BUILT','nro_sha256':digest(dest),'forge_rs_revision':
+    record('build.json',{'version':VERSION,'status':'BUILT','nro_sha256':digest(dest),'forge_rs_revision':
         'd1865b68e9b194eb3eacc8bd71bbf601a5fac63e','runtime_active':True,'source_sha256':source_hashes(),'runtime_test':'NOT RUN'})
 
 def test():
@@ -92,8 +92,8 @@ def package():
     previous={str(p.relative_to(named)) for p in named.rglob('*') if p.is_file()}
     if previous-payloads.keys(): raise ValueError('Preserving unexpected previous candidate files')
     shutil.copytree(source,named,dirs_exist_ok=True)
-    guide=(MOD/'DISTRIBUTION_README.md').read_bytes();(dest/'README.md').write_bytes(guide)
-    archive=dest/'key-quest-markers-rs-r12-small-candidate.zip'
+    guide=(MOD/'DISTRIBUTION_README.md').read_text().replace('r13',VERSION).encode();(dest/'README.md').write_bytes(guide)
+    archive=dest/('key-quest-markers-rs-'+VERSION+'-candidate.zip')
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
         z.writestr('README.md',guide)
         for n in sorted(payloads): z.write(source/n,package_name+'/'+n)
@@ -105,7 +105,7 @@ def package():
     (dest/'NOTICES.txt').write_text(notices);(dest/'NOTICES.html').write_text('<pre>'+escape(notices)+'</pre>\n')
     evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','native-adapter','verify','tests']}
     (dest/'VALIDATION.json').write_text(json.dumps(evidence,indent=2)+'\n')
-    manifest={'mod':'key-quest-markers-rs','version':'r12-small','status':'DEVELOPMENT','runtime_test':'NOT RUN',
+    manifest={'mod':'key-quest-markers-rs','version':VERSION,'status':'DEVELOPMENT','runtime_test':'NOT RUN',
               'runtime_active':True,'package_name':package_name,'payloads':payloads,'archive_sha256':digest(archive)}
     (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (dest/'SHA256SUMS').write_text(''.join(digest(p)+'  '+str(p.relative_to(dest))+'\n'
@@ -116,6 +116,9 @@ def package():
         for n,h in payloads.items(): assert hashlib.sha256(z.read(package_name+'/'+n)).hexdigest()==h==digest(named/n)
     for line in (dest/'SHA256SUMS').read_text().splitlines():
         h,n=line.split('  ',1);assert digest(dest/n)==h
+    # Validate both variant deliveries with the same complete candidate checker.
+    spec.update(version=VERSION,archive=archive.name,candidate=str(dest.relative_to(ROOT)))
+    distribution.verify_candidate(spec, ROOT)
     print('Verified active DEVELOPMENT candidate:',archive)
 
 def main():

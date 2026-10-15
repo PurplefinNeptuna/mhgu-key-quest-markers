@@ -28,7 +28,7 @@ Run from any directory:
 
 `prepare` verifies inputs and the read-only native GUI layout fixture. All commands are offline;
 there is no download, install, game launch or settings command. Outputs use the
-workspace's `build/key-quest-markers-rs/candidates/r12-small/` and matching `work/` folder,
+workspace's `build/key-quest-markers-rs/candidates/r13/` and matching `work/` folder,
 or the independent checkout's own `build/` and `work/` folders after export.
 
 The workspace coordinator also supports
@@ -117,3 +117,27 @@ half-texel-inset UV corners, along with the unchanged layout and cleanup cases.
 The original r12 delivery remains untouched; its complete file hashes are in
 `docs/R12_COMPARISON.json`. Independent source exports and output paths use
 `r12-small`, so neither build nor package commands overwrite original r12.
+
+
+## r13: special Village urgents, both emblem builds
+
+Default commands build/test/package r13 with the original emblem. Prefix the same
+commands with `KQM_SMALL_MARK=1` for r13-small. This is a build-time selection;
+there is no runtime option or config. Separate work/build paths, metadata names
+and version receipts prevent either comparison candidate overwriting the other.
+The pinned converter does not accept Cargo feature arguments, so build.rs emits
+a checked cfg from this one environment flag. Both binaries share all classifier
+and native adapter source; only UVs, plugin name and diagnostic version differ.
+
+Run both `./build.sh build` and `./build.sh test` before packaging each variant.
+Use `./build.sh package` for the small variant; it invokes the same complete
+candidate validator. The workspace coordinator packages/checks the default r13
+record. Independent exports support both commands with the same flag.
+
+Groups47..54 are the four special encounter pairs listed Urgent on Kiranico.
+They lack the rank-up urgency bit. They use the full native counter availability
+predicate (scene flag plus per-record enabled bit), rather than the rank-up
+offered set or rank-key prerequisites. Completion
+of either record in a native family makes both grey. Detailed resources, native
+functions, live URLs and limits are in docs/SPECIAL_URGENTS.json. No new hooks,
+resources, pointers, native signatures or save writes are introduced.
