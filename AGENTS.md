@@ -31,3 +31,8 @@ publish or push implicitly. Preserve accepted artifacts and unrelated edits.
 
 Target upstream Forge 1.5.1, native ARM32 Hook 24 and the actual 70-byte metadata
 record. Do not restore retired custom loader shims or patches.
+
+r17 works with the base game and optional MHGU HD Project (user-confirmed
+2026-10-15). The copied English HD common archive is a build fixture, not a
+runtime requirement. See EVIDENCE.json. User guides call badge colours Green,
+Red and Grey. Keep Gathering/objective source labels in research records.
