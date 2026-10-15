@@ -1,11 +1,11 @@
 {
-  "version": "r10",
+  "version": "r11",
   "status": "DEVELOPMENT",
   "runtime_active": true,
   "runtime_test": "NOT RUN",
   "host_tests": 10,
   "typed_arm_cases": 16,
-  "compiled_active_adapter_cases": 31,
+  "compiled_active_adapter_cases": 32,
   "archive_replacements": 0,
   "runtime_gui": "Existing native child, request visibility, title AutoScale and game-owned maps/caches",
   "layout": {
@@ -40,13 +40,16 @@
     "instances": 63,
     "texture_id": 22,
     "archive_replacements": 0,
+    "title_class": "cGUIObjMessage",
+    "title_type_crc": 800599726,
+    "title_bytes": 352,
     "new_atlas": false,
     "runtime_test": "NOT RUN"
   },
   "native_checks": {
     "status": "PASSED",
-    "nro_sha256": "df8099a24b8c4f33e033b8eb99d59972cee1899569ce724ea3b587e8baeba1a9",
-    "elf_sha256": "1c0c6772035ff0b16584a5c334a67dbd7dbaf4de8672adae854bd06598425386",
+    "nro_sha256": "12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48",
+    "elf_sha256": "064f691798a2a3892d895d5682b8db27f70bc7812d1dd2ea74544e41d4f530e4",
     "exports": [
       "fini",
       "forge_onInit",
@@ -77,7 +80,7 @@
       "0xa53528",
       "0xa5350c",
       "0xa53aa8",
-      "0xa56b4c",
+      "0xa56ab8",
       "0x5456e4",
       "0xa38ffc",
       "0xa47d2c",
@@ -135,15 +138,15 @@
   },
   "candidate_manifest": {
     "mod": "key-quest-markers-rs",
-    "version": "r10",
+    "version": "r11",
     "status": "DEVELOPMENT",
     "runtime_test": "NOT RUN",
     "runtime_active": true,
     "package_name": "key-quest-markers-rs",
     "payloads": {
-      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "df8099a24b8c4f33e033b8eb99d59972cee1899569ce724ea3b587e8baeba1a9"
+      "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48"
     },
-    "archive_sha256": "cc8b9e4cefd293bcba2ec994473166e19a8d11dcc3b9ace5fc23a0a365a4ed28"
+    "archive_sha256": "958593abfdb5a77ba037ef3b20ce48e649c3f641e04c11012db5c6256a9323eb"
   },
   "prior_accepted_r9": {
     "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
@@ -152,8 +155,20 @@
     "runtime_changed_for_this_record": false
   },
   "limits": [
-    "r10 was not installed or launched.",
-    "Eden/Ryujinx clipping, long-title appearance, completion ribbons and menu transitions need manual acceptance.",
-    "r9 user acceptance remains scoped to that unchanged payload."
-  ]
+    "r11 was not installed or launched.",
+    "r10 was tested in Eden and rejected all native title bindings before drawing.",
+    "Eden/Ryujinx clipping and new placement still need r11 manual acceptance.",
+    "r9 user acceptance remains scoped to the unchanged r9 payload."
+  ],
+  "fix": {
+    "cause": "r10 required cGUIObjText, but native title binding4/ID6 is cGUIObjMessage",
+    "title_class": "cGUIObjMessage",
+    "title_bytes": 352,
+    "title_type_crc": "0x2fb82eae",
+    "native_type_getter": "0xa56ab8",
+    "unchanged_r10_failure_reproduced": true,
+    "wrong_subclass_negative_case": true,
+    "fixture_type_from_resource": true,
+    "layer_priority_changed": false
+  }
 }

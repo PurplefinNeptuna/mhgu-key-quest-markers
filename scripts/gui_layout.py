@@ -67,7 +67,11 @@ def inspect(source):
     require(struct.unpack_from('<I',texture)[0]==22 and struct.unpack_from('<I',texture,12)[0]==0x02000200,'Wrong lobby texture')
     require(gui.text(struct.unpack_from('<I',texture,44)[0])=='eng\\GUI\\99_texture\\HD_lobby00_BM_NOMIP','Wrong HD atlas name')
     require(gui.word(68)==63,'Unexpected counter instance count')
+    title=gui.table(48,172,36)[34]
+    require(struct.unpack_from('<I',title)[0]==6 and struct.unpack_from('<I',title,20)[0]==0x2fb82eae,
+            'Counter title must be cGUIObjMessage, not cGUIObjText')
     return {'status':'PASSED','source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
             'source_gui_sha256':SOURCE_SHA,'row_animation':20,'existing_objects':12,'existing_drawables':9,
             'existing_sequences':15,'instances':63,'texture_id':22,'archive_replacements':0,
+            'title_class':'cGUIObjMessage','title_type_crc':0x2fb82eae,'title_bytes':352,
             'new_atlas':False,'runtime_test':'NOT RUN'}

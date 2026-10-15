@@ -62,14 +62,14 @@ impl Snapshot {
         }
         let p = self.progress.load(Ordering::Relaxed);
         log::error!(
-            "Native quest badges r10 diagnostic: {label}, Village={}, Hub/G={}",
+            "Native quest badges r11 diagnostic: {label}, Village={}, Hub/G={}",
             p & 65535,
             p >> 16
         );
         for i in 0..8 {
             let d = self.decisions[i].load(Ordering::Relaxed);
             log::error!(
-                "Native quest badges r10 diagnostic: row={} quest={} group={} quest_flags={:#x} badge={} gui_flags={:#x}",
+                "Native quest badges r11 diagnostic: row={} quest={} group={} quest_flags={:#x} badge={} gui_flags={:#x}",
                 i,
                 self.ids[i].load(Ordering::Relaxed),
                 d & 255,

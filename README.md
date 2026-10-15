@@ -1,6 +1,6 @@
 # Native Quest Badges (Rust)
 
-**DEVELOPMENT r10. Moves badges into the request-mark area and fits full quest names; r10 manual acceptance is pending.** Implements native 24×24 quest badges by creating GUI children
+**DEVELOPMENT r11. Fixes r10's title-class rejection; request-slot layout and native title fitting remain. r11 manual acceptance is pending.** Implements native 24×24 quest badges by creating GUI children
 at runtime. Red means a key still needed for current progression, yellow means a
 currently offered available urgent, and grey means a completed/obsolete key or an
 inactive/old urgent. Ordinary and unresolved quests have no badge.
@@ -11,8 +11,8 @@ bubble. Native AutoScale fits long titles and resets on row reuse.
 The badges reuse the already-loaded English HD lobby emblem. The package contains
 one NRO; no ARC, atlas or other game asset is replaced. The game owns rendering and
 object cleanup. There is no overlay, settings panel, configuration or progression
-write. Forge lists the plugin as **Native Quest Badges r10** and logs failures at
-ERROR level even with the default loader filter. r10 also records installation, first hook entry and two bounded classification snapshots, without changing loader settings.
+write. Forge lists the plugin as **Native Quest Badges r11** and logs failures at
+ERROR level even with the default loader filter. r11 also records installation, first hook entry and two bounded classification snapshots, without changing loader settings.
 
 See [DISTRIBUTION_README.md](DISTRIBUTION_README.md) for installing a clean package,
 [DEVELOPMENT.md](DEVELOPMENT.md) for independent builds, and

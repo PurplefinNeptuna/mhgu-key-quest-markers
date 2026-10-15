@@ -1,8 +1,8 @@
-# Native implementation audit — r10 request-slot layout
+# Native implementation audit — r11 Message binding correction
 
 ## Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r10
+The blanket r1 disable gate and unresolved-state placeholders are removed. r11
 installs the parent and row hooks after executable/Forge validation and updates
 native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
@@ -398,7 +398,7 @@ is a historical snapshot; this record is the later manual evidence.
 ## r10 request-slot placement and title fitting
 
 The unchanged English HD resource has request Texture ID20 at lookup index3,
-position (365,2), size32×32; title Text ID6 at index4, X=62, size355×38. Both are
+position (365,2), size32×32; title Message ID6 at index4, X=62, size355×38. Both are
 children of the same row Null. The native builder calls 0x56e530/0x545630 to set
 the request object's visibility immediately through 0xa47950; +0x54 bit0 is
 therefore the current displayed request state after the original returns.
@@ -411,7 +411,8 @@ is modified. Shared identity is possible: copied quest107, Another Pack Attack,
 is native key category1 with mRequestVillage=8, which the builder's 0x11e0 mask
 shows as a request bubble.
 
-Row handles validate Text size384, Texture size304, IDs, native types, owning cGUI,
+r10 incorrectly required Text size384. r11 validates the resource's Message
+size352, Texture size304, IDs, native types, owning cGUI,
 resource and common parent. Handles remain synchronous callback locals. Existing
 badges are hidden and valid titles restored before classification can fail.
 A bad request/title binding skips only its decoration and reports error128 once;
@@ -426,7 +427,7 @@ Verified native title operations (main-relative):
 | Size setter | 0xa53528, object and float2 pointer, writes +0xc8/+0xcc |
 | Native FontSize invalidation tail | 0xa5350c, ORs +0xf0 bit16 |
 | Cached-layout refresh | 0xa53aa8 checks bit16, calls virtual+0x70, then clears it |
-| Text type getter | 0xa56b4c |
+| Message type getter (r11) | 0xa56ab8; replaces the inappropriate Text getter0xa56b4c |
 
 Size and AutoScale setters do not invalidate cached glyphs. The adapter sets the
 same bit16 as FontSize after an actual layout change. It changes neither font,
@@ -440,3 +441,31 @@ at scale1; a 500px title fits width303/271, without enlargement. The final glyph
 scaler and GPU submission are doubles. Fixture results establish dispatch,
 geometry and restoration, not font measurement, visible clipping or GPU pixels.
 The r9 acceptance record remains historical; r10 needs its own manual trial.
+
+
+## r10 Eden failure and r11 correction — 2026-10-15
+
+The tested installed NRO matched r10 SHA
+`df8099a24b8c4f33e033b8eb99d59972cee1899569ce724ea3b587e8baeba1a9`.
+Fresh Eden logs at59.07s show both hooks, correct key/urgent decisions, every
+GUI flags snapshot zero, and error128 (request/title binding invalid). No badge
+objects reached rendering. The copied source GUI's object34/row binding4/ID6
+has type CRC800599726 (`0x2fb82eae`), cGUIObjMessage, size352. Its derived
+cGUIObjText class has a different CRC826240196 (`0x313f6cc4`) and size384.
+Exact-type validation in r10 therefore rejected the genuine title.
+
+The old fixture forced a Text type onto that resource and missed the rejection.
+r11 reads the source class CRC and resolves its own factory DTI accordingly.
+Message's actual getDTI instructions at0xa56ab8 run against their GOT input
+main+0x183f0b0. The saved Message DTI and original vtable confirm shared Size,
+AutoScale, AutoWrap, font invalidation and cached-layout refresh operations.
+Those property fields and setters did not need changing. Only the required
+class/size and its supporting type-getter signature change in the native adapter.
+
+The unchanged r10 NRO reproduces all-eight-row rejection and creates no badges
+against the corrected fixture. A new negative fixture gives ID6 valid ownership
+but substitutes the Text subclass; r11 must reject that one row while other badges
+continue working. Original r9 and r10 payloads are preserved; r11 is a new
+DEVELOPMENT candidate, requiring separate manual acceptance. This evidence
+establishes the pre-render rejection, not the absence of every possible later
+clipping or layering problem.

@@ -29,6 +29,8 @@ assert props['Visible']==1 and props['BlendState']==1 and props['Priority']==2
 objects=gui.table(48,172,36)[30:42]
 request=gui.props(struct.unpack_from('<I',objects[3],24)[0],objects[3][4])
 title=gui.props(struct.unpack_from('<I',objects[4],24)[0],objects[4][4])
+assert struct.unpack_from('<I',objects[4],20)[0]==0x2fb82eae # The source declares Message, not Text.
+assert info['title_class']=='cGUIObjMessage' and info['title_bytes']==352
 assert struct.unpack_from('<I',objects[3])[0]==20 and struct.unpack_from('<I',objects[4])[0]==6
 assert (request['PosX'],request['PosY'],request['Size'][:2])==(365.,2.,(32.,32.))
 assert (title['PosX'],title['Size'][:2],title['AutoScale'],title['AutoWrap'])==(62.,(355.,38.),0,0)

@@ -31,7 +31,7 @@ UI,HOLDER,CONTROLLER,INFO,PROFILE,QUEST,RESOURCE,RECORDS,PROGRESS,ROWS,DTI,VFT=(
     [0x1000,0x2000,0x3000,0x4000,0x10000,0x20000,0x21000,0x22000,0x23000,0x24000,0x25000,0x26000])
 ROOT_DTI,ALLOCATOR,ATLAS,GUI_RESOURCE=DATA+0x25100,DATA+0x25200,DATA+0x61000,DATA+0x62000
 GUI_OWNER,GUI_HEADER,OBJECT_TABLE=DATA+0x65000,DATA+0x66000,DATA+0x67000
-TEXT_DTI=DATA+0x25700
+MESSAGE_DTI=DATA+0x25700
 MAP_DTI,MAP_ALLOCATOR,ANIM_DTI,NULL_DTI=(DATA+x for x in [0x25300,0x25400,0x25500,0x25600])
 INSTANCE_ARRAY=DATA+0x27000
 REGS=[getattr(arm,'UC_ARM_REG_R'+str(i))for i in range(13)]
@@ -40,7 +40,9 @@ STYLE=[0xa4dc24,0xa4a9f4,0xa47a94,0xa4dca0,0xa47a04,0xa4aa24,0xa4aa5c,0xa4aa94,0
 icon_props=gui.props(struct.unpack_from('<I',row_objects[2],24)[0],row_objects[2][4])
 SOURCE_STYLE=dict(zip(STYLE,(icon_props[k]for k in ['BlendState','ControlPoint','FixFrame','Mask','Priority',
     'ReferencePosition','ReferenceRotation','ReferenceScaleX','ReferenceScaleY','ReferenceScaleZ','Reverse','SamplerState'])))
-TEXT_CRC=0x313f6cc4
+TITLE_CRC=struct.unpack_from('<I',row_objects[4],20)[0]
+assert TITLE_CRC==0x2fb82eae # Derive the fixture's title class from the real resource.
+UNUSED_TEXT_DTI=DATA+0x25800
 CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
@@ -89,8 +91,13 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         target=struct.unpack_from('<I',native_image,0x178ff90+offset)[0]
         word(VFT+0x200+offset,GAME+target if target else 0)
     assert read(VFT+0x20c)==0
-    word(ROOT_DTI+4,1);word(DTI+4,2);word(TEXT_DTI+4,4);word(TEXT_DTI+24,384//4);word(TEXT_DTI+28,TEXT_CRC)
-    word(VFT+0x914,GAME+0x1088);word(VFT+0x904,GAME+0x1040);word(VFT+0x950,GAME+0x1060);word(VFT+0x970,GAME+0xa554d0)
+    word(ROOT_DTI+4,1);word(DTI+4,2);word(MESSAGE_DTI+4,4);word(MESSAGE_DTI+24,352//4);word(MESSAGE_DTI+28,TITLE_CRC)
+    word(MESSAGE_DTI,VFT+0xa00);word(VFT+0xa08,GAME+0x1064)
+    # Keep both real class identities available. Selecting the Text subclass for
+    # this Message resource must fail; it must never make the fixture pass.
+    word(UNUSED_TEXT_DTI+24,384//4);word(UNUSED_TEXT_DTI+28,0x313f6cc4)
+    word(GAME+0x183f0b0,MESSAGE_DTI) # Real Message getDTI's GOT input.
+    word(VFT+0x914,GAME+0xa56ab8);word(VFT+0x904,GAME+0x1040);word(VFT+0x950,GAME+0x1060);word(VFT+0x970,GAME+0xa554d0)
     for offset,target in [(0x38,0x1050),(0x3c,0x1054),(0x40,0x1058)]:word(VFT+0x900+offset,GAME+target)
     # Relocate the real Object/Polygon/Texture vtables and constructor globals.
     # Matrix/color/sGUI contents are fixture inputs; constructor instructions run.
@@ -120,7 +127,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     word(GUI_RESOURCE+0x64,GUI_HEADER);word(GUI_HEADER+0xac,OBJECT_TABLE)
     for j,record_bytes in enumerate(row_objects):
         u.mem_write(OBJECT_TABLE+(30+j)*36,record_bytes)
-        word(OBJECT_TABLE+(30+j)*36+0x14,DTI);word(OBJECT_TABLE+(30+j)*36+0x20,0)
+        word(OBJECT_TABLE+(30+j)*36+0x14,MESSAGE_DTI if j==4 else DTI);word(OBJECT_TABLE+(30+j)*36+0x20,0)
     word(DTI,VFT+0x200);word(DTI+24,304//4);word(DTI+28,0x1b6313a3)
     word(ROOT_DTI+24,176//4)
     word(ALLOCATOR,VFT+0x300);word(VFT+0x320,GAME+0x1030);word(VFT+0x334,GAME+0x1034)
@@ -253,12 +260,11 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
                 word(request+0x54,(read(request+0x54)&~1)|int(i in requests))
             calls.append('row-original');ret(cpu);return
         if address==GAME+0x546f28:assert r[0]==HOLDER;ret(cpu,gui_identity);return
-        if address==GAME+0x7aef68:ret(cpu,MAP_DTI if r[0]==0x57fd7fb5 else DTI if r[0]==0x1b6313a3 else TEXT_DTI if r[0]==TEXT_CRC else ROOT_DTI);return
+        if address==GAME+0x7aef68:ret(cpu,MAP_DTI if r[0]==0x57fd7fb5 else DTI if r[0]==0x1b6313a3 else MESSAGE_DTI if r[0]==TITLE_CRC else UNUSED_TEXT_DTI if r[0]==0x313f6cc4 else ROOT_DTI);return
         if address==GAME+0x1000:ret(cpu,DTI);return
         if address==GAME+0x1014:ret(cpu,ROOT_DTI);return
         if address==GAME+0x1080:ret(cpu,ANIM_DTI);return
         if address==GAME+0x1084:ret(cpu,NULL_DTI);return
-        if address==GAME+0x1088:ret(cpu,TEXT_DTI);return
         if address==GAME+0xb80f94:
             assert r[:2]==[GUI_RESOURCE,20];ret(cpu,DATA+0x60000+constructing*0x40);return
         if address==GAME+0x1038:
@@ -365,7 +371,13 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         word(roots[i]+0x8c,3) # A newly constructed native row needs its first draw-list build.
     constructing=None
     if invalid_request:word(read(DATA+0x2a000+12)+0x50,99)
-    if invalid_title:word(read(DATA+0x2a000+16)+0x50,99)
+    if invalid_title=='subclass':
+        u.mem_write(VFT+0xb00,bytes(u.mem_read(VFT+0x900,128)))
+        word(VFT+0xb14,GAME+0xa56b4c)
+        text_getter_got=0xa56b50+8+struct.unpack_from('<I',native_image,0xa56b58)[0]
+        word(GAME+text_getter_got,UNUSED_TEXT_DTI)
+        word(read(DATA+0x2a000+16),VFT+0xb00)
+    elif invalid_title:word(read(DATA+0x2a000+16)+0x50,99)
     if invalid_owner:word(read(DATA+0x2a000+8)+0x74,DATA+0x28000)
     if invalid_object:word(read(DATA+0x2a000+7*0x100+8)+0x50,99)
     call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO)
@@ -396,10 +408,10 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         # Run the exact cleanup function seen in the crash. Its real count getter
         # counts 13 linked nodes and therefore requires a 13-entry lookup array.
         for i in range(8):call(GAME+0x5456e4,0,DATA+0x28000+i*0x200)
-        assert len(created)==8-int(invalid_request or invalid_title) and len(allocations)==3*len(created)
+        assert len(created)==8-int(bool(invalid_request or invalid_title)) and len(allocations)==3*len(created)
         assert all(p in freed for i,p in enumerate(original_caches) if not(i==0 and (invalid_request or invalid_title)))
         if repeat:
-            call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8-int(invalid_request or invalid_title) and len(allocations)==3*len(created)
+            call(GAME+0x54d030,CONTROLLER,0 if invalid_info else INFO);assert len(created)==8-int(bool(invalid_request or invalid_title)) and len(allocations)==3*len(created)
         if invalid_info or ordinary or bad_count:assert states==dict.fromkeys(range(8),0) and not colors
         else:
             assert states=={i:v for i,v in enumerate([1,1,1,1,1,0,0,0]) if not(i==0 and (invalid_request or invalid_title))}
@@ -520,7 +532,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(instance+0xd8)==read(instance+0xdc)==0
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
     CASES+=1;return {'case':label,'visible':states,'colors':colors,'native_draws':len(drawn),'ownership_cleanup':True,'saved_records_unchanged':True}
-results=[test_case('invalid request on a fitted row restores its title',late_invalid=True),
+results=[test_case('Text subclass is rejected for the Message resource',invalid_title='subclass'),
+         test_case('invalid request on a fitted row restores its title',late_invalid=True),
          test_case('request shares the key slot without overwriting bubble',requests=(0,2,3,5)),
          test_case('selected row uses the same request-relative layout',requests=(0,4),selected=4),
          test_case('missing request binding leaves other badges working',invalid_request=True),
@@ -540,6 +553,7 @@ results=[test_case('invalid request on a fitted row restores its title',late_inv
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
           'error_only_filter_diagnostic_snapshots':True,'deduplicated_scalar_snapshots':True,
+          'title_resource_class_crc':TITLE_CRC,'native_message_type_getter':True,
           'resource_inline_constants':SOURCE_STYLE,'native_prepaint_and_texture_draw':True,'native_quad_geometry':True,'native_autoscale_dispatch_and_clamp':True,'request_visibility_placement':True,'title_restoration':True,
           'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
           'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})

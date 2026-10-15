@@ -7,7 +7,7 @@ use quest_badges_core::Badge;
 
 const ID: u32 = 0x4b514d33; // KQM3, outside the counter's existing object IDs.
 const TEXTURE_BYTES: usize = 304;
-const TEXT_BYTES: usize = 384;
+const MESSAGE_BYTES: usize = 352;
 const MAP_BYTES: usize = 13 * 4; // Original twelve bindings plus our native child.
 const CACHE_BYTES: usize = 10 * 16 + 8; // Ten drawable begin/end pairs plus terminator.
 static FAILURE: AtomicU32 = AtomicU32::new(0);
@@ -58,6 +58,8 @@ struct Row {
 impl Row {
     // Lookup indices stay those of the original resource, even after appending
     // the badge. Check type and ownership before borrowing either native object.
+    // The row title is cGUIObjMessage (resource CRC 0x2fb82eae), not its
+    // cGUIObjText subclass. Both use the inherited Size/AutoScale setters.
     fn binding(self, index: u32, id: u32, dti: u32, size: usize) -> Option<u32> {
         let object = memory::word(self.objects + index * 4)?;
         (memory::writable(object, size)
@@ -406,8 +408,8 @@ pub fn objects(ui: u32) -> Result<[Option<Decoration>; 8], u32> {
         }
         let texture = MtDti::find("cGUIObjTexture")?;
         let root = MtDti::find("cGUIObjRoot")?;
-        let text = MtDti::find("cGUIObjText")?;
-        if texture.size() != TEXTURE_BYTES || root.size() != 176 || text.size() != TEXT_BYTES {
+        let text = MtDti::find("cGUIObjMessage")?;
+        if texture.size() != TEXTURE_BYTES || root.size() != 176 || text.size() != MESSAGE_BYTES {
             return None;
         }
         let mut rows = [None; 8];
@@ -442,7 +444,7 @@ pub fn objects(ui: u32) -> Result<[Option<Decoration>; 8], u32> {
         // Restore a valid title even when the request binding is missing. Only
         // rows with our child could have been fitted by a previous callback.
         if row.badge != 0 {
-            if let Some(title) = row.binding(4, 6, text as *const _ as u32, TEXT_BYTES) {
+            if let Some(title) = row.binding(4, 6, text as *const _ as u32, MESSAGE_BYTES) {
                 fit_title(title, 355.0, false);
             }
         }
@@ -452,7 +454,7 @@ pub fn objects(ui: u32) -> Result<[Option<Decoration>; 8], u32> {
     }
     let mut result = [None; 8];
     for (i, row) in rows.into_iter().flatten().enumerate() {
-        let Some(title) = row.binding(4, 6, text as *const _ as u32, TEXT_BYTES) else {
+        let Some(title) = row.binding(4, 6, text as *const _ as u32, MESSAGE_BYTES) else {
             continue;
         };
         let Some(request) = row.binding(3, 20, texture as *const _ as u32, TEXTURE_BYTES) else {
