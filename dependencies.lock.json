@@ -2080,7 +2080,7 @@
     "vendor/forge-rs/release.sh": "1c7aa6bd4641c3971781170db6c469ac2e71c6eed8ca89f0a15a52ffcde5fe26",
     "vendor/forge-rs/rustfmt.toml": "685603e3f0ed3f18c401fe0087477d224a6bc63abff946e019c8ad9ad4b1b102",
     "vendor/libnx/LICENSE-MIT": "55d5333af71557138d70049fbbd28d306eb855f3cff87cc7b6392a5291b6678e",
-    "Cargo.lock": "d6e85fd4afaa938f51ae5a3bb5dd42700d9d7e38204b6ce24763cab496bf5514",
+    "Cargo.lock": "dcbbd074896b1c59bff34fa50ce2b6adad6e9a77f72c7cb7f1d55051e94962a5",
     "armv7a-none-eabi.json": "d2be3e33facf2d2da75a5cb64029ee8e617f406e1dd9767e3063aee76292f7d5",
     "rust-toolchain.toml": "12e203268a5a347c27ea5daac929edda7641f85f1a469bf3fd276c085fb30dc7",
     "research/native-hook.h": "032abe55c5dee9d2fc3090ac355004b5f329a8361c2276cff2668a3487acfd9a",
@@ -2091,7 +2091,7 @@
   },
   "inputs": {
     "main": "b3935415499549adaf4c0e89822831daa175cfd456a7990791c79be3997645ef",
-    "forge": "1e452243cc85108a2271dda99167f9728d051887075766b38e36a1ce94a29b42",
+    "forge": "469f425dd02a37b7a5d84ddde5f769922bc5e0d5fbc8adb0ca270e2c0773cd7d",
     "common_eng.arc": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
     "sdk": "9a9b7035266637ee693a32da6b0fde54bda00e897bef05b1c8d8cda30f8ac8b0"
   }

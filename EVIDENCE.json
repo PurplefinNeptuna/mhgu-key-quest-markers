@@ -1,0 +1,1806 @@
+{
+  "historical": {
+    "docs/R12_COMPARISON.json": {
+      "comparison": "r12 original versus r12-small alternate",
+      "original": {
+        "version": "r12",
+        "source_commit": "fbd8647",
+        "delivery": "build/key-quest-markers-rs/candidates/r12/delivery",
+        "sha256": {
+          "GAMEBANANA_README.html": "7ffef39cd4c64e96eb16315ce83dd9f84927e92a0fe1fc79c116a9a6df77424b",
+          "NOTICES.html": "7b5d43479a48fb0f83c1d2052972f65c24b6ecb6701a21e7b3464fccfb519987",
+          "NOTICES.txt": "8bb45779ee915d62944acd8792ea2d5f5b0b55f308d346e36118ca986636f70c",
+          "README.html": "afb9d4cc1f13585bf585bd3b6c3693837cb4b0c6c78d34b4dafe643ded9a05fe",
+          "README.md": "5e2e5be40f4ad1507333fe0599831a04d2b81df2b55a087ef6d6c240224e1313",
+          "SHA256SUMS": "298129e3b6743a6665ace57d53f13a6e940338b083d06360e227a58c2d7b6055",
+          "VALIDATION.json": "1f15f84726fbe0a5aca05f8e006da8c32f4f4a456dfffd3a2db35e508c765097",
+          "key-quest-markers-rs/romfs/nativeNX/plugins/key_quest_markers_rs.nro": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64",
+          "key-quest-markers-rs-r12-candidate.zip": "791f828878083e0b56cc8f83578f3e75c563e0cc89a418d212d49b4614ddad3b",
+          "manifest.json": "9ca50490690b8571a9806fe2b41db6f665b91b85774586c6d2d0e17e00609b9f"
+        }
+      },
+      "alternate": {
+        "version": "r12-small",
+        "runtime_test": "NOT RUN",
+        "texture_id": 22,
+        "logical_atlas_size": [
+          512,
+          512
+        ],
+        "source_rect": [
+          342,
+          0,
+          372,
+          30
+        ],
+        "physical_hd_atlas_size": [
+          2048,
+          2048
+        ],
+        "physical_source_rect": [
+          1368,
+          0,
+          1488,
+          120
+        ],
+        "research_png_sha256": "2aba7168427ee790935bede595e13fcfe74c20d59aecebeddf133ed4b8c55ecf",
+        "appearance": "Smaller top emblem with continuous black outline, matching the orange comparison preview.",
+        "unchanged": [
+          "32x32 native quad",
+          "Y=3",
+          "X=365 or 329",
+          "state colours and classification",
+          "request bubble and title fitting",
+          "native ownership, hooks and resource validation"
+        ],
+        "packaging": "Same runtime folder and NRO filename for replacement between trials; separately versioned ZIP and Forge label.",
+        "nro_sha256": "2a4338ec773e28a1c0bb60fd498ea6e24a697056991a0cee647e6c345a582f5f",
+        "archive_sha256": "ce76daa54389a772f82baba013cd199e245294a54d3c70f33752b45e684d7d8e",
+        "static_checks": "10 host tests, 16 ARM ABI/GE patterns, 32 compiled native adapter cases passed"
+      }
+    },
+    "docs/PROMOTION_R14.json": {
+      "version": "r14",
+      "date": "2026-10-15",
+      "status": "READY_TO_DISTRIBUTE",
+      "source_commit": "96fcd21",
+      "chosen_emblem": "original",
+      "nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65",
+      "candidate_zip_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db",
+      "runtime_binary_changed": false,
+      "release_package": "build/key-quest-markers-rs/releases/r14/key-quest-markers-rs-r14.zip",
+      "support_changes": "Release installation guide and deterministic ZIP wrapper; original candidate preserved.",
+      "archived_small_comparisons": [
+        {
+          "version": "r12-small",
+          "old_path": "build/key-quest-markers-rs/candidates/r12-small",
+          "archive_path": "backups/key-quest-markers-rs/small-emblem-comparisons/20261015/r12-small",
+          "zip_sha256": "ce76daa54389a772f82baba013cd199e245294a54d3c70f33752b45e684d7d8e",
+          "files_preserved": 17
+        },
+        {
+          "version": "r13-small",
+          "old_path": "build/key-quest-markers-rs/candidates/r13-small",
+          "archive_path": "backups/key-quest-markers-rs/small-emblem-comparisons/20261015/r13-small",
+          "zip_sha256": "b36e925edaf25b9501482e988814972e88faccc1196f32a29e4a84e037128a1c",
+          "files_preserved": 17
+        },
+        {
+          "version": "r14-small",
+          "old_path": "build/key-quest-markers-rs/candidates/r14-small",
+          "archive_path": "backups/key-quest-markers-rs/small-emblem-comparisons/20261015/r14-small",
+          "zip_sha256": "ece9431459f0a0a0752a61ce75a95c0766edb4dae249b72600bac276387f4465",
+          "files_preserved": 17
+        }
+      ],
+      "archive_manifest": "backups/key-quest-markers-rs/small-emblem-comparisons/20261015/archive-manifest.json",
+      "archive_manifest_sha256": "ab974619e23d1a236c88b9a958a20db4f4030f68bf065806064ff40c10ffab22",
+      "published": false,
+      "installed_or_launched": false,
+      "release_zip_sha256": "d155aa1397ae17ce521d48d436fd78ace0bc92550116a642608c4288fb947b5f",
+      "release_nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
+    },
+    "docs/RUNTIME_R14.json": {
+      "version": "r14",
+      "date": "2026-10-15",
+      "release_status": "READY_TO_DISTRIBUTE",
+      "result": "USER_ACCEPTED_ORIGINAL_EMBLEM",
+      "user_report": "good, use original only and promote it to ready to distribute statys",
+      "platform": "Eden/Linux, MHGU Switch 1.4.0 English HD",
+      "emulator": "Eden Development Build master-a594c8d60e-master",
+      "forge_version": "1.5.0",
+      "nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65",
+      "candidate_zip_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db",
+      "installed_matches_candidate": true,
+      "source_commit": "96fcd21",
+      "renderer": "MHGU native GUI",
+      "emblem": "Original large lobby emblem; logical UV (136,344,198,406), displayed 32x32",
+      "active_urgent_colour": "#9B4DCA",
+      "log_snapshot": {
+        "workspace_path": "work/key-quest-markers-rs/runtime-acceptance/r14-original-20261015/eden_log.txt",
+        "sha256": "381eac76d1d8638c5d18c5e136965dbda24cb8487f35d74cfd6ff4dd551fec00",
+        "bytes": 93664,
+        "both_hooks_entered": true,
+        "village_stage": 3,
+        "hub_g_stage": 1,
+        "quest_308_group_47_badge": 3,
+        "badge_3_meaning": "Purple active urgent",
+        "visible_native_badge_flag": "0x20a0001",
+        "ordinary_rows_hidden": true,
+        "grey_badge_decisions_present": true,
+        "plugin_failure_lines_present": false
+      },
+      "scope": "User accepted the current original-emblem build. Fresh log corroborates version, hooks and special urgent 308 purple classification; it is not a pixel capture or exhaustive gameplay test.",
+      "limits": [
+        "Ryujinx and native Switch gameplay remain unconfirmed.",
+        "Individual ranks, colours, scrolling, request overlaps, long titles and transitions were not separately enumerated for r14.",
+        "Log snapshots record the first classified/visible page; they do not establish all later progression states."
+      ],
+      "runtime_changed_for_promotion": false,
+      "installed_or_launched_by_promotion": false
+    },
+    "docs/CANDIDATE_RESULTS.json": {
+      "version": "r14",
+      "status": "READY_TO_DISTRIBUTE",
+      "runtime_active": true,
+      "runtime_test": "USER_CONFIRMED_EDEN",
+      "host_tests": 11,
+      "typed_arm_cases": 16,
+      "compiled_active_adapter_cases": 40,
+      "archive_replacements": 0,
+      "runtime_gui": "Existing native child, request visibility, title AutoScale and game-owned maps/caches",
+      "layout": {
+        "badge_size": [
+          32,
+          32
+        ],
+        "y": 3,
+        "request_hidden_x": 365,
+        "request_visible_x": 329,
+        "title_widths": [
+          299,
+          263
+        ],
+        "restored_title_size": [
+          355,
+          38
+        ],
+        "request_objects_unchanged": true,
+        "native_cached_layout_refresh": true,
+        "native_autoscale_dispatch_and_clamp": true,
+        "glyph_measurement_and_scaling": "Supplied fixture bounds and scaler double; actual pixels require a manual trial",
+        "native_row_height": 40
+      },
+      "resource_checks": {
+        "status": "PASSED",
+        "source_sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
+        "source_gui_sha256": "95730f3adbaf2c017968cb0079a0caa666de541cecd66ff8ad223e1137b30c5a",
+        "row_animation": 20,
+        "existing_objects": 12,
+        "existing_drawables": 9,
+        "existing_sequences": 15,
+        "instances": 63,
+        "texture_id": 22,
+        "archive_replacements": 0,
+        "title_class": "cGUIObjMessage",
+        "title_type_crc": 800599726,
+        "title_bytes": 352,
+        "new_atlas": false,
+        "runtime_test": "NOT RUN"
+      },
+      "native_checks": {
+        "status": "PASSED",
+        "nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65",
+        "elf_sha256": "a5e9476cd23751b3ed3d67d05e58a00f55b4d4f31e445970e17294f8a3c93d91",
+        "exports": [
+          "fini",
+          "forge_onInit",
+          "forge_onLoad",
+          "forge_onUpdate",
+          "init"
+        ],
+        "strong_imports": [
+          "__aeabi_unwind_cpp_pr0",
+          "forge_hook_create",
+          "forge_log",
+          "forge_log_getLevel",
+          "forge_mem_getMainTextAddr",
+          "forge_patch_create",
+          "forge_patch_destroy",
+          "forge_patch_disable",
+          "forge_patch_enable",
+          "forge_singleton_getInstanceByName",
+          "free",
+          "malloc",
+          "nnosAllocateTlsSlot",
+          "nnosGetTlsValue",
+          "nnosSetTlsValue"
+        ],
+        "signature_windows": [
+          "0xa53324",
+          "0xa53348",
+          "0xa53528",
+          "0xa5350c",
+          "0xa53aa8",
+          "0xa56ab8",
+          "0x5456e4",
+          "0xa38ffc",
+          "0xa47d2c",
+          "0xa38b58",
+          "0xa4f60c",
+          "0xa4d0d8",
+          "0x616cb0",
+          "0x54d030",
+          "0x523da4",
+          "0x3b1a18",
+          "0x3b1d70",
+          "0x50cbd0",
+          "0x3b57d0",
+          "0x7aef68",
+          "0x3b2174",
+          "0x546f28",
+          "0x54af8c",
+          "0x7aa47c",
+          "0x540c08",
+          "0x540c38",
+          "0xa4faf0",
+          "0xa4fb58",
+          "0xa4e0b8",
+          "0xa47950",
+          "0xa4844c",
+          "0xa48668",
+          "0xa4f6a4",
+          "0xa4f77c",
+          "0xa494a0",
+          "0xa4964c",
+          "0xa4dc24",
+          "0xa4a9f4",
+          "0xa47a94",
+          "0xa4dca0",
+          "0xa47a04",
+          "0xa4aa24",
+          "0xa4aa5c",
+          "0xa4aa94",
+          "0xa4aac8",
+          "0xa4aafc",
+          "0xa4dc54",
+          "0xa4fa5c"
+        ],
+        "hook_abi_bytes": 24,
+        "ordinary_hook_slots": 2,
+        "texture_constructor": "0xa4f60c",
+        "texture_dti_placement_virtual": false,
+        "forge_trampoline_bytes": 32,
+        "forge_pool_chunk_bytes": 16384,
+        "compiled_status_writes": [],
+        "runtime_active": true,
+        "gui_attachment": "Game-owned native children and expanded draw caches",
+        "progression_semantics": "Native stages, alternatives and offered urgent IDs",
+        "runtime_test": "NOT RUN"
+      },
+      "candidate_manifest": {
+        "mod": "key-quest-markers-rs",
+        "version": "r14",
+        "status": "DEVELOPMENT",
+        "runtime_test": "NOT RUN",
+        "runtime_active": true,
+        "package_name": "key-quest-markers-rs",
+        "payloads": {
+          "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
+        },
+        "archive_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db"
+      },
+      "prior_accepted_r9": {
+        "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
+        "zip_sha256": "5113237365aa63ef2bbf64b446154c682d336690fb0dd4f3544303f4a97cac35",
+        "installed_matches_candidate": true,
+        "runtime_changed_for_this_record": false
+      },
+      "limits": [
+        "User accepted original-emblem r14 on Eden/Linux; individual cases were not separately enumerated.",
+        "Ryujinx and native Switch gameplay remain unconfirmed.",
+        "Static receipts retain their original pre-acceptance NOT RUN fields; current manual evidence is docs/RUNTIME_R14.json."
+      ],
+      "fix": {
+        "cause": "r10 required cGUIObjText, but native title binding4/ID6 is cGUIObjMessage",
+        "title_class": "cGUIObjMessage",
+        "title_bytes": 352,
+        "title_type_crc": "0x2fb82eae",
+        "native_type_getter": "0xa56ab8",
+        "unchanged_r10_failure_reproduced": true,
+        "wrong_subclass_negative_case": true,
+        "fixture_type_from_resource": true,
+        "layer_priority_changed": false
+      },
+      "geometry_change": {
+        "previous_size": [
+          24,
+          24
+        ],
+        "previous_y": 8,
+        "new_size_matches_native_request_slot": true,
+        "quad_vertical_bounds": [
+          3,
+          35
+        ],
+        "accepted_r11": "docs/RUNTIME_R11.json",
+        "r11_bytes_preserved": true
+      },
+      "atlas_variant": {
+        "texture_id": 22,
+        "default_rect": [
+          136,
+          344,
+          198,
+          406
+        ],
+        "small_rect": [
+          342,
+          0,
+          372,
+          30
+        ],
+        "comparison_record": "docs/R12_COMPARISON.json",
+        "geometry_unchanged": true,
+        "classifier_shared": true
+      },
+      "special_urgents": {
+        "records": 8,
+        "families": 4,
+        "groups": [
+          47,
+          54
+        ],
+        "full_native_availability": "0x54af8c",
+        "enabled_table_executed": true,
+        "native_first_run_repeat_bits_tested": true,
+        "crosscheck": "docs/SPECIAL_URGENTS.json"
+      },
+      "variants": {
+        "r14": {
+          "manifest": {
+            "mod": "key-quest-markers-rs",
+            "version": "r14",
+            "status": "DEVELOPMENT",
+            "runtime_test": "NOT RUN",
+            "runtime_active": true,
+            "package_name": "key-quest-markers-rs",
+            "payloads": {
+              "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
+            },
+            "archive_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db"
+          },
+          "native_adapter_cases": 40,
+          "tests": "PASSED",
+          "distribution": "READY_TO_DISTRIBUTE"
+        },
+        "r14-small": {
+          "manifest": {
+            "mod": "key-quest-markers-rs",
+            "version": "r14-small",
+            "status": "DEVELOPMENT",
+            "runtime_test": "NOT RUN",
+            "runtime_active": true,
+            "package_name": "key-quest-markers-rs",
+            "payloads": {
+              "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "95d39fab4e403405b4dc1e4cd89a3d2ad63c830d710d841f0c3b4a41a1cf812e"
+            },
+            "archive_sha256": "ece9431459f0a0a0752a61ce75a95c0766edb4dae249b72600bac276387f4465"
+          },
+          "native_adapter_cases": 40,
+          "tests": "PASSED",
+          "distribution": "ARCHIVED_COMPARISON",
+          "archive_path": "backups/key-quest-markers-rs/small-emblem-comparisons/20261015/r14-small"
+        }
+      },
+      "previous_r13_variants": {
+        "r13": {
+          "mod": "key-quest-markers-rs",
+          "version": "r13",
+          "status": "DEVELOPMENT",
+          "runtime_test": "NOT RUN",
+          "runtime_active": true,
+          "package_name": "key-quest-markers-rs",
+          "payloads": {
+            "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "1364090987790ba6cd48d684017ee592982efb5218ce8b0a29de142dc0893308"
+          },
+          "archive_sha256": "8b1551986252a7fa929ba448ed95bc30fbe551e7aaab880a9d43a5924ba23557"
+        },
+        "r13-small": {
+          "mod": "key-quest-markers-rs",
+          "version": "r13-small",
+          "status": "DEVELOPMENT",
+          "runtime_test": "NOT RUN",
+          "runtime_active": true,
+          "package_name": "key-quest-markers-rs",
+          "payloads": {
+            "romfs/nativeNX/plugins/key_quest_markers_rs.nro": "24ac1f474113e8bd91cccf7c9229c52af4649ef81a150392941b7b32d87f541d"
+          },
+          "archive_sha256": "b36e925edaf25b9501482e988814972e88faccc1196f32a29e4a84e037128a1c"
+        }
+      },
+      "color_change": {
+        "active_urgent": "#9B4DCA",
+        "previous_active_urgent": "#FFD239",
+        "needed_key": "#E74725",
+        "inactive_completed": "#808080",
+        "request_bubble_unchanged": true,
+        "classification_unchanged": true
+      },
+      "promotion": {
+        "record": "docs/PROMOTION_R14.json",
+        "runtime_evidence": "docs/RUNTIME_R14.json",
+        "released_variant": "r14",
+        "runtime_bytes_changed": false
+      }
+    },
+    "docs/RUNTIME_R11.json": {
+      "version": "r11",
+      "date": "2026-10-15",
+      "result": "USER_CONFIRMED_WORKING",
+      "platform": "Eden/Linux, MHGU 1.4.0 English HD",
+      "user_report": "works well, but you can see the key mark size isnt big enoug, the gap from top is bigger than bottom",
+      "nro_sha256": "12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48",
+      "installed_matches_candidate": true,
+      "zip_sha256": "958593abfdb5a77ba037ef3b20ce48e649c3f641e04c11012db5c6256a9323eb",
+      "screenshot": "codex-clipboard-87e91549-f7fa-4ae3-8c31-459cc8efbd7f.png",
+      "observed": "Visible red and grey badges inside the request column, with ordinary request bubbles and completion ribbon also visible. User requests a larger, more vertically centred badge.",
+      "log_snapshot": {
+        "workspace_path": "work/key-quest-markers-rs/candidates/r12/eden-r11-success.txt",
+        "sha256": "016bfcf433b6e7aef09d5b6378da661d6e5fbc08d69f7adf3f521a4ac9122386",
+        "bytes": 70616,
+        "both_hooks": true,
+        "progression": {
+          "village": 4,
+          "hub_g": 2
+        }
+      },
+      "limits": [
+        "No exhaustive rank, colour or transition coverage was reported.",
+        "Ryujinx/native Switch gameplay remains unconfirmed.",
+        "r12 size and position require separate acceptance."
+      ],
+      "screenshot_snapshot": {
+        "workspace_path": "work/key-quest-markers-rs/candidates/r12/r11-size-report.png",
+        "sha256": "2c09bdffd6986cfc679c10c713b9c78a383dbff57c11c66ab4a1c9c43fec426d"
+      }
+    },
+    "docs/SPECIAL_URGENTS.json": {
+      "checked_date": "2026-10-15",
+      "live_kiranico": {
+        "all_eight_pages_label": "Urgent",
+        "records": [
+          {
+            "id": 308,
+            "title": "Tumultuous Sprouts",
+            "category": 47,
+            "family": 1,
+            "flags": 768,
+            "kiranico": "https://mhgu.kiranico.com/quest/478ad"
+          },
+          {
+            "id": 309,
+            "title": "Tumultuous Sprouts",
+            "category": 48,
+            "family": 1,
+            "flags": 776,
+            "kiranico": "https://mhgu.kiranico.com/quest/4ba6d"
+          },
+          {
+            "id": 319,
+            "title": "Into the Wyvern's Den",
+            "category": 49,
+            "family": 2,
+            "flags": 776,
+            "kiranico": "https://mhgu.kiranico.com/quest/4785d"
+          },
+          {
+            "id": 320,
+            "title": "Into the Wyvern's Den",
+            "category": 50,
+            "family": 2,
+            "flags": 776,
+            "kiranico": "https://mhgu.kiranico.com/quest/4ba3d"
+          },
+          {
+            "id": 324,
+            "title": "No Go on the Popo",
+            "category": 51,
+            "family": 3,
+            "flags": 776,
+            "kiranico": "https://mhgu.kiranico.com/quest/4970a"
+          },
+          {
+            "id": 325,
+            "title": "No Go on the Popo",
+            "category": 52,
+            "family": 3,
+            "flags": 776,
+            "kiranico": "https://mhgu.kiranico.com/quest/45063"
+          },
+          {
+            "id": 329,
+            "title": "A Forest Fracas",
+            "category": 53,
+            "family": 4,
+            "flags": 776,
+            "kiranico": "https://mhgu.kiranico.com/quest/4dd8e"
+          },
+          {
+            "id": 330,
+            "title": "A Forest Fracas",
+            "category": 54,
+            "family": 4,
+            "flags": 776,
+            "kiranico": "https://mhgu.kiranico.com/quest/478bd"
+          }
+        ]
+      },
+      "previous_kiranico_inventory": {
+        "urgent_rows": 36,
+        "unmatched_urgent_titles_after_fix": 0,
+        "scope": "Existing 944-row research snapshot; eight affected pages refreshed live in this task."
+      },
+      "native_evidence": {
+        "main_nso_sha256": "b3935415499549adaf4c0e89822831daa175cfd456a7990791c79be3997645ef",
+        "group_archive_sha256": "8b5e466ad141fcaafd187cafcf0adcf7648bca327536a722f9faa69778e27231",
+        "quest_archive_sha256": "4126956feec6ca93f3866ce6c31181f0c16c82d137ab8c9904a9e46571d45e76",
+        "special_family_getter": "0x3b21f0",
+        "special_family_table": "0x162a8a0",
+        "first_eight_family_words": [
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4
+        ],
+        "repeat_category_filter": "0x3b2214",
+        "native_counter_availability": "0x54af8c",
+        "existing_scene_availability_query": "0x3b2174",
+        "completion_reader": "0x523da4",
+        "full_availability_abi": "u32(u32 quest_id, u32 category, u32 context); category=0xff, context=0",
+        "enabled_table": {
+          "address": "0x162cde4",
+          "entries": 51,
+          "stride": 8,
+          "special_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "owner_bitfield_offset": "0x35d4"
+        },
+        "new_hooks": 0,
+        "existing_checked_function_now_called": "0x54af8c",
+        "ghidra_instruction_mismatches": 0
+      },
+      "report": {
+        "installed_version": "r12",
+        "installed_nro_sha256": "b595d5bd4e54a66fbd014629514a2706d1ce5ea63920c05f98f29ca949563d64",
+        "quest_id_in_screenshot": "308 or 309; log snapshots only record the first page, so exact visible ID is not established",
+        "log_sha256": "02c5805f102d625ba03ebc187f64709cafeaf5fe675fd039ac2ef716848b3e32"
+      },
+      "policy": {
+        "identity": "Special groups47..54 bypass only the rank-up urgency bit requirement. Other categories keep existing validation.",
+        "grey": "Record or companion completed, or native availability false.",
+        "limits": "Full counter availability code and enabled-bit tests execute in compiled ARM fixtures; scene-query and completion values are doubles. New in-game acceptance required on Eden and Ryujinx.",
+        "active_urgent": "Full native counter availability true, this record unfinished and neither record in its native family completed; no rank-up pool or rank-key prerequisite requirement.",
+        "active_urgent_colour": "#9B4DCA (r14; r13 used #FFD239)"
+      }
+    },
+    "DISTRIBUTION.before-compaction.json": {
+      "schema_version": 1,
+      "mod": "key-quest-markers-rs",
+      "status": "READY_TO_DISTRIBUTE",
+      "runtime_platform": "switch",
+      "reason": "User accepted r14 and explicitly selected the original emblem only. Promote the unchanged installed/tested NRO; small-emblem comparisons are archived. Eden acceptance is scoped and Ryujinx remains unconfirmed.",
+      "publication": {
+        "published": false,
+        "url": null,
+        "date": null
+      },
+      "version": "r14",
+      "package_name": "key-quest-markers-rs",
+      "archive": "key-quest-markers-rs-r14.zip",
+      "runtime_test": "USER_CONFIRMED_EDEN",
+      "runtime_active": true,
+      "gamebanana": {
+        "ai_code": {
+          "used": true,
+          "software": [
+            {
+              "name": "OpenAI Codex",
+              "url": "https://openai.com/codex/"
+            }
+          ],
+          "scope": "Implementing Rust native callbacks, runtime GUI insertion and allocation cleanup, progression classification, tests, standalone build/package tooling and explanatory comments."
+        },
+        "ai_assets": [],
+        "credits": [
+          {
+            "name": "Forge",
+            "author": "Jeffi / Skyline Project",
+            "url": "https://github.com/jeffi6375/forge",
+            "scope": "Loader API and native hooks."
+          },
+          {
+            "name": "forge-rs",
+            "author": "Fexty",
+            "url": "https://github.com/Fexty12573/forge-rs",
+            "scope": "Rust runtime, callbacks, allocation, singleton lookup and patch bindings."
+          },
+          {
+            "name": "libnx",
+            "author": "Hydrosphere Developers",
+            "url": "https://github.com/switchbrew/libnx",
+            "scope": "MIT-licensed ARM32 syscall wrappers."
+          },
+          {
+            "name": "MHGU HD Project",
+            "author": "Monkbreh / Monke",
+            "url": "https://github.com/Monkbreh/MHGU-HD-Project",
+            "scope": "External English HD dependency supplying the already-loaded lobby emblem. No HD files are included in this plugin."
+          },
+          {
+            "name": "Monster Hunter Generations Ultimate",
+            "author": "Capcom",
+            "url": "https://www.monsterhunter.com/",
+            "scope": "Native GUI and quest APIs and the original emblem loaded from the user supplied game; no game asset files are shipped."
+          }
+        ]
+      },
+      "previous_runtime_evidence": "docs/RUNTIME_R14.json",
+      "approval": {
+        "date": "2026-10-15",
+        "basis": "Explicit user instruction: good, use original only and promote it to ready to distribute statys"
+      },
+      "target": "MHGU Nintendo Switch 1.4.0 English HD; Forge 1.5.0 matching forge-rs 1.5.0 Hook ABI; Eden/Ryujinx.",
+      "limitations": [
+        "User accepted the unchanged original-emblem r14 on Eden/Linux; individual ranks, colours, scrolling, request overlaps, long titles and transitions were not separately enumerated.",
+        "Ryujinx and native Switch gameplay remain unconfirmed.",
+        "English HD layout only. The HD Project and compatible Forge 1.5.0 loader are external dependencies.",
+        "The accepted r14 binary retains bounded startup and first-page diagnostic logs at ERROR level; no per-frame logging."
+      ],
+      "readme": "mods/key-quest-markers-rs/DISTRIBUTION_README.md",
+      "notices": [
+        "mods/key-quest-markers-rs/DISTRIBUTION_NOTICES.md",
+        "mods/key-quest-markers-rs/LICENSE",
+        "mods/key-quest-markers-rs/vendor/forge-rs/LICENSE",
+        "mods/key-quest-markers-rs/vendor/libnx/LICENSE-MIT",
+        "mods/key-quest-markers-rs/licenses/FORGE-MIT.txt",
+        "mods/key-quest-markers-rs/vendor/crates/log-0.4.34/LICENSE-MIT",
+        "mods/key-quest-markers-rs/licenses/RUST-MIT.txt",
+        "mods/key-quest-markers-rs/licenses/COMPILER_BUILTINS.txt"
+      ],
+      "payloads": {
+        "romfs/nativeNX/plugins/key_quest_markers_rs.nro": {
+          "source": "build/key-quest-markers-rs/candidates/r14/package/romfs/nativeNX/plugins/key_quest_markers_rs.nro",
+          "sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
+        }
+      },
+      "evidence": {
+        "static": [
+          "build/key-quest-markers-rs/candidates/r14/resource.json",
+          "build/key-quest-markers-rs/candidates/r14/build.json",
+          "build/key-quest-markers-rs/candidates/r14/arm.json",
+          "build/key-quest-markers-rs/candidates/r14/native-adapter.json",
+          "build/key-quest-markers-rs/candidates/r14/verify.json",
+          "build/key-quest-markers-rs/candidates/r14/tests.json",
+          "mods/key-quest-markers-rs/docs/CANDIDATE_RESULTS.json",
+          "mods/key-quest-markers-rs/docs/SPECIAL_URGENTS.json"
+        ],
+        "manual": [
+          "mods/key-quest-markers-rs/docs/RUNTIME_R14.json"
+        ],
+        "manual_summary": "User accepted original r14 on Eden/Linux and requested promotion. Fresh Eden 1.4.0/Forge1.5.0 log and matching installed NRO corroborate r14 hooks, grey decisions and quest308/group47 active purple classification. This is not exhaustive coverage or Ryujinx acceptance.",
+        "static_summary": "11 host tests, 16 ARM ABI/GE cases, 40 compiled native adapter cases, import/signature/resource checks and standalone builds/verification passed before acceptance. No runtime rebuild during promotion."
+      },
+      "dependencies": [
+        {
+          "name": "Forge 1.5.0",
+          "scope": "External Switch loader with the matching 24-byte ordinary Hook ABI used by forge-rs1.5.0."
+        },
+        {
+          "name": "MHGU HD Project English",
+          "scope": "External loaded HD_lobby00_BM_NOMIP atlas and supported English counter layout; no HD assets shipped."
+        }
+      ]
+    },
+    "docs/RUNTIME_RESULTS.json": {
+      "date": "2026-10-15",
+      "version": "r9",
+      "implementation_commit": "346de56",
+      "distribution_status": "DEVELOPMENT",
+      "user_confirmation": {
+        "quote": "ok then save this knowledge somewhere in this project because this is working, nice job",
+        "result": "WORKING",
+        "platform": "Eden on Linux",
+        "scope": "User confirmed the native in-game badges work. Individual colours, ranks, transitions and progression cases were not enumerated."
+      },
+      "implementation": {
+        "renderer": "MHGU native in-game GUI",
+        "object_class": "cGUIObjTexture",
+        "forge_imgui": false,
+        "forge_onImGuiFreeRender": false,
+        "atlas": "Existing loaded English HD_lobby00_BM_NOMIP, texture ID22",
+        "display_size": [
+          24,
+          24
+        ],
+        "row_local_position": [
+          -28,
+          8
+        ],
+        "arc_replacements": 0,
+        "extracted_assets_shipped": false,
+        "details": "NATIVE_AUDIT.md"
+      },
+      "accepted_payload": {
+        "nro_sha256": "331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576",
+        "zip_sha256": "5113237365aa63ef2bbf64b446154c682d336690fb0dd4f3544303f4a97cac35",
+        "installed_matches_candidate": true,
+        "runtime_changed_for_this_record": false
+      },
+      "runtime": {
+        "emulator": "Eden Development Build master-a594c8d60e-master",
+        "game": "MHGU Switch 1.4.0 (32-bit)",
+        "title_id": "0100770008DD8000",
+        "build_id": "FB08F1D20FD1204FE7070672777F869B",
+        "forge_version": "1.5.0",
+        "r9_initialization_logged": true,
+        "parent_hook_entry_logged": true,
+        "row_hook_entry_logged": true,
+        "progression_snapshot": {
+          "village": 4,
+          "hub_g": 2
+        },
+        "guest_exception_observed": false,
+        "log_is_complete_run": false,
+        "note": "Snapshot ends during a diagnostic line. User confirmation establishes visible success; this log does not establish clean shutdown or exhaustive gameplay acceptance."
+      },
+      "log_snapshot": {
+        "workspace_path": "work/key-quest-markers-rs/runtime-acceptance/20261015-074002/eden_log.txt",
+        "sha256": "7ee1f8e51420f5bde04a9721694e2a4c19c8f9cba58d36ba0606e802900a5911",
+        "bytes": 66700,
+        "source_mtime": "2026-10-15T07:43:45.768626+07:00",
+        "purpose": "Historical local evidence, not a standalone build input"
+      },
+      "remaining_coverage": [
+        "Ryujinx and native Switch gameplay were not confirmed.",
+        "Individual badge states, alternative groups, simultaneous urgents, rank coverage, scrolling, confirmation, menu reopening, quest return and progression advancement were not enumerated."
+      ],
+      "preservation": {
+        "candidate_zip_unchanged": true,
+        "installed_payload_unchanged": true,
+        "pretrial_package_manifest_preserved": true,
+        "note": "The candidate manifest/validation describe the pretrial build and retain runtime_test=NOT RUN. This later evidence record documents the user trial. No release promotion, installation, launch, settings/save edit, push or publication was performed."
+      }
+    }
+  },
+  "current": {
+    "version": "r15",
+    "date": "2026-10-15",
+    "scope": "Approved workspace rename/upstream-loader maintenance; no gameplay run.",
+    "forge": {
+      "version": "1.5.1",
+      "commit": "b23e114a23f41c9a8e2fd34b2f4df2a2102d0ee1",
+      "url": "https://github.com/Fexty12573/forge/releases/tag/v1.5.1",
+      "archive_sha256": "9c9a04d5d4d842e71b6ed05b85612cea7a1c7dfedb4a8d2e23eb9870211300dd",
+      "path": "work/shared/forge-1.5.1",
+      "nso_sha256": "469f425dd02a37b7a5d84ddde5f769922bc5e0d5fbc8adb0ca270e2c0773cd7d"
+    },
+    "reports": {
+      "resource": {
+        "status": "PASSED",
+        "source_sha256": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
+        "source_gui_sha256": "95730f3adbaf2c017968cb0079a0caa666de541cecd66ff8ad223e1137b30c5a",
+        "row_animation": 20,
+        "existing_objects": 12,
+        "existing_drawables": 9,
+        "existing_sequences": 15,
+        "instances": 63,
+        "texture_id": 22,
+        "archive_replacements": 0,
+        "title_class": "cGUIObjMessage",
+        "title_type_crc": 800599726,
+        "title_bytes": 352,
+        "new_atlas": false,
+        "runtime_test": "NOT RUN"
+      },
+      "build": {
+        "version": "r15",
+        "status": "BUILT",
+        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+        "forge_rs_revision": "d1865b68e9b194eb3eacc8bd71bbf601a5fac63e",
+        "runtime_active": true,
+        "source_sha256": {
+          "Cargo.toml": "c7edd4b6dc28a09167a189dfdfd22bcf6a464ae653005b2f8911732ce29d6429",
+          "Cargo.lock": "dcbbd074896b1c59bff34fa50ce2b6adad6e9a77f72c7cb7f1d55051e94962a5",
+          ".cargo/config.toml": "f6a8921cede665cd4d67f8da70ef86bcf78700371a84216bb6b0fc036c3e442b",
+          "armv7a-none-eabi.json": "d2be3e33facf2d2da75a5cb64029ee8e617f406e1dd9767e3063aee76292f7d5",
+          "build.rs": "295e23e5c1b5c6df7410f49017285dd7d612ea6ef0ea716c99ae622a35518484",
+          "scripts/gui_layout.py": "aeb3c044b33393adf50e475883275c7547460281c8419f34c93f03332ac742c6",
+          "src/gui.rs": "a19dfa1cc7fe912a2773608e218d0f48b31b00b213f114b2e160da90fac76b2b",
+          "src/hooks.rs": "b70c40abee00782b0c7bbc18a1ca8f924e736b06ef25995b6af0a21c43c67c9f",
+          "src/lib.rs": "a4b4c66e0dd5ebad527402f38c8f5a246fbf375c5ae750caedf69693a159fd0d",
+          "src/memory.rs": "c191f6a5be4a38a5bafe94626d0783976080fa1650d6fd96f2e83804915d154f",
+          "src/native.rs": "8ba43540352e6397b43afab254be3dc528a881a00331091216d17a1ed8b7d291",
+          "src/offers.rs": "49e101abec86ca8de0ee8923ee2923d2b6f445ddea1530cc734ea6512ce2eabe",
+          "src/signatures.rs": "64ef009630b99fc3b2dd2983e7718088c37af7645d06f6a8555f7ce9928d47fb",
+          "src/svc.S": "ad8af8eadfe25a122ee2f0e4e5b1722a947b7d0747f52f30ac9373190fc7ac2c",
+          "core/src/lib.rs": "7991ed8d0fc5728dff361d9b105691a47ba2fbf8357100a57bee870a4107c773",
+          "link/exported.txt": "50cb9c9e65b083a73a3cc08700f259c7fef253d7dbc5cadd78132d7e9b623461",
+          "link/switch32.ld": "dfa3102bf0a910ad89aaa60e286153a087f44d74cb19c5f694a9542866540aa5"
+        },
+        "runtime_test": "NOT RUN"
+      },
+      "arm": {
+        "status": "PASSED",
+        "typed_detour_cases": 16,
+        "forwarded_integer_arguments": 7,
+        "registered_name": "Key Quest Markers r15",
+        "metadata_bytes": 70,
+        "hook_abi_bytes": 24,
+        "minimum_forge_version": "1.5.1",
+        "GE": "unchanged before original in all 16 patterns; no restoration required at audited direct continuations",
+        "preserved": [
+          "r4-r11",
+          "d8-d15",
+          "sp",
+          "incoming stack words"
+        ],
+        "direct_caller_windows": {
+          "0x616c00": "00616c00 <.data+0x616c00>:\n  616c00:\te7961104 \tldr\tr1, [r6, r4, lsl #2]\n  616c04:\te3510000 \tcmp\tr1, #0\n  616c08:\t0a000011 \tbeq\t0x616c54\n  616c0c:\te59f0094 \tldr\tr0, [pc, #148]\t@ 0x616ca8\n  616c10:\te3a02000 \tmov\tr2, #0\n  616c14:\te3a03001 \tmov\tr3, #1\n  616c18:\te79f0000 \tldr\tr0, [pc, r0]\n  616c1c:\te5900000 \tldr\tr0, [r0]\n  616c20:\te58d2000 \tstr\tr2, [sp]\n  616c24:\te3a02000 \tmov\tr2, #0\n  616c28:\tebf693e3 \tbl\t0x3bbbbc\n  616c2c:\te3500001 \tcmp\tr0, #1",
+          "0x618bc0": "00618bc0 <.data+0x618bc0>:\n  618bc0:\te59f0088 \tldr\tr0, [pc, #136]\t@ 0x618c50\n  618bc4:\te59d1030 \tldr\tr1, [sp, #48]\t@ 0x30\n  618bc8:\te79f0000 \tldr\tr0, [pc, r0]\n  618bcc:\te3510012 \tcmp\tr1, #18\n  618bd0:\te3a01017 \tmov\tr1, #23\n  618bd4:\t13a02002 \tmovne\tr2, #2\n  618bd8:\t03a02001 \tmoveq\tr2, #1\n  618bdc:\te5900000 \tldr\tr0, [r0]\n  618be0:\tebfd0c25 \tbl\t0x55bc7c\n  618be4:\te1a03000 \tmov\tr3, r0",
+          "0x618cbc": "00618cbc <.data+0x618cbc>:\n  618cbc:\te59f0048 \tldr\tr0, [pc, #72]\t@ 0x618d0c\n  618cc0:\te3a01017 \tmov\tr1, #23\n  618cc4:\te3a02003 \tmov\tr2, #3\n  618cc8:\te79f0000 \tldr\tr0, [pc, r0]\n  618ccc:\te5900000 \tldr\tr0, [r0]\n  618cd0:\tebfd0be9 \tbl\t0x55bc7c\n  618cd4:\te1a03000 \tmov\tr3, r0",
+          "0x782bb4": "00782bb4 <.data+0x782bb4>:\n  782bb4:\tea000092 \tb\t0x782e04",
+          "0x782e04": "00782e04 <.data+0x782e04>:\n  782e04:\te1a00004 \tmov\tr0, r4\n  782e08:\te3a01000 \tmov\tr1, #0\n  782e0c:\tebfb674a \tbl\t0x65cb3c\n  782e10:\te5d4103c \tldrb\tr1, [r4, #60]\t@ 0x3c\n  782e14:\te351000f \tcmp\tr1, #15\n  782e18:\t8a000011 \tbhi\t0x782e64\n  782e1c:\te3a02001 \tmov\tr2, #1\n  782e20:\te30d3080 \tmovw\tr3, #53376\t@ 0xd080",
+          "0x6e3f68": "006e3f68 <.data+0x6e3f68>:\n  6e3f68:\te30e0c7d \tmovw\tr0, #60541\t@ 0xec7d\n  6e3f6c:\te34f0fff \tmovt\tr0, #65535\t@ 0xffff\n  6e3f70:\te7d50000 \tldrb\tr0, [r5, r0]\n  6e3f74:\te3500001 \tcmp\tr0, #1\n  6e3f78:\t0a0000d0 \tbeq\t0x6e42c0\n  6e3f7c:\te3500000 \tcmp\tr0, #0\n  6e3f80:\t1a00002a \tbne\t0x6e4030"
+        },
+        "live_flags": "Row and parent direct callers replace NZCVQ before conditional use or make an unconditional next call; no incoming GE consumer",
+        "runtime_test": "NOT RUN",
+        "resource_attachment": "NOT VERIFIED"
+      },
+      "native-adapter": {
+        "status": "PASSED",
+        "compiled_nro": true,
+        "cases": 40,
+        "results": [
+          {
+            "case": "all eight special urgents outside rank-up offer pool",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 1
+            },
+            "colors": {
+              "0": 4291448219,
+              "1": 4291448219,
+              "2": 4291448219,
+              "3": 4291448219,
+              "4": 4291448219,
+              "5": 4291448219,
+              "6": 4291448219,
+              "7": 4291448219
+            },
+            "native_draws": 8,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "only enabled special records become purple",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 1
+            },
+            "colors": {
+              "0": 4291448219,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4291448219,
+              "5": 4286611584,
+              "6": 4291448219,
+              "7": 4286611584
+            },
+            "native_draws": 8,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "disabled special records remain grey despite scene availability",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 1
+            },
+            "colors": {
+              "0": 4286611584,
+              "1": 4286611584,
+              "2": 4286611584,
+              "3": 4286611584,
+              "4": 4286611584,
+              "5": 4286611584,
+              "6": 4286611584,
+              "7": 4286611584
+            },
+            "native_draws": 8,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "special pair completed by first-run quest",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 1
+            },
+            "colors": {
+              "0": 4286611584,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4291448219,
+              "4": 4291448219,
+              "5": 4291448219,
+              "6": 4291448219,
+              "7": 4291448219
+            },
+            "native_draws": 8,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "special pair completed by repeat quest",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 1
+            },
+            "colors": {
+              "0": 4286611584,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4291448219,
+              "4": 4291448219,
+              "5": 4291448219,
+              "6": 4291448219,
+              "7": 4291448219
+            },
+            "native_draws": 8,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "special pairs complete independently",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 1
+            },
+            "colors": {
+              "0": 4286611584,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4291448219,
+              "4": 4286611584,
+              "5": 4286611584,
+              "6": 4291448219,
+              "7": 4291448219
+            },
+            "native_draws": 8,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "unavailable special urgents are grey",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 1
+            },
+            "colors": {
+              "0": 4286611584,
+              "1": 4286611584,
+              "2": 4286611584,
+              "3": 4286611584,
+              "4": 4286611584,
+              "5": 4286611584,
+              "6": 4286611584,
+              "7": 4286611584
+            },
+            "native_draws": 8,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "special urgency does not bypass invalid offer context",
+            "visible": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "Text subclass is rejected for the Message resource",
+            "visible": {
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 4,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "invalid request on a fitted row restores its title",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "request shares the key slot without overwriting bubble",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "selected row uses the same request-relative layout",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "missing request binding leaves other badges working",
+            "visible": {
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 4,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "missing title binding leaves other badges working",
+            "visible": {
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 4,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "scrolling and early-return restore title fitting",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "first malformed trampoline rolls back",
+            "startup_rollback": true,
+            "failed_hook": 1
+          },
+          {
+            "case": "second malformed trampoline rolls back both targets",
+            "startup_rollback": true,
+            "failed_hook": 2
+          },
+          {
+            "case": "all badge states and native draw traversal",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "urgent inactive",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4286611584,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "urgent unavailable",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4286611584,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "urgent prerequisites incomplete",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4286611584,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "viewing still red",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "key completion",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4286611584,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "urgent completion",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4286611584,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "resource object mismatch",
+            "visible": {},
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "animation address is not the GUI owner",
+            "visible": {},
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "no offer context",
+            "visible": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "ordinary rows",
+            "visible": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "invalid offer count",
+            "visible": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "different GUI",
+            "visible": {},
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "satisfied alternative",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4286611584,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "simultaneous urgents",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4291448219,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "secondary table",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "both tables",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "primary table empty",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "object allocation failure",
+            "visible": {},
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "cache allocation failure",
+            "visible": {},
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "map allocation failure",
+            "visible": {},
+            "colors": {},
+            "native_draws": 0,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "repeated row update reuses native children",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          },
+          {
+            "case": "partial allocation failure recovers without duplicate children",
+            "visible": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1,
+              "4": 1,
+              "5": 0,
+              "6": 0,
+              "7": 0
+            },
+            "colors": {
+              "0": 4280633319,
+              "1": 4286611584,
+              "2": 4291448219,
+              "3": 4286611584,
+              "4": 4286611584
+            },
+            "native_draws": 5,
+            "ownership_cleanup": true,
+            "saved_records_unchanged": true
+          }
+        ],
+        "error_only_filter_diagnostic_snapshots": true,
+        "deduplicated_scalar_snapshots": true,
+        "title_resource_class_crc": 800599726,
+        "native_message_type_getter": true,
+        "resource_inline_constants": {
+          "10804260": 1,
+          "10791412": 0,
+          "10779284": 0,
+          "10804384": 0,
+          "10779140": 2,
+          "10791460": 1,
+          "10791516": 1,
+          "10791572": 3,
+          "10791624": 3,
+          "10791676": 3,
+          "10804308": 0,
+          "10811996": 0
+        },
+        "native_prepaint_and_texture_draw": true,
+        "native_quad_geometry": true,
+        "native_autoscale_dispatch_and_clamp": true,
+        "request_visibility_placement": true,
+        "title_restoration": true,
+        "actual_forge_lifecycle_and_installer": true,
+        "installed_entry_branches": true,
+        "native_resource_cleanup": true,
+        "expanded_object_map_and_native_instance_clear": true,
+        "support_signatures_precede_hook_signatures": true,
+        "native_animation_constructor": true,
+        "native_texture_constructor": true,
+        "native_style_texture_color_visibility_setters": true,
+        "null_dti_placement_slot": true,
+        "native_cache_allocator_and_free": true,
+        "distinct_gui_owner": true,
+        "native_draw_walker": true,
+        "native_root_destructors": true,
+        "archive_replacements": 0,
+        "thread_context_restored": true,
+        "runtime_test": "NOT RUN",
+        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d"
+      },
+      "verify": {
+        "status": "PASSED",
+        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+        "elf_sha256": "82b2f132fe7dc22501b27c0f8b975f83e902d1128a7e02b6a60880b182386bde",
+        "exports": [
+          "fini",
+          "forge_onInit",
+          "forge_onLoad",
+          "forge_onUpdate",
+          "init"
+        ],
+        "strong_imports": [
+          "__aeabi_unwind_cpp_pr0",
+          "forge_hook_create",
+          "forge_log",
+          "forge_log_getLevel",
+          "forge_mem_getMainTextAddr",
+          "forge_patch_create",
+          "forge_patch_destroy",
+          "forge_patch_disable",
+          "forge_patch_enable",
+          "forge_singleton_getInstanceByName",
+          "free",
+          "malloc",
+          "nnosAllocateTlsSlot",
+          "nnosGetTlsValue",
+          "nnosSetTlsValue"
+        ],
+        "signature_windows": [
+          "0xa53324",
+          "0xa53348",
+          "0xa53528",
+          "0xa5350c",
+          "0xa53aa8",
+          "0xa56ab8",
+          "0x5456e4",
+          "0xa38ffc",
+          "0xa47d2c",
+          "0xa38b58",
+          "0xa4f60c",
+          "0xa4d0d8",
+          "0x616cb0",
+          "0x54d030",
+          "0x523da4",
+          "0x3b1a18",
+          "0x3b1d70",
+          "0x50cbd0",
+          "0x3b57d0",
+          "0x7aef68",
+          "0x3b2174",
+          "0x546f28",
+          "0x54af8c",
+          "0x7aa47c",
+          "0x540c08",
+          "0x540c38",
+          "0xa4faf0",
+          "0xa4fb58",
+          "0xa4e0b8",
+          "0xa47950",
+          "0xa4844c",
+          "0xa48668",
+          "0xa4f6a4",
+          "0xa4f77c",
+          "0xa494a0",
+          "0xa4964c",
+          "0xa4dc24",
+          "0xa4a9f4",
+          "0xa47a94",
+          "0xa4dca0",
+          "0xa47a04",
+          "0xa4aa24",
+          "0xa4aa5c",
+          "0xa4aa94",
+          "0xa4aac8",
+          "0xa4aafc",
+          "0xa4dc54",
+          "0xa4fa5c"
+        ],
+        "hook_abi_bytes": 24,
+        "ordinary_hook_slots": 2,
+        "texture_constructor": "0xa4f60c",
+        "texture_dti_placement_virtual": false,
+        "forge_trampoline_bytes": 32,
+        "forge_pool_chunk_bytes": 16384,
+        "compiled_status_writes": [],
+        "runtime_active": true,
+        "gui_attachment": "Game-owned native children and expanded draw caches",
+        "progression_semantics": "Native stages, alternatives and offered urgent IDs",
+        "runtime_test": "NOT RUN"
+      },
+      "tests": {
+        "status": "PASSED",
+        "nro_sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d",
+        "archive_replacements": 0,
+        "host": true,
+        "resource": true,
+        "arm": true,
+        "runtime_test": "NOT RUN"
+      }
+    },
+    "manual_test": "NOT RUN"
+  }
+}

@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "mod": "key-quest-markers-rs",
+  "mod": "key-quest-markers",
   "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
-  "reason": "User accepted r14 and explicitly selected the original emblem only. Promote the unchanged installed/tested NRO; small-emblem comparisons are archived. Eden acceptance is scoped and Ryujinx remains unconfirmed.",
+  "reason": "User explicitly approved the workspace compaction and distribution of the renamed/upstream-maintenance builds after static validation.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r14",
-  "package_name": "key-quest-markers-rs",
-  "archive": "key-quest-markers-rs-r14.zip",
-  "runtime_test": "USER_CONFIRMED_EDEN",
+  "version": "r15",
+  "package_name": "key-quest-markers",
+  "archive": "key-quest-markers-r15.zip",
+  "runtime_test": "NOT_RUN",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -59,60 +59,57 @@
       }
     ]
   },
-  "previous_runtime_evidence": "docs/RUNTIME_R14.json",
   "approval": {
     "date": "2026-10-15",
-    "basis": "Explicit user instruction: good, use original only and promote it to ready to distribute statys"
+    "basis": "User approved implementation of the full compaction plan, including renamed ready releases and stock Forge maintenance. Earlier gameplay acceptance remains attached to the original hashes."
   },
-  "target": "MHGU Nintendo Switch 1.4.0 English HD; Forge 1.5.0 matching forge-rs 1.5.0 Hook ABI; Eden/Ryujinx.",
+  "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. English HD Project required.",
   "limitations": [
+    "This maintenance build has no new gameplay run. Earlier user acceptance applies only to the preserved original binaries; Ryujinx/native Switch coverage remains unconfirmed.",
     "User accepted the unchanged original-emblem r14 on Eden/Linux; individual ranks, colours, scrolling, request overlaps, long titles and transitions were not separately enumerated.",
     "Ryujinx and native Switch gameplay remain unconfirmed.",
-    "English HD layout only. The HD Project and compatible Forge 1.5.0 loader are external dependencies.",
     "The accepted r14 binary retains bounded startup and first-page diagnostic logs at ERROR level; no per-frame logging."
   ],
-  "readme": "mods/key-quest-markers-rs/DISTRIBUTION_README.md",
+  "readme": "mods/key-quest-markers/README.md",
   "notices": [
-    "mods/key-quest-markers-rs/DISTRIBUTION_NOTICES.md",
-    "mods/key-quest-markers-rs/LICENSE",
-    "mods/key-quest-markers-rs/vendor/forge-rs/LICENSE",
-    "mods/key-quest-markers-rs/vendor/libnx/LICENSE-MIT",
-    "mods/key-quest-markers-rs/licenses/FORGE-MIT.txt",
-    "mods/key-quest-markers-rs/vendor/crates/log-0.4.34/LICENSE-MIT",
-    "mods/key-quest-markers-rs/licenses/RUST-MIT.txt",
-    "mods/key-quest-markers-rs/licenses/COMPILER_BUILTINS.txt"
+    "mods/key-quest-markers/DISTRIBUTION_NOTICES.md",
+    "mods/key-quest-markers/LICENSE",
+    "mods/key-quest-markers/vendor/forge-rs/LICENSE",
+    "mods/key-quest-markers/vendor/libnx/LICENSE-MIT",
+    "mods/key-quest-markers/licenses/FORGE-MIT.txt",
+    "mods/key-quest-markers/vendor/crates/log-0.4.34/LICENSE-MIT",
+    "mods/key-quest-markers/licenses/RUST-MIT.txt",
+    "mods/key-quest-markers/licenses/COMPILER_BUILTINS.txt"
   ],
   "payloads": {
-    "romfs/nativeNX/plugins/key_quest_markers_rs.nro": {
-      "source": "build/key-quest-markers-rs/candidates/r14/package/romfs/nativeNX/plugins/key_quest_markers_rs.nro",
-      "sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65"
+    "romfs/nativeNX/plugins/key_quest_markers.nro": {
+      "source": "build/key-quest-markers/candidates/r15/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "sha256": "84f47bd097d55138bc7a38ab95cbe3efc43b8fe4535513467c75a2fd12da153d"
     }
   },
   "evidence": {
     "static": [
-      "build/key-quest-markers-rs/candidates/r14/resource.json",
-      "build/key-quest-markers-rs/candidates/r14/build.json",
-      "build/key-quest-markers-rs/candidates/r14/arm.json",
-      "build/key-quest-markers-rs/candidates/r14/native-adapter.json",
-      "build/key-quest-markers-rs/candidates/r14/verify.json",
-      "build/key-quest-markers-rs/candidates/r14/tests.json",
-      "mods/key-quest-markers-rs/docs/CANDIDATE_RESULTS.json",
-      "mods/key-quest-markers-rs/docs/SPECIAL_URGENTS.json"
+      "mods/key-quest-markers/EVIDENCE.json"
     ],
     "manual": [
-      "mods/key-quest-markers-rs/docs/RUNTIME_R14.json"
+      "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "manual_summary": "User accepted original r14 on Eden/Linux and requested promotion. Fresh Eden 1.4.0/Forge1.5.0 log and matching installed NRO corroborate r14 hooks, grey decisions and quest308/group47 active purple classification. This is not exhaustive coverage or Ryujinx acceptance.",
-    "static_summary": "11 host tests, 16 ARM ABI/GE cases, 40 compiled native adapter cases, import/signature/resource checks and standalone builds/verification passed before acceptance. No runtime rebuild during promotion."
+    "static_summary": "Current host/native/build evidence and original dated results are recorded in EVIDENCE.json.",
+    "manual_summary": "No new gameplay run. The user approved distribution of this maintenance build; historical gameplay reports and exact hashes remain under EVIDENCE.json historical records."
   },
   "dependencies": [
     {
-      "name": "Forge 1.5.0",
-      "scope": "External Switch loader with the matching 24-byte ordinary Hook ABI used by forge-rs1.5.0."
+      "name": "Forge",
+      "version": "1.5.1",
+      "scope": "External unmodified upstream Switch loader; not bundled."
     },
     {
-      "name": "MHGU HD Project English",
-      "scope": "External loaded HD_lobby00_BM_NOMIP atlas and supported English counter layout; no HD assets shipped."
+      "name": "English MHGU HD Project",
+      "scope": "External already-loaded lobby emblem and layout; no HD assets bundled."
     }
-  ]
+  ],
+  "support": {
+    "DEVELOPMENT.md": "mods/key-quest-markers/DEVELOPMENT.md",
+    "EVIDENCE.json": "mods/key-quest-markers/EVIDENCE.json"
+  }
 }

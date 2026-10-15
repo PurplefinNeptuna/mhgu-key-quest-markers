@@ -27,13 +27,13 @@ pub unsafe extern "C" fn forge_onLoad(params: *mut forge::PluginInitParams) {
         return;
     }
     let mut name = [0; 64];
-    let label = concat!("Native Quest Badges ", env!("KQM_VERSION")).as_bytes();
+    let label = concat!("Key Quest Markers ", env!("KQM_VERSION")).as_bytes();
     name[..label.len()].copy_from_slice(label);
     // The pinned Forge loader provides the complete writable 70-byte record.
     // This narrow ABI extension leaves vendored bindings and their pins intact.
     unsafe {
         params.cast::<PluginMetadata>().write(PluginMetadata {
-            version: forge::REQUIRED_VERSION,
+            version: forge::ForgeVersion { major: 1, minor: 5, patch: 1 },
             name,
         });
     }
@@ -50,12 +50,12 @@ fn start() {
             // DEVELOPMENT diagnostics use ERROR so the user's existing error-only
             // Forge filter records this result without changing their settings.
             log::error!(concat!(
-                "Native quest badges ",
+                "Key Quest Markers ",
                 env!("KQM_VERSION"),
                 " diagnostic: hooks installed; waiting for quest counter"
             ));
         }
-        Err(reason) => log::error!("Native quest badges: {reason}"),
+        Err(reason) => log::error!("Key Quest Markers: {reason}"),
     }
 }
 /// Hot hooks publish only bit flags. Deduplicated diagnostics run in Forge's
@@ -68,7 +68,7 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
         if entered & !previous & bit != 0 {
             log::error!(
                 concat!(
-                    "Native quest badges ",
+                    "Key Quest Markers ",
                     env!("KQM_VERSION"),
                     " diagnostic: entered {} hook"
                 ),
@@ -92,7 +92,7 @@ pub extern "C" fn forge_onUpdate(_delta: f32) {
         (128, "request/title binding invalid; affected badge hidden"),
     ] {
         if errors & !old & bit != 0 {
-            log::error!("Native quest badges hidden: {message}");
+            log::error!("Key Quest Markers hidden: {message}");
             if bit == 16 {
                 let stage = gui::take_failure();
                 log::error!(

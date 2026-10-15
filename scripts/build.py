@@ -55,7 +55,7 @@ def prepare():
 
 def build():
     prepare();env,_=environment();lock=digest(MOD/'Cargo.lock')
-    link=MOD/'target';output=MOD/'key_quest_markers_rs.nro'
+    link=MOD/'target';output=MOD/'key_quest_markers.nro'
     if link.exists() or link.is_symlink() or output.exists(): raise ValueError('Preserving existing target/ or loose NRO')
     CARGO_TARGET.mkdir(parents=True,exist_ok=True);link.symlink_to(CARGO_TARGET,target_is_directory=True)
     try: run([converter(),'forge','build','--release'],cwd=MOD,env=env)
@@ -63,7 +63,7 @@ def build():
         link.unlink()
         if output.exists(): shutil.move(output,CARGO_TARGET/output.name)
     if digest(MOD/'Cargo.lock')!=lock: raise ValueError('Cargo.lock changed during build')
-    dest=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'
+    dest=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro'
     dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(CARGO_TARGET/output.name,dest)
     record('build.json',{'version':VERSION,'status':'BUILT','nro_sha256':digest(dest),'forge_rs_revision':
         'd1865b68e9b194eb3eacc8bd71bbf601a5fac63e','runtime_active':True,'source_sha256':source_hashes(),'runtime_test':'NOT RUN'})
@@ -77,7 +77,7 @@ def test():
     arm_python=CONFIG.get('arm_python',ROOT/'tools/mwc-analysis-venv/bin/python')
     run([arm_python,MOD/'tests/arm.py'])
     run([arm_python,MOD/'tests/native_adapter.py'])
-    verify();record('tests.json',{'status':'PASSED','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'),
+    verify();record('tests.json',{'status':'PASSED','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro'),
                      'archive_replacements':0,
                      'host':True,'resource':True,'arm':True,'runtime_test':'NOT RUN'})
 def verify(): run([PYTHON,MOD/'scripts/verify.py'])
@@ -91,7 +91,7 @@ def package():
         import mod_distribution as distribution
         print('Verified release:',distribution.package(spec['mod'],ROOT))
         return
-    verify();source=BUILD_ROOT/'package';nro=source/'romfs/nativeNX/plugins/key_quest_markers_rs.nro'
+    verify();source=BUILD_ROOT/'package';nro=source/'romfs/nativeNX/plugins/key_quest_markers.nro'
     test_record=json.loads((BUILD_ROOT/'tests.json').read_text())
     if test_record['status']!='PASSED' or test_record['nro_sha256']!=digest(nro) or test_record.get('archive_replacements')!=0: raise ValueError('Test this exact build first')
     dest=BUILD_ROOT/'delivery';dest.mkdir(parents=True,exist_ok=True)
@@ -101,8 +101,8 @@ def package():
     previous={str(p.relative_to(named)) for p in named.rglob('*') if p.is_file()}
     if previous-payloads.keys(): raise ValueError('Preserving unexpected previous candidate files')
     shutil.copytree(source,named,dirs_exist_ok=True)
-    guide=(MOD/'DISTRIBUTION_README.md').read_text().replace('r14',VERSION).encode();(dest/'README.md').write_bytes(guide)
-    archive=dest/('key-quest-markers-rs-'+VERSION+'-candidate.zip')
+    guide=(MOD/'README.md').read_text().replace('r15',VERSION).encode();(dest/'README.md').write_bytes(guide)
+    archive=dest/('key-quest-markers-'+VERSION+'-candidate.zip')
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
         z.writestr('README.md',guide)
         for n in sorted(payloads): z.write(source/n,package_name+'/'+n)
@@ -114,7 +114,7 @@ def package():
     (dest/'NOTICES.txt').write_text(notices);(dest/'NOTICES.html').write_text('<pre>'+escape(notices)+'</pre>\n')
     evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','native-adapter','verify','tests']}
     (dest/'VALIDATION.json').write_text(json.dumps(evidence,indent=2)+'\n')
-    manifest={'mod':'key-quest-markers-rs','version':VERSION,'status':'DEVELOPMENT','runtime_test':'NOT RUN',
+    manifest={'mod':'key-quest-markers','version':VERSION,'status':'DEVELOPMENT','runtime_test':'NOT RUN',
               'runtime_active':True,'package_name':package_name,'payloads':payloads,'archive_sha256':digest(archive)}
     (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (dest/'SHA256SUMS').write_text(''.join(digest(p)+'  '+str(p.relative_to(dest))+'\n'

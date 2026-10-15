@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "key-quest-markers-rs"
+name = "key-quest-markers"
 version = "0.1.0"
 dependencies = [
  "log",

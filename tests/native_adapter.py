@@ -17,7 +17,7 @@ from mhgu_assets import read_arc
 import unicorn
 from unicorn import arm_const as arm
 MODULE,ENGINE,RETURN,STACK,GAME,DATA=0x31000000,0x32000000,0x32000100,0x41010000,0x33000000,0x34000000
-elf,names=symbols();data=(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro').read_bytes();nro=Nro(data)
+elf,names=symbols();data=(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro').read_bytes();nro=Nro(data)
 native_image,_=main_image(input_path('main').read_bytes())
 _,arc=read_arc(input_path('common_eng.arc'))
 gui=Gui(next(v['data'] for k,v in arc.items() if k[0].endswith('count\\counter')))
@@ -25,7 +25,7 @@ row_objects=gui.table(48,172,36)[30:42]
 base_symbol=None
 for line in subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-nm','-C','-n',elf],text=True).splitlines():
     fields=line.split(maxsplit=2)
-    if len(fields)==3 and fields[2]=='key_quest_markers_rs::memory::BASE':base_symbol=int(fields[0],16)
+    if len(fields)==3 and fields[2]=='key_quest_markers::memory::BASE':base_symbol=int(fields[0],16)
 assert base_symbol is not None
 UI,HOLDER,CONTROLLER,INFO,PROFILE,QUEST,RESOURCE,RECORDS,PROGRESS,ROWS,DTI,VFT=(DATA+x for x in
     [0x1000,0x2000,0x3000,0x4000,0x10000,0x20000,0x21000,0x22000,0x23000,0x24000,0x25000,0x26000])
@@ -580,5 +580,5 @@ record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASE
           'title_resource_class_crc':TITLE_CRC,'native_message_type_getter':True,
           'resource_inline_constants':SOURCE_STYLE,'native_prepaint_and_texture_draw':True,'native_quad_geometry':True,'native_autoscale_dispatch_and_clamp':True,'request_visibility_placement':True,'title_restoration':True,
           'actual_forge_lifecycle_and_installer':True,'installed_entry_branches':True,'native_resource_cleanup':True,'expanded_object_map_and_native_instance_clear':True,'support_signatures_precede_hook_signatures':True,'native_animation_constructor':True,'native_texture_constructor':True,'native_style_texture_color_visibility_setters':True,'null_dti_placement_slot':True,'native_cache_allocator_and_free':True,'distinct_gui_owner':True,'native_draw_walker':True,'native_root_destructors':True,'archive_replacements':0,
-          'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro')})
+          'thread_context_restored':True,'runtime_test':'NOT RUN','nro_sha256':digest(BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro')})
 print('PASS: compiled native insertion, actual draw walker/destructors, colors and allocation rollback:',CASES,'cases')

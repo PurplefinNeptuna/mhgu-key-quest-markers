@@ -8,7 +8,7 @@ from mhgu_binary import Nro,main_image
 from native_support import nso_exports
 
 def symbols():
-    elf=CARGO_TARGET/'armv7a-none-eabi/release/libkey_quest_markers_rs.so'
+    elf=CARGO_TARGET/'armv7a-none-eabi/release/libkey_quest_markers.so'
     result={}
     for line in subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-nm','-n',elf],text=True).splitlines():
         fields=line.split()
@@ -16,7 +16,7 @@ def symbols():
     return elf,result
 
 def verify():
-    doctor();nro_path=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers_rs.nro'
+    doctor();nro_path=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro'
     data=nro_path.read_bytes();nro=Nro(data);elf,names=symbols()
     receipt=json.loads((BUILD_ROOT/'build.json').read_text())
     if receipt.get('version')!=VERSION or receipt['nro_sha256']!=digest(nro_path) or receipt.get('source_sha256')!=source_hashes():
@@ -43,7 +43,7 @@ def verify():
     if writes:raise ValueError('Unexpected processor status writes: '+str(writes))
     if imports&{'igBegin','igTreeNode_Str','forge_graphics_getContext','forge_config_create'}:
         raise ValueError('Unrequested settings/overlay dependency')
-    expected={'romfs/nativeNX/plugins/key_quest_markers_rs.nro'}
+    expected={'romfs/nativeNX/plugins/key_quest_markers.nro'}
     source=BUILD_ROOT/'package';actual={str(p.relative_to(source)) for p in source.rglob('*') if p.is_file()}
     if actual!=expected:raise ValueError('Unexpected runtime payload files')
     resources=json.loads((BUILD_ROOT/'resource.json').read_text())
