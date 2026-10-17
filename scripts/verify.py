@@ -18,6 +18,9 @@ def symbols():
 def verify():
     doctor();nro_path=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro'
     data=nro_path.read_bytes();nro=Nro(data);elf,names=symbols()
+    # DT_TEXTREL / DF_TEXTREL require writes to memory the Switch maps read-only.
+    if 22 in nro.tags or nro.tags.get(30,0)&4:
+        raise ValueError('NRO requires dynamic relocations in read-only memory')
     receipt=json.loads((BUILD_ROOT/'build.json').read_text())
     if receipt.get('version')!=VERSION or receipt['nro_sha256']!=digest(nro_path) or receipt.get('source_sha256')!=source_hashes():
         raise ValueError('Build receipt differs from staged NRO/current sources')
@@ -57,7 +60,7 @@ def verify():
     record('verify.json',{'status':'PASSED','nro_sha256':digest(nro_path),'elf_sha256':digest(elf),
         'exports':sorted(exports),'strong_imports':sorted(imports),'signature_windows':windows,'hook_abi_bytes':24,
         'ordinary_hook_slots':2,'texture_constructor':'0xa4f60c','texture_dti_placement_virtual':False,'forge_trampoline_bytes':32,'forge_pool_chunk_bytes':16384,
-        'compiled_status_writes':writes,'runtime_active':True,
+        'compiled_status_writes':writes,'runtime_active':True,'text_relocations':False,
         'gui_attachment':'Game-owned native children and expanded draw caches','progression_semantics':'Native stages, alternatives and offered urgent IDs','runtime_test':'NOT RUN'})
     print('PASS: native imports/signatures, Hook ABI compilation, active callback path and payload inventory')
 if __name__=='__main__':verify()

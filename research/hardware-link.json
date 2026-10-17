@@ -1,0 +1,94 @@
+{
+  "version": "r18",
+  "date": "2026-10-18",
+  "status": "PASSED",
+  "scope": "Static ELF/NRO loading requirements; no runtime test.",
+  "before": {
+    "sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
+    "bytes": 61440,
+    "DT_TEXTREL": true,
+    "DF_TEXTREL": false,
+    "relocation_targets": {
+      "text": 6,
+      "data": 115
+    },
+    "nonwritable_targets": [
+      {
+        "offset": "0xc8",
+        "type": 23
+      },
+      {
+        "offset": "0xd0",
+        "type": 23
+      },
+      {
+        "offset": "0xfc",
+        "type": 23
+      },
+      {
+        "offset": "0x100",
+        "type": 23
+      },
+      {
+        "offset": "0xcc",
+        "type": 2
+      },
+      {
+        "offset": "0xf8",
+        "type": 2
+      }
+    ]
+  },
+  "after": {
+    "sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1",
+    "bytes": 61440,
+    "DT_TEXTREL": false,
+    "DF_TEXTREL": false,
+    "relocation_targets": {
+      "data": 111
+    },
+    "nonwritable_targets": []
+  },
+  "elf_sha256": "f5179bd550e8eae45808c1d88277334db5ad7eb4737efaf4225ab71e59260c8c",
+  "gcc_startup_symbols_present": false,
+  "target": {
+    "arch": "arm",
+    "data-layout": "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64",
+    "llvm-target": "armv7a-none-eabi",
+    "os": "switch",
+    "env": "",
+    "vendor": "none",
+    "target-endian": "little",
+    "target-pointer-width": 32,
+    "target-c-int-width": 32,
+    "linker": "arm-none-eabi-gcc",
+    "linker-flavor": "gcc",
+    "pre-link-args": {
+      "gcc": [
+        "-nostartfiles",
+        "-Wl,-z,text"
+      ]
+    },
+    "abi": "eabi",
+    "features": "+v8,+crc,+crypto",
+    "max-atomic-width": 64,
+    "panic-strategy": "abort",
+    "relocation-model": "pic",
+    "dynamic-linking": true,
+    "executables": true,
+    "relro-level": "off",
+    "disable-redzone": false,
+    "frame-pointer": "always",
+    "no-default-libraries": true,
+    "emit-debug-gdb-scripts": false,
+    "llvm-floatabi": "soft",
+    "has-thread-local": false,
+    "has-rpath": false,
+    "crt-static-default": false,
+    "crt-static-respected": false,
+    "position-independent-executables": true
+  },
+  "build_log_sha256": "acc1934217c94b6f2bcce6b33ef2a19eb8fad4008b5acc226b6903d5fa718039",
+  "read_only_relocation_link_errors": false,
+  "old_nro_verifier_regression": "PASS: key-quest-markers verifier rejects actual r17 NRO with read-only relocations"
+}

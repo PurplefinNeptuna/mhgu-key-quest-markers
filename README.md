@@ -5,13 +5,16 @@ whether you still need them for progression.
 
 ## Requirements
 
+This is a hardware-test candidate. Real Switch compatibility is unconfirmed.
+The tester must supply the updated Forge loader separately.
+
 - MHGU 1.4.0 for Nintendo Switch.
 - [Fexty's Forge 1.5.1](https://github.com/Fexty12573/forge/releases/tag/v1.5.1).
 
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r17.zip`.
+2. Extract `key-quest-markers-r18-candidate.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.

@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "READY_TO_DISTRIBUTE",
+  "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "User confirmed the exact r17 candidate was tested and requested distribution readiness. Promotes the unchanged installed/candidate NRO; Ryujinx/native Switch gameplay remains unconfirmed.",
+  "reason": "Hardware-test rebuild with PIC retained, GCC startup objects excluded and read-only dynamic relocations rejected. No gameplay changes; hardware acceptance pending.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r17",
+  "version": "r18",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r17.zip",
-  "runtime_test": "USER_CONFIRMED_EDEN",
+  "archive": "key-quest-markers-r18-candidate.zip",
+  "runtime_test": "NOT RUN",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -61,8 +61,8 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "User accepted r17 on Eden/Linux; individual settings, persistence, ranks, quest states and transitions were not separately enumerated.",
-    "Ryujinx and native Switch gameplay remain unconfirmed."
+    "No runtime test of this rebuild on Switch, Eden or Ryujinx.",
+    "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
   ],
   "readme": "mods/key-quest-markers/README.md",
   "notices": [
@@ -83,8 +83,8 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r17: host configuration/classification fixtures, compiled ARM settings/save-failure/native GUI fixtures, ABI/state/import/resource checks; details in EVIDENCE.json.",
-    "manual_summary": "User-confirmed Eden/Linux r17 acceptance with matching installed/candidate hash and a preserved fresh log. User also confirmed operation without the HD Project on 2026-10-15. Detailed scenario coverage and other platforms remain unconfirmed."
+    "static_summary": "r18: target build and complete host/native fixtures passed; DT_TEXTREL absent and every dynamic relocation target is writable. See EVIDENCE.json and research/hardware-link.json.",
+    "manual_summary": "NOT RUN for r18. Prior accepted r17 evidence is preserved in EVIDENCE.json and backups/accepted/."
   },
   "dependencies": [
     {
@@ -97,14 +97,12 @@
     "DEVELOPMENT.md": "mods/key-quest-markers/DEVELOPMENT.md",
     "EVIDENCE.json": "mods/key-quest-markers/EVIDENCE.json"
   },
-  "approval": {
-    "date": "2026-10-15",
-    "basis": "User: ok, tested, promote to ready to distribute status. Installed r17 NRO matches the validated candidate exactly."
-  },
   "payloads": {
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
-      "source": "build/key-quest-markers/candidates/r17/package/romfs/nativeNX/plugins/key_quest_markers.nro",
-      "sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6"
+      "source": "build/key-quest-markers/candidates/r18/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1"
     }
-  }
+  },
+  "candidate": "build/key-quest-markers/candidates/r18/delivery",
+  "candidate_builder": "scripts/build.py"
 }

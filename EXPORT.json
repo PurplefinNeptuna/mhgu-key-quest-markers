@@ -2128,6 +2128,7 @@
     "src/config.rs",
     "src/settings.rs",
     "research/theme-colours.json",
-    "research/log-cleanup.json"
+    "research/log-cleanup.json",
+    "research/hardware-link.json"
   ]
 }

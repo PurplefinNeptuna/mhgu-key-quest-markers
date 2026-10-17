@@ -1,3 +1,16 @@
+# r18 hardware-test rebuild: DEVELOPMENT
+
+PIC remains enabled. The target adds `-nostartfiles` and `-Wl,-z,text` to
+exclude GCC startup objects and reject dynamic relocations in read-only sections.
+Gameplay, hooks, settings and assets are unchanged apart from build identification.
+The final NRO verifier also rejects DT_TEXTREL/DF_TEXTREL.
+
+The accepted r17 release and its records are preserved at
+`backups/accepted/key-quest-markers/r17-before-hardware-link/`.
+New output uses separate r18 candidate and work directories. No installation,
+launch or hardware acceptance is implied. The updated loader is not bundled.
+See EVIDENCE.json for the exact build and validation results.
+
 # r17 game UI colours and quiet logs — READY_TO_DISTRIBUTE
 
 The user confirmed on 2026-10-15 that r17 also works without the HD Project.

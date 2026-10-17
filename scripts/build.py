@@ -104,7 +104,7 @@ def package():
     previous={str(p.relative_to(named)) for p in named.rglob('*') if p.is_file()}
     if previous-payloads.keys(): raise ValueError('Preserving unexpected previous candidate files')
     shutil.copytree(source,named,dirs_exist_ok=True)
-    guide=(MOD/'README.md').read_text().replace('r17',VERSION).encode();(dest/'README.md').write_bytes(guide)
+    guide=(MOD/'README.md').read_text().replace('r18',VERSION).encode();(dest/'README.md').write_bytes(guide)
     archive=dest/('key-quest-markers-'+VERSION+'-candidate.zip')
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
         z.writestr('README.md',guide)

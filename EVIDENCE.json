@@ -3040,7 +3040,7 @@
       "workspace_distribution_check": "PASS: 11 mod records"
     }
   },
-  "current": {
+  "r17_before_hardware_link": {
     "base_game_confirmation": {
       "date": "2026-10-15",
       "source": "Direct user report in this chat",
@@ -4376,6 +4376,122 @@
       "release_directory": "build/key-quest-markers/releases/r17",
       "source_commit": "befdea5",
       "publication": false
+    }
+  },
+  "current": {
+    "version": "r18",
+    "date": "2026-10-18",
+    "status": "DEVELOPMENT",
+    "scope": "Linker-only hardware-test rebuild; gameplay unchanged.",
+    "runtime_test": "NOT RUN",
+    "previous_accepted": "r17",
+    "preserved_release": "backups/accepted/key-quest-markers/r17-before-hardware-link",
+    "build_validation": "PASSED",
+    "nro_sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1",
+    "elf_sha256": "f5179bd550e8eae45808c1d88277334db5ad7eb4737efaf4225ab71e59260c8c",
+    "relocations": {
+      "before": {
+        "sha256": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6",
+        "bytes": 61440,
+        "DT_TEXTREL": true,
+        "DF_TEXTREL": false,
+        "relocation_targets": {
+          "text": 6,
+          "data": 115
+        },
+        "nonwritable_targets": [
+          {
+            "offset": "0xc8",
+            "type": 23
+          },
+          {
+            "offset": "0xd0",
+            "type": 23
+          },
+          {
+            "offset": "0xfc",
+            "type": 23
+          },
+          {
+            "offset": "0x100",
+            "type": 23
+          },
+          {
+            "offset": "0xcc",
+            "type": 2
+          },
+          {
+            "offset": "0xf8",
+            "type": 2
+          }
+        ]
+      },
+      "after": {
+        "sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1",
+        "bytes": 61440,
+        "DT_TEXTREL": false,
+        "DF_TEXTREL": false,
+        "relocation_targets": {
+          "data": 111
+        },
+        "nonwritable_targets": []
+      }
+    },
+    "relocation_audit": "research/hardware-link.json",
+    "validation": {
+      "build": {
+        "path": "build/key-quest-markers/candidates/r18/build.json",
+        "sha256": "a7964701995ae676bcad18229dcbf0b596da6aa26b01903444e2e0d6da0b38a2",
+        "status": "BUILT"
+      },
+      "tests": {
+        "path": "build/key-quest-markers/candidates/r18/tests.json",
+        "sha256": "4e3683c18e5317e9e58af733f1968ec7e45bf4a4922949460f04fa8e5ec81d1c",
+        "status": "PASSED"
+      },
+      "resource": {
+        "path": "build/key-quest-markers/candidates/r18/resource.json",
+        "sha256": "ffd94e6869d409869f695d3ca7901f05028854e5c0ecafcf1a86494526c2ff23",
+        "status": "PASSED"
+      },
+      "arm": {
+        "path": "build/key-quest-markers/candidates/r18/arm.json",
+        "sha256": "8fd0480308f6e71cd647c1260b1fe71172c0198aa51b7334d34ccaa6c1bc9990",
+        "status": "PASSED"
+      },
+      "native-adapter": {
+        "path": "build/key-quest-markers/candidates/r18/native-adapter.json",
+        "sha256": "0909627bd5cbc032be3f312a947de92b5934e91880da7b968c831bd8845841fb",
+        "status": "PASSED"
+      },
+      "verify": {
+        "path": "build/key-quest-markers/candidates/r18/verify.json",
+        "sha256": "cba8fbbed5e65edc0ee400bec32f8508b9c1b09afdf6e407453a31119f4cf7d5",
+        "status": "PASSED"
+      }
+    },
+    "logs": {
+      "build": {
+        "path": "build/key-quest-markers/candidates/r18/build.log",
+        "sha256": "acc1934217c94b6f2bcce6b33ef2a19eb8fad4008b5acc226b6903d5fa718039"
+      },
+      "test": {
+        "path": "build/key-quest-markers/candidates/r18/test.log",
+        "sha256": "c2b5895bdb0bb8489e34f09cff52cde4fdf1ae28117b925fb58e52afa8e54073"
+      }
+    },
+    "gameplay_source_changes": "None. Damage Numbers metadata/startup log and Key Quest Markers build identity use the new version.",
+    "linker_errors": "None. Both builds report only the existing -z norelro ignored warning.",
+    "updated_loader_revision": "Not supplied or inspected.",
+    "native_gui_cases": 42,
+    "package": {
+      "path": "build/key-quest-markers/candidates/r18/delivery/key-quest-markers-r18-candidate.zip",
+      "sha256": "910c005099cf9325984d8af1e9465447ac692245ceb0074b3b122eefdda352f4",
+      "status": "VERIFIED_DEVELOPMENT_CANDIDATE"
+    },
+    "distribution_check": {
+      "status": "PASSED",
+      "mod_records": 11
     }
   }
 }

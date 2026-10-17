@@ -10,6 +10,9 @@
     "target-c-int-width": 32,
     "linker": "arm-none-eabi-gcc",
     "linker-flavor": "gcc",
+    "pre-link-args": {
+        "gcc": ["-nostartfiles", "-Wl,-z,text"]
+    },
     "abi": "eabi",
     "features": "+v8,+crc,+crypto",
     "max-atomic-width": 64,
