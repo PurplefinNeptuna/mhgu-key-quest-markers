@@ -4381,7 +4381,7 @@
   "current": {
     "version": "r18",
     "date": "2026-10-18",
-    "status": "DEVELOPMENT",
+    "status": "READY_TO_DISTRIBUTE",
     "scope": "Linker-only hardware-test rebuild; gameplay unchanged.",
     "runtime_test": "NOT RUN",
     "previous_accepted": "r17",
@@ -4484,14 +4484,52 @@
     "linker_errors": "None. Both builds report only the existing -z norelro ignored warning.",
     "updated_loader_revision": "Not supplied or inspected.",
     "native_gui_cases": 42,
-    "package": {
+    "distribution_check": {
+      "status": "PASSED",
+      "mod_records": 11
+    },
+    "validated_candidate_package": {
       "path": "build/key-quest-markers/candidates/r18/delivery/key-quest-markers-r18-candidate.zip",
       "sha256": "910c005099cf9325984d8af1e9465447ac692245ceb0074b3b122eefdda352f4",
       "status": "VERIFIED_DEVELOPMENT_CANDIDATE"
     },
-    "distribution_check": {
-      "status": "PASSED",
-      "mod_records": 11
+    "package": {
+      "path": "build/key-quest-markers/releases/r18/key-quest-markers-r18.zip",
+      "sha256": "cdf8a1a236a74c0cce5074af4680382520d47acd09cdf34be6a343c8ac0cd174",
+      "status": "READY_TO_DISTRIBUTE"
+    },
+    "promotion": {
+      "date": "2026-10-18",
+      "approval": "User requested: promote key quest marker to ready to distribure. Promote existing validated r18 bytes unchanged; runtime coverage remains unconfirmed.",
+      "runtime_bytes_changed": false,
+      "rebuilt": false,
+      "runtime_test": "NOT RUN",
+      "preserved_candidate": "backups/accepted/key-quest-markers/r18-distribution-approved",
+      "candidate_preservation": {
+        "elf-dynamic.txt": "3650194e472702f7b5ada77893a3dd0ae57a5f23792cb81c109d5f7f6a3281c6",
+        "build.json": "a7964701995ae676bcad18229dcbf0b596da6aa26b01903444e2e0d6da0b38a2",
+        "build.log": "acc1934217c94b6f2bcce6b33ef2a19eb8fad4008b5acc226b6903d5fa718039",
+        "native-adapter.json": "0909627bd5cbc032be3f312a947de92b5934e91880da7b968c831bd8845841fb",
+        "arm.json": "8fd0480308f6e71cd647c1260b1fe71172c0198aa51b7334d34ccaa6c1bc9990",
+        "verify.json": "cba8fbbed5e65edc0ee400bec32f8508b9c1b09afdf6e407453a31119f4cf7d5",
+        "test.log": "c2b5895bdb0bb8489e34f09cff52cde4fdf1ae28117b925fb58e52afa8e54073",
+        "tests.json": "4e3683c18e5317e9e58af733f1968ec7e45bf4a4922949460f04fa8e5ec81d1c",
+        "package.log": "827582c3a267f1da1cbd6171535c8b1b703b7d24e81649c3000b6e576a963371",
+        "resource.json": "ffd94e6869d409869f695d3ca7901f05028854e5c0ecafcf1a86494526c2ff23",
+        "delivery/README.html": "e6c590784d3c5cb89bc81420ecbaa10e731418622db24a95ac05a01e3c2677c9",
+        "delivery/GAMEBANANA_README.html": "11bf8a77da7ba237a8b75042baa736aa86d4b7141ecb98aa93b81c77c555de56",
+        "delivery/SHA256SUMS": "3a5eec3b561432509c73f530572d04c63957f93c96c09b5c16732633507dd6c4",
+        "delivery/manifest.json": "d24c3d577a01bc3938ba6dc4fc4347cf7f1dca588c679048e33a62cf00aebf3f",
+        "delivery/NOTICES.html": "1e90c80ee12f38ca84dc563c0ef9190e7fa6b6a9221ccae647db57089e728d29",
+        "delivery/key-quest-markers-r18-candidate.zip": "910c005099cf9325984d8af1e9465447ac692245ceb0074b3b122eefdda352f4",
+        "delivery/NOTICES.txt": "8261787fe9956919047647ac4dc12edf254f64d9b18f21ca348705b134bb88aa",
+        "delivery/README.md": "365b9962c14b58b9e722e7008262e5fefb55ab9fe2e56b9d4c33340adeef874a",
+        "delivery/VALIDATION.json": "138a577cf0ba844d25f11469dfacf2afc87e04c03952d4995275171c54823715",
+        "delivery/key-quest-markers/romfs/nativeNX/plugins/key_quest_markers.nro": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1",
+        "package/romfs/nativeNX/plugins/key_quest_markers.nro": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1"
+      },
+      "release_nro_sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1",
+      "publication": "UNPUBLISHED"
     }
   }
 }

@@ -1,4 +1,4 @@
-# r18 hardware-test rebuild: DEVELOPMENT
+# r18 linker rebuild: READY_TO_DISTRIBUTE
 
 PIC remains enabled. The target adds `-nostartfiles` and `-Wl,-z,text` to
 exclude GCC startup objects and reject dynamic relocations in read-only sections.
@@ -10,6 +10,12 @@ The accepted r17 release and its records are preserved at
 New output uses separate r18 candidate and work directories. No installation,
 launch or hardware acceptance is implied. The updated loader is not bundled.
 See EVIDENCE.json for the exact build and validation results.
+
+On 2026-10-18 the user approved distribution of the unchanged validated r18 NRO.
+The release ZIP is `build/key-quest-markers/releases/r18/key-quest-markers-r18.zip`.
+The candidate and its original records are preserved at
+`backups/accepted/key-quest-markers/r18-distribution-approved/`.
+Promotion does not rebuild, install, publish or add a runtime test result.
 
 # r17 game UI colours and quiet logs — READY_TO_DISTRIBUTE
 

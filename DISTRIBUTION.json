@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
-  "reason": "Hardware-test rebuild with PIC retained, GCC startup objects excluded and read-only dynamic relocations rejected. No gameplay changes; hardware acceptance pending.",
+  "reason": "User explicitly approved distribution of the unchanged validated r18 NRO. This promotion adds no gameplay or hardware test result.",
   "publication": {
     "published": false,
     "url": null,
@@ -11,7 +11,7 @@
   },
   "version": "r18",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r18-candidate.zip",
+  "archive": "key-quest-markers-r18.zip",
   "runtime_test": "NOT RUN",
   "runtime_active": true,
   "gamebanana": {
@@ -103,6 +103,8 @@
       "sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1"
     }
   },
-  "candidate": "build/key-quest-markers/candidates/r18/delivery",
-  "candidate_builder": "scripts/build.py"
+  "approval": {
+    "date": "2026-10-18",
+    "basis": "User requested: promote key quest marker to ready to distribure. Promote existing validated r18 bytes unchanged; runtime coverage remains unconfirmed."
+  }
 }
