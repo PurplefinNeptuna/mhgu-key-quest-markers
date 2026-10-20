@@ -1,149 +1,21 @@
-# r18 linker rebuild: READY_TO_DISTRIBUTE
+# Key Quest Markers: development and research
 
-PIC remains enabled. The target adds `-nostartfiles` and `-Wl,-z,text` to
-exclude GCC startup objects and reject dynamic relocations in read-only sections.
-Gameplay, hooks, settings and assets are unchanged apart from build identification.
-The final NRO verifier also rejects DT_TEXTREL/DF_TEXTREL.
+**Current state.** r18 is READY_TO_DISTRIBUTE after user approval on
+2026-10-18. The validated NRO was promoted unchanged; the local, unpublished ZIP
+is `build/key-quest-markers/releases/r18/key-quest-markers-r18.zip`. r18 has no
+runtime test of its own; it differs from the Eden/Linux-accepted r17 only in
+link flags and build identification. Ryujinx and native Switch gameplay remain
+unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact
+results, with the pre-compaction `docs/*.json` records under `historical`.
 
-The accepted r17 release and its records are preserved at
-`backups/accepted/key-quest-markers/r17-before-hardware-link/`.
-New output uses separate r18 candidate and work directories. No installation,
-launch or hardware acceptance is implied. The updated loader is not bundled.
-See EVIDENCE.json for the exact build and validation results.
+The mod draws badges with the game's own GUI objects: native cGUIObjTexture
+children on each quest row, the already-loaded lobby emblem and the native
+renderer. Forge supplies lifecycle, hooks, logging, singleton/DTI lookup and
+supporting APIs. There is no ImGui badge drawing, ARC replacement or shipped
+artwork; the package is one NRO. The HD Project is optional (user-confirmed on
+2026-10-15); the copied English HD archive is only a build-time layout fixture.
 
-On 2026-10-18 the user approved distribution of the unchanged validated r18 NRO.
-The release ZIP is `build/key-quest-markers/releases/r18/key-quest-markers-r18.zip`.
-The candidate and its original records are preserved at
-`backups/accepted/key-quest-markers/r18-distribution-approved/`.
-Promotion does not rebuild, install, publish or add a runtime test result.
-
-# r17 game UI colours and quiet logs — READY_TO_DISTRIBUTE
-
-The user confirmed on 2026-10-15 that r17 also works without the HD Project.
-HD is optional. The copied English HD archive remains a build-time fixture,
-not a runtime dependency. Earlier sections describe the HD resources used for
-those dated investigations.
-
-The reported Eden r16 log contains21 false ERROR diagnostics: successful hook
-installation, two hook-entry notices and two nine-line snapshots. Its NRO hash
-matches the preserved r16 candidate. `research/log-cleanup.json` records the
-log/payload correlation. r17 removes snapshots, hook-entry atomics and diagnostic
-ID/flag packets entirely. One INFO startup remains; actual hook/resource failures
-are reported once per reason from onUpdate. Creation/validation failures retain
-their numeric stage on the same line; historical stage explanations follow below.
-No successful rows, pages, saves or frames produce warnings/errors.
-
-## Game UI defaults
-
-Defaults now use the exact game UI colour properties: key green `#006305`
-(RGB0,99,5) and urgent red `#A30000` (RGB163,0,0). Completed stays `#808080`.
-Saved custom RGB values remain untouched; Reset defaults then Save & apply uses
-this palette. Classification, settings, native rendering and geometry are unchanged.
-
-See `research/theme-colours.json` for copied input hashes, object/instance IDs,
-file offsets and native category/message bindings. `inspect_theme` verifies the
-actual pinned resource and executable at build time; no screenshot is sampled.
-The base and HD `counter_down` resource are byte-identical. The main objective's
-instance colour overrides its shared Message template; the separate Slaying
-category red `#CC0000` is not the colour requested here.
-
-The r16 candidate, receipts and support remain unchanged in its versioned tree.
-The user accepted the unchanged r17 on Eden/Linux on 2026-10-15 and requested
-distribution readiness. The fresh log contains none of the old plugin diagnostic
-dumps. The installed NRO matches the candidate SHA-256
-`ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6`. Individual settings,
-persistence, ranks, quest states and transitions were not separately enumerated;
-Ryujinx/native Switch gameplay remains unconfirmed. See EVIDENCE.json for the
-log fingerprint, scoped acceptance and byte-for-byte candidate preservation.
-Promotion changes metadata/support only; it does not rebuild or install.
-
-# r16 configurable colours — DEVELOPMENT
-
-The current candidate targets stock Forge 1.5.1 and preserves r15's original
-32×32 native emblem, placement, title fitting and quest classification. The
-settings panel uses Forge ImGui only; badges still use the game renderer.
-
-`core/src/colors.rs` owns bounded RGB INI parsing, formatting and the tested
-mount/write/readback/commit policy. Key/Urgent/Completed preserve badge ordinals
-1/3/2. Configuration keys are exactly `key`, `urgent`, `completed`; all values
-are six hexadecimal RGB digits and native alpha remains255.
-
-`src/settings.rs` protects UI drafts and load state with a Forge mutex. Three
-independent atomic RGB settings are copied once per native row update, avoiding
-settings locks or file I/O in game hooks. Editing/resetting marks loading complete
-so delayed storage availability cannot overwrite choices. Save publishes only
-after write, flush, readback and checked commit all succeed. Failures preserve
-the pending and previously applied palettes; prior disk bytes are not guaranteed.
-
-`src/config.rs` reuses Forge's counted save mount and the checked ARM32 SDK file
-ABI established by the maintained preferences implementation. Narrow SDK calls
-are necessary because stock forge-rs ScopedMount panics on mount failure,
-Reader asserts on short reads, Writer ignores short writes, and checked flush
-and commit are absent. Handles and filesystem abort context use scoped guards.
-Forge's unmount performs its normal additional commit; the plugin checks an
-explicit commit before reporting success. Only the plugin's primary INI is used.
-
-Manual r16 acceptance remains NOT RUN. Check picker/hex edits, pending/reset,
-Save & apply without scrolling or counter reopening, restart persistence, all
-three badge states, request overlap, selection, confirmation, scrolling and menu
-transitions. Record Eden and Ryujinx separately. No installation or launch is
-part of candidate preparation.
-
-r15's complete release was preserved byte-for-byte at
-`backups/accepted/key-quest-markers/r15-before-colours/`; its hashes are adjacent.
-Earlier implementation records follow with their original historical scope.
-
-## Earlier development and research
-
-Current Switch build: r15 with upstream Forge 1.5.1. Earlier version claims below retain their recorded scope.
-
-## Key Quest Markers
-
-**r14 — READY_TO_DISTRIBUTE. Original emblem only.** The user accepted the
-unchanged r14 NRO on Eden/Linux on 2026-10-15. Ryujinx and native Switch gameplay
-remain unconfirmed; individual cases were not separately enumerated.
-
-Native 32×32 badges share an empty request slot and sit four pixels left of a
-visible request bubble. Needed keys are orange-red #E74725, active urgents purple
-#9B4DCA, and completed/inactive badges grey #808080. Native AutoScale fits long
-titles and resets on row reuse. Special Village urgent pairs are included.
-
-The game owns texture children, drawing and cleanup. The plugin references the
-already-loaded English HD lobby emblem; it ships one NRO and no game assets or
-ARC replacements. Runtime source and the tested NRO were not changed during
-promotion. The accepted binary retains its bounded startup/first-page diagnostic
-logs; there is no per-frame logging.
-
-- [Installation guide](README.md)
-- [Independent builds and packaging](DEVELOPMENT.md)
-- [Native ownership, resource and ABI audit](DEVELOPMENT.md)
-- [r14 runtime acceptance](EVIDENCE.json)
-- [Promotion and archived comparison receipts](EVIDENCE.json)
-- [Special-urgent native/Kiranico cross-check](EVIDENCE.json)
-
-The original r14 release is under `build/key-quest-markers/releases/r15/` in
-the workspace. Small-emblem comparisons are archived and are not release options.
-Historical r9/r11 evidence and original C++/PC releases remain preserved.
-
-
-## Current release workflow
-
-r14 with the original emblem is READY_TO_DISTRIBUTE, approved on 2026-10-15.
-Its NRO is pinned to SHA-256
-`79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65`.
-Use `./build.sh package` or the workspace distribution coordinator to package
-those approved bytes. Packaging verifies the existing build and test receipts;
-it does not rebuild, install or launch. Rebuilding a different runtime requires
-a new version and separate validation/acceptance.
-
-Only the original emblem is a supported release. `KQM_SMALL_MARK=1` remains solely
-for reproducing historical comparisons; ready-release packaging rejects it.
-All small-emblem candidate deliveries are archived with verified hashes recorded
-in docs/PROMOTION_R14.json. Preserve original candidate/rollback bytes.
-
-The following sections retain the build procedure and implementation history.
-
-## Development
+## Build and validate
 
 The independent source folder owns its recipes, Rust sources, vendored sources,
 locks, tests and licenses. Supply your own game/resource inputs and tool binaries
@@ -171,135 +43,81 @@ Run from any directory:
 ./build.sh export --output /path/to/new/source-folder
 ```
 
-`prepare` verifies inputs and the read-only native GUI layout fixture. All commands are offline;
-there is no download, install, game launch or settings command. Outputs use the
-workspace's `build/key-quest-markers/candidates/r15/` and matching `work/` folder,
-or the independent checkout's own `build/` and `work/` folders after export.
+`prepare` verifies inputs and the read-only native GUI layout fixture. All
+commands are offline; there is no download, install, game launch or settings
+command. Outputs use the workspace's `build/key-quest-markers/candidates/r18/`
+and matching `work/` folder, or the independent checkout's own `build/` and
+`work/` folders after export. The target keeps PIC and adds `-nostartfiles` and
+`-Wl,-z,text`; the final NRO verifier rejects DT_TEXTREL/DF_TEXTREL.
 
-The workspace coordinator also supports
-`python3 scripts/mod_distribution.py package key-quest-markers` for this
-explicitly registered DEVELOPMENT candidate. It delegates to the owned builder,
-verifies ZIP/runtime/support/checksums, and does not grant release approval.
-Run the full coordinator `check` before committing distribution work.
+The workspace coordinator packages the registered record with
+`python3 scripts/mod_distribution.py package key-quest-markers`. It delegates to
+the owned builder, verifies ZIP/runtime/support/checksums, and does not grant
+release approval. Run the full coordinator `check` before committing
+distribution work. A different runtime needs a new version and separate
+validation and acceptance.
 
-r12 activates the parent and row hooks after executable/Forge validation. The
-parent copies offered urgent IDs into scoped Forge SDK TLS; the row callback reads
-native progression/completion and creates missing cGUIObjTexture children. They
-are attached to each row's main Null, using the game's MT allocation/constructor
-and sibling-link functions. The native draw cache grows from 152 to 168 bytes.
-The runtime index map grows to thirteen entries with the original twelve
-bindings preserved; resource descriptors remain untouched. See the
-native audit for exact ownership and the source of these sizes.
+`KQM_SMALL_MARK=1` builds the archived small-emblem comparison variant
+(`-small` version suffix, separate build/work paths). It exists only to reproduce
+historical comparisons; ready-release packaging rejects it. The pinned converter
+does not accept Cargo feature arguments, so build.rs emits a checked cfg from
+this one environment flag.
 
-The build only reads the copied HD common archive as a layout fixture; it does
-not stage any ARC. r1/r2/r3/r4/r5/r6/r7/r8/r9/r10/r11 and the original C++/PC releases remain preserved. r12
-retains the 70-byte named plugin metadata and reports failures at ERROR.
-No command installs, launches, edits saves or changes emulator settings.
+## Badge policy and colours
 
-Forge owns lifecycle/logging, allocation for plugin data, hooks, patches, singleton
-lookup, main addresses and SDK TLS. DTI lookup uses its high-level wrapper. The
-bindings do not expose the native GUI hierarchy or MT allocator/constructor
-operations needed for game-owned children; checked raw native calls fill that gap.
-Using Forge malloc for these objects would mismatch their native destructors.
+| Badge | Ordinal | Default | Meaning |
+| --- | --- | --- | --- |
+| Key | 1 | `#006305` (RGB 0,99,5) | Needed key quest for the current progression tier |
+| Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests |
+| Urgent | 3 | `#A30000` (RGB 163,0,0) | Offered, available, unfinished urgent |
 
-Texture construction uses the checked native function at main+0xa4f60c after MT
-allocation. MHGU’s Texture DTI has no placement virtual; the generic forge-rs
-instantiate wrapper cannot be used for this class.
+The defaults are the exact game UI colour properties. See
+`research/theme-colours.json` for copied input hashes, object/instance IDs, file
+offsets and native category/message bindings; `inspect_theme` verifies the
+pinned resource and executable at build time. The base and HD `counter_down`
+resource are byte-identical. The main objective's instance colour overrides its
+shared Message template; the separate Slaying category red `#CC0000` is not the
+requested colour. Native alpha stays 255.
 
-The compiled adapter fixture calls forge_onInit, installs both hooks and enters
-their patched game addresses before creating badges. Supporting signature order
-is independent of each trampoline’s target snapshot.
+Groups 47..54 are four special Village encounter pairs that Kiranico lists as
+Urgent. They lack the rank-up urgency bit and use the full native counter
+availability predicate instead of the rank-up offered set. Completion of either
+record in a family makes both grey. Native details are in the r13 entry below.
 
-The r8 runtime log confirmed both hooks and visible red/grey decisions. Its
-incorrect native mask mode came from reading immediate INIT_PARAM kinds 17/18
-as byte-section offsets. r9 decodes those fields directly and copies the actual
-Tex_icon style, including Mask=0. The unchanged r8 NRO reproduces a mask-pass
-entry in the regression; the r9 fixture executes native colour draw and quad
-generation with GPU commands doubled. The user confirmed r9 works on Eden/Linux; r10 was rejected before drawing and r11 was subsequently user-confirmed working (docs/RUNTIME_R11.json).
+## Settings
 
+Configuration keys are exactly `key`, `urgent`, `completed`; values are six
+hexadecimal RGB digits. Saved custom values are never rewritten; Reset defaults
+then Save & apply uses the game palette. The settings panel uses Forge ImGui only.
 
-r11 reads native request visibility after the original builder and positions the
-same 24×24 child at X=369, or X=337 when the bubble is visible at X=365. The title
-gets native AutoScale and width303/271 (X=62 plus a four-pixel gap); ordinary or
-unresolved rows restore width355, height38 and AutoScale=false. The request mark
-is read-only. Title Size/AutoScale/AutoWrap calls use their audited integer/pointer
-ABIs; setting text dirty bit16 invalidates cached glyph layout. Invalid request
-bindings hide only the affected badge and restore its valid title before returning.
+`core/src/colors.rs` owns bounded RGB INI parsing, formatting and the tested
+mount/write/readback/commit policy. `src/settings.rs` protects UI drafts and load
+state with a Forge mutex. Three independent atomic RGB settings are copied once
+per native row update, avoiding settings locks or file I/O in game hooks.
+Editing/resetting marks loading complete so delayed storage availability cannot
+overwrite choices. Save publishes only after write, flush, readback and checked
+commit all succeed. Failures preserve the pending and previously applied
+palettes; prior disk bytes are not guaranteed.
 
-The compiled fixture also executes native AutoScale dispatch and clamp arithmetic
-with supplied glyph bounds; glyph scaling and GPU submission remain doubles.
-It checks short/long titles, both slots, per-row binding failures and early-return
-restoration. Preserve the accepted r9 runtime evidence in docs/RUNTIME_RESULTS.json.
+`src/config.rs` reuses Forge's counted save mount and the checked ARM32 SDK file
+ABI established by the maintained preferences implementation. Narrow SDK calls
+are necessary because stock forge-rs ScopedMount panics on mount failure,
+Reader asserts on short reads, Writer ignores short writes, and checked flush
+and commit are absent. Handles and filesystem abort context use scoped guards.
+Forge's unmount performs its normal additional commit; the plugin checks an
+explicit commit before reporting success. Only the plugin's primary INI is used.
 
+## Logging
 
-r10 failed its new title binding: source object ID6 declares cGUIObjMessage, CRC
-0x2fb82eae, size352. r10 incorrectly required the cGUIObjText subclass, size384.
-Fresh Eden logs show classification with zero GUI flags and error128. The unchanged
-r10 binary reproduces rejection against the corrected fixture. r11 uses Message
-DTI and its native getDTI at0xa56ab8; inherited Size/AutoScale APIs remain unchanged.
-Fixtures derive title CRC from the original GUI record, use the real Message
-getDTI instructions and reject a substituted Text subclass with otherwise valid
-ID and ownership. No rendering priority changes are part of this correction.
+Startup is one INFO line. Actual hook/resource failures are reported once per
+reason from onUpdate; creation/validation failures carry their numeric stage on
+the same line (stage meanings are in the history below). Successful rows,
+pages, saves and frames produce no warnings or errors. r17 removed the r8–r16
+snapshots, hook-entry atomics and diagnostic ID/flag packets after an Eden r16
+log showed 21 false ERROR lines; `research/log-cleanup.json` records that
+log/payload correlation.
 
-
-r12 keeps the accepted r11 binding/renderer and enlarges only the badge quad to
-32×32. Its free-slot X=365 preserves the slot centre; X=329 leaves four pixels
-before a bubble at365. Y=3 lifts the emblem within the white band, versus r11's
-24px/Y=8. The full quad ends at35 within the native 40px row envelope. Title
-widths become299/263 with the same four-pixel gap and restoration rules. The
-screenshot shows r11's visible emblem lower and smaller than the bubble; r12's
-appearance still requires a new in-game check. No extra hooks, objects, resources,
-map/cache capacity or renderer changes are needed for this size adjustment.
-
-
-### r12-small comparison variant
-
-Only the source UV and build identity differ from r12. The smaller outlined top
-emblem occupies logical `(342,0,372,30)` in texture22, equivalent to physical
-`(1368,0,1488,120)` in the 2048² HD atlas. It is drawn at the same 32×32 size.
-Native compiled fixtures check the rectangle setter, stored UV and all four
-half-texel-inset UV corners, along with the unchanged layout and cleanup cases.
-The original r12 delivery remains untouched; its complete file hashes are in
-`docs/R12_COMPARISON.json`. Independent source exports and output paths use
-`r12-small`, so neither build nor package commands overwrite original r12.
-
-
-### r13: special Village urgents, both emblem builds
-
-Default commands build/test/package r13 with the original emblem. Prefix the same
-commands with `KQM_SMALL_MARK=1` for r13-small. This is a build-time selection;
-there is no runtime option or config. Separate work/build paths, metadata names
-and version receipts prevent either comparison candidate overwriting the other.
-The pinned converter does not accept Cargo feature arguments, so build.rs emits
-a checked cfg from this one environment flag. Both binaries share all classifier
-and native adapter source; only UVs, plugin name and diagnostic version differ.
-
-Run both `./build.sh build` and `./build.sh test` before packaging each variant.
-Use `./build.sh package` for the small variant; it invokes the same complete
-candidate validator. The workspace coordinator packages/checks the default r13
-record. Independent exports support both commands with the same flag.
-
-Groups47..54 are the four special encounter pairs listed Urgent on Kiranico.
-They lack the rank-up urgency bit. They use the full native counter availability
-predicate (scene flag plus per-record enabled bit), rather than the rank-up
-offered set or rank-key prerequisites. Completion
-of either record in a native family makes both grey. Detailed resources, native
-functions, live URLs and limits are in docs/SPECIAL_URGENTS.json. No new hooks,
-resources, pointers, native signatures or save writes are introduced.
-
-
-### r14: purple active urgents
-
-The default and `KQM_SMALL_MARK=1` commands now build r14 and r14-small.
-Active urgent badges change from yellow #FFD239 to purple #9B4DCA, packed as
-0xffca4d9b so little-endian bytes are155,77,202,255. The internal state remains
-ordinal3 and is named Purple in core and diagnostics. Native request objects,
-key/grey colours, classification and layout are unchanged. Existing exact-RGBA
-and compiled native quad checks validate the new colour in both builds.
-Original r13/r13-small packages remain byte-for-byte preserved.
-
-
-## Native implementation audit — r12 badge size and alignment
+## Native implementation
 
 ### Native classification and attachment
 
@@ -337,7 +155,7 @@ category23 is final-stage/no-key. An unfinished old key becomes grey; completion
 or a satisfied Village alternative group also makes it grey. Only the quest's
 own progression domain must be known; an unknown tier hides an unfinished key.
 
-Yellow requires historical urgent identity, membership in the actual counter's
+An active urgent badge (ordinal 3) requires historical urgent identity, membership in the actual counter's
 offered set, current availability and the native prerequisite counter. Completed
 urgents are grey. Inactive/old urgents are grey even if unfinished. Multiple offered
 IDs are evaluated independently. This handles special Village phases involving
@@ -388,8 +206,8 @@ the checked raw call keeps native ownership and borrowing local instead.
 
 The native texture gets ID22 from the existing rGUI context through lookup
 0xb80fd0 / setter0xa4faf0. Its 512² logical atlas and loaded resource are validated.
-The display size is 24×24. r9 used (-28,8) relative to the main row Null;
-r10 uses (369,8), or (337,8) when the native request bubble is visible.
+The display size is 32×32 at row-local Y=3, X=365 in a free request slot or
+X=329 before a visible request bubble (r12; r9 used 24×24 at (-28,8)).
 The source rectangle is `(136,344,198,406)` in HD_lobby00_BM_NOMIP, the white lobby
 emblem already loaded by English HD. The size/position fields (+0xb4/+0xb8 and
 +0x80/+0x84) are verified by native getters/setters. Position setters use VFP scalar
@@ -458,24 +276,29 @@ The pinned exports lack memory-query/program-ID/cache-flush helpers and native
 GUI-holder operations; narrow SVC/native calls fill those gaps. No second renderer
 or allocator is introduced. Diagnostics are deduplicated outside hot hooks.
 
-### Runtime report and revised delivery
+## Fixtures and validation
 
-The user reported Rust Damage Numbers in Plugin UI but absent from Loaded Plugins,
-and no quest badges. The installed badge NRO/archive matched r2. The checked Eden
-logs show Forge1.5.0; its config filters at ERROR, hiding r2's INFO/WARN messages.
-forge-rs's entry macro writes only the version prefix; Forge's list skips empty
-names. The candidate supplies the full 70-byte metadata record (name at offset6) and retains
-Forge logging with failures at ERROR. Vendored pins are unchanged.
+Core policy fixtures cover all badge states, alternatives, obsolete unfinished
+keys, simultaneous urgents, viewing versus completing and conflicting records.
+The hook harness executes production ownership-aware rollback with Forge doubles.
 
-The installed HD Project and r2 badge package both replace common_eng.arc. The
-inspected Eden source selects the alphabetically first file, letting HD Project's
-unmodified counter win. Individual live file ownership was not logged. The user
-then explicitly chose native runtime insertion with all ARC files untouched.
-The candidate implements that choice and contains only the NRO. Remove/disable the old Rust
-candidate as a whole so its old ARC cannot remain as a leftover installation file.
-Installed packages/settings/saves were read only; no installation or launch occurred.
+`resource.py` only reads the copied native GUI/atlas layout and rejects corrupt
+bounds. It checks that no ARC is staged. The fifteen original row sequences and
+twelve-object index layout are inputs, and remain unchanged at runtime.
 
-### Automated evidence and manual acceptance
+`arm.py` runs the compiled seven-argument pass-through callback in all sixteen GE
+patterns, checks callee-saved state, named 70-byte metadata with canaries, the
+1.5.0 request and native Hook declarations, and retains caller continuation code.
+
+`native_adapter.py` runs the compiled parent/row/GUI adapter with native-shaped
+memory, MT constructor/query doubles and real game ARM draw-list/destructor code.
+Its twenty-one cases cover states, progression evidence, both holder tables, missing
+context, bad objects, object/cache allocation failure and repeated insertion.
+It checks colors, pose/size, unchanged index arrays and saved records, actual native
+draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
+
+The GPU commands are doubles. No fixture launches Forge or establishes actual
+in-game pixels, clipping or gameplay acceptance.
 
 Policy fixtures cover all states, obsolete unfinished keys, alternative groups,
 simultaneous urgents, viewing versus completing, missing/conflicting records and
@@ -498,7 +321,56 @@ individual cases and Ryujinx remain unconfirmed: Village/Hub/G progression, alte
 simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
 and progression advancement. Check size, four-pixel gap, clipping and colors.
 Disable the old prefix plugin during a trial; preserve accepted releases and
-installed rollback payloads. See RUNTIME_RESULTS.json for the scoped r9 confirmation.
+installed rollback payloads. See EVIDENCE.json `historical` → `docs/RUNTIME_RESULTS.json` for the scoped r9 confirmation.
+
+## Release history
+
+Each runtime change got its own version and build/work folders. Preserved
+releases and pre-change records are under `backups/accepted/key-quest-markers/`
+(and `key-quest-markers-rs/` for the first Rust candidates).
+
+| Version | Status | Change |
+| --- | --- | --- |
+| r18 | READY_TO_DISTRIBUTE 2026-10-18 | `-nostartfiles` and `-Wl,-z,text` link rebuild. Candidate records in `r18-distribution-approved/`. |
+| r17 | READY_TO_DISTRIBUTE 2026-10-15 | Game UI default colours and quiet logs. User-accepted on Eden/Linux, with and without HD; NRO `ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6`. Preserved in `r17-before-hardware-link/`. |
+| r16 | DEVELOPMENT, never accepted | Configurable Key/Urgent/Completed colours. |
+| r15 | release | Stock Forge 1.5.1; the Rust implementation (r1–r14 were developed as key-quest-markers-rs) renamed to replace the C++ project. Preserved in `r15-before-colours/`. |
+| r14 | READY_TO_DISTRIBUTE 2026-10-15 | Purple active urgents (#9B4DCA). NRO `79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65`. |
+| r13 | candidate | Special Village urgent pairs, original and small emblem builds. |
+| r12 / r12-small | candidates | 32×32 badges; small-emblem atlas comparison (archived, not a release option). |
+| r11 | user-confirmed Eden/Linux | Correct Message title binding. |
+| r10 | failed | Request-slot placement and title fitting rejected by a wrong title class. |
+| r9 | user-confirmed Eden/Linux | First visible badges: material correction. |
+| r1–r8 | failed or diagnostic | See below. |
+
+Before r17, keys were orange-red #E74725; active urgents were purple #9B4DCA
+from r14 and yellow #FFD239 before that. Individual settings, persistence, ranks, quest states and
+transitions were never separately enumerated in any acceptance. Checks still
+worth a dedicated run: picker/hex edits, pending/reset, Save & apply without
+scrolling or reopening the counter, restart persistence, all three badge
+states, request overlap, selection, confirmation, scrolling and menu
+transitions, on Eden and Ryujinx separately.
+
+The sections below are the dated runtime reports and corrections that produced
+the current design. Each keeps its original scope; "yellow" and 24×24 sizes are
+the colours and geometry of that time.
+
+### r2 runtime report and native insertion
+
+The user reported Rust Damage Numbers in Plugin UI but absent from Loaded Plugins,
+and no quest badges. The installed badge NRO/archive matched r2. The checked Eden
+logs show Forge1.5.0; its config filters at ERROR, hiding r2's INFO/WARN messages.
+forge-rs's entry macro writes only the version prefix; Forge's list skips empty
+names. The candidate supplies the full 70-byte metadata record (name at offset6) and retains
+Forge logging with failures at ERROR. Vendored pins are unchanged.
+
+The installed HD Project and r2 badge package both replace common_eng.arc. The
+inspected Eden source selects the alphabetically first file, letting HD Project's
+unmodified counter win. Individual live file ownership was not logged. The user
+then explicitly chose native runtime insertion with all ARC files untouched.
+The candidate implements that choice and contains only the NRO. Remove/disable the old Rust
+candidate as a whole so its old ARC cannot remain as a leftover installation file.
+Installed packages/settings/saves were read only; no installation or launch occurred.
 
 ### r3 runtime failure and r4 correction
 
@@ -679,7 +551,7 @@ SHA `331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576`.
 The fresh Eden log identifies MHGU 1.4.0, Forge1.5.0, r9 initialization and both
 hook entries. Visible success is established by the user report. The snapshot
 ends partway through a diagnostic line, so it proves no clean-shutdown result.
-Full hashes, snapshot identity and coverage limits are in [RUNTIME_RESULTS.json](EVIDENCE.json).
+Full hashes, snapshot identity and coverage limits are in EVIDENCE.json `historical` → `docs/RUNTIME_RESULTS.json`.
 
 Preserve this native GUI implementation: the game's own cGUIObjTexture objects,
 row hierarchy, loaded HD atlas and native renderer provide the badges. Forge
@@ -778,7 +650,7 @@ The user confirmed r11 works and supplied a screenshot showing red/grey badges,
 request bubbles and a completion ribbon. The installed NRO matches r11 SHA
 `12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48`;
 the fresh Eden log identifies r11, both hooks and visible native GUI flags.
-Details and preserved screenshot/log hashes are in [RUNTIME_R11.json](EVIDENCE.json).
+Details and preserved screenshot/log hashes are in EVIDENCE.json `historical` → `docs/RUNTIME_R11.json`.
 This accepts the binding correction on Eden/Linux without exhaustive coverage.
 
 The screenshot's visible red mark is about32px square, versus a request bubble
@@ -807,7 +679,7 @@ the native 512² logical atlas. Its black outline remains in the source pixels.
 The compiled native fixture checks the UV setter and stored rectangle, then
 quad UV corners at X342.5/371.5 and Y0.5/29.5. The quad remains 32×32 at Y3
 and X365/329. No resources, ownership, hooks, title fitting or classification
-change. Original r12 delivery hashes are retained in `R12_COMPARISON.json`.
+change. Original r12 delivery hashes are retained in EVIDENCE.json `historical` → `docs/R12_COMPARISON.json`.
 Actual sampling and visual preference require the user's in-game comparison.
 
 
@@ -841,7 +713,7 @@ uses the audited three-integer ABI. No hook sites, allocation or renderer change
 Static ARM cases
 exercise all eight real ID/category/flag records, missing offer context, availability,
 independent pair completion and native drawing/cleanup in both emblem builds.
-See SPECIAL_URGENTS.json for hashes, URLs, user-report evidence and runtime limits.
+See EVIDENCE.json `historical` → `docs/SPECIAL_URGENTS.json` for hashes, URLs, user-report evidence and runtime limits.
 
 
 ### r14: urgent colour — 2026-10-15
@@ -853,28 +725,3 @@ same mapping. Needed keys remain #E74725 and completed/inactive badges #808080.
 The game's yellow request objects are untouched. r13 special-urgent semantics,
 all native calls, hooks, row geometry and ownership remain unchanged. Existing
 exact-byte host assertions and every coloured native quad check cover this change.
-
-
-## Fixtures
-
-Core policy fixtures cover all badge states, alternatives, obsolete unfinished
-keys, simultaneous urgents, viewing versus completing and conflicting records.
-The hook harness executes production ownership-aware rollback with Forge doubles.
-
-`resource.py` only reads the copied native GUI/atlas layout and rejects corrupt
-bounds. It checks that no ARC is staged. The fifteen original row sequences and
-twelve-object index layout are inputs, and remain unchanged at runtime.
-
-`arm.py` runs the compiled seven-argument pass-through callback in all sixteen GE
-patterns, checks callee-saved state, named 70-byte metadata with canaries, the
-1.5.0 request and native Hook declarations, and retains caller continuation code.
-
-`native_adapter.py` runs the compiled parent/row/GUI adapter with native-shaped
-memory, MT constructor/query doubles and real game ARM draw-list/destructor code.
-Its twenty-one cases cover states, progression evidence, both holder tables, missing
-context, bad objects, object/cache allocation failure and repeated insertion.
-It checks colors, pose/size, unchanged index arrays and saved records, actual native
-draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
-
-The GPU commands are doubles. No fixture launches Forge or establishes actual
-in-game pixels, clipping or gameplay acceptance.
