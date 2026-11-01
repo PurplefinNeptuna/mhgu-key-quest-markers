@@ -112,18 +112,15 @@ explicit commit before reporting success. Only the plugin's primary INI is used.
 Startup is one INFO line. Actual hook/resource failures are reported once per
 reason from onUpdate; creation/validation failures carry their numeric stage on
 the same line (stage meanings are in `src/gui.rs`). Successful rows,
-pages, saves and frames produce no warnings or errors. r17 removed the r8–r16
-snapshots, hook-entry atomics and diagnostic ID/flag packets after an Eden r16
-log showed 21 false ERROR lines; `research/log-cleanup.json` records that
-log/payload correlation.
+pages, saves and frames produce no warnings or errors. `research/log-cleanup.json`
+records why the older diagnostic lines were removed.
 
 ## Native implementation
 
 ### Native classification and attachment
 
-The blanket r1 disable gate and unresolved-state placeholders are removed. r12
-installs the parent and row hooks after executable/Forge validation and updates
-native badge objects synchronously. Ordinary runtime validation rejects actual
+The plugin installs the parent and row hooks after executable/Forge validation
+and updates native badge objects synchronously. Ordinary runtime validation rejects actual
 mismatched resources or unavailable records. There is no configuration bypass.
 
 Original main NSO SHA-256:
@@ -207,7 +204,7 @@ the checked raw call keeps native ownership and borrowing local instead.
 The native texture gets ID22 from the existing rGUI context through lookup
 0xb80fd0 / setter0xa4faf0. Its 512² logical atlas and loaded resource are validated.
 The display size is 32×32 at row-local Y=3, X=365 in a free request slot or
-X=329 before a visible request bubble (r12; r9 used 24×24 at (-28,8)).
+X=329 before a visible request bubble.
 The source rectangle is `(136,344,198,406)` in HD_lobby00_BM_NOMIP, the white lobby
 emblem already loaded by English HD. The size/position fields (+0xb4/+0xb8 and
 +0x80/+0x84) are verified by native getters/setters. Position setters use VFP scalar
@@ -240,7 +237,7 @@ root/cache/index arrays valid and destroys unpublished storage.
 ### ARM and Forge boundaries
 
 forge-rs 1.5.0 is pinned at `d1865b68e9b194eb3eacc8bd71bbf601a5fac63e`.
-The loader handshake requests 1.5.0. Native and Rust checks agree on Hook size24,
+The loader handshake requests 1.5.1. Native and Rust checks agree on Hook size24,
 alignment4, context offset12, ctx_cell offset16 and has_ctx offset20 (native).
 Older incompatible loaders are rejected; no loader is bundled or replaced.
 
@@ -288,7 +285,7 @@ twelve-object index layout are inputs, and remain unchanged at runtime.
 
 `arm.py` runs the compiled seven-argument pass-through callback in all sixteen GE
 patterns, checks callee-saved state, named 70-byte metadata with canaries, the
-1.5.0 request and native Hook declarations, and retains caller continuation code.
+1.5.1 request and native Hook declarations, and retains caller continuation code.
 
 `native_adapter.py` runs the compiled parent/row/GUI adapter with native-shaped
 memory, MT constructor/query doubles and real game ARM draw-list/destructor code.
@@ -300,28 +297,9 @@ draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
 The GPU commands are doubles. No fixture launches Forge or establishes actual
 in-game pixels, clipping or gameplay acceptance.
 
-Policy fixtures cover all states, obsolete unfinished keys, alternative groups,
-simultaneous urgents, viewing versus completing, missing/conflicting records and
-row transitions. The resource fixture checks the unmodified fifteen-sequence,
-twelve-object row and existing HD atlas; the package check rejects any ARC payload.
+The package check rejects any ARC payload. Protected quest, completion and progression records stay unchanged in every fixture. Pixel rendering and the game's actual query results still need a manual trial.
 
-The compiled fixture uses unmodified twelve-object rows, native-shaped metadata,
-query/MT allocation and original-row factory/property doubles and the game's
-actual ARM animation and texture constructors, texture style/rectangle/color/
-visibility setters, cache allocator/free, child-link helpers, draw walker and
-root/container/texture destructors. It verifies object creation, direct-child links, preserved original bindings in expanded index maps,
-expanded cache bounds with canaries, actual traversal of visible badges, repeated
-updates without additional allocation, native cleanup, failure rollback and every
-badge state. Protected quest/completion/progression records remain unchanged.
-Pixel rendering and the game's actual query results still require a manual trial.
-
-No emulator was launched, package installed, save modified or loader replaced by
-this implementation. The user confirmed r9 works on English HD Eden/Linux;
-individual cases and Ryujinx remain unconfirmed: Village/Hub/G progression, alternative groups,
-simultaneous urgents, scrolling, selection, confirmation, reopening, quest return
-and progression advancement. Check size, four-pixel gap, clipping and colors.
-Disable the old prefix plugin during a trial; preserve accepted releases and
-installed rollback payloads. See EVIDENCE.json `historical` → `docs/RUNTIME_RESULTS.json` for the scoped r9 confirmation.
+Runtime evidence: r17 was accepted by the user on Eden/Linux, with and without HD, and its build is at `build/key-quest-markers/candidates/r17/`. See `EVIDENCE.json`.
 
 ## Native reference
 

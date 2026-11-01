@@ -84,7 +84,7 @@
       "mods/key-quest-markers/EVIDENCE.json"
     ],
     "static_summary": "r18: target build and complete host/native fixtures passed; DT_TEXTREL absent and every dynamic relocation target is writable. See EVIDENCE.json and research/hardware-link.json.",
-    "manual_summary": "NOT RUN for r18. Prior accepted r17 evidence is preserved in EVIDENCE.json and backups/accepted/."
+    "manual_summary": "NOT RUN for r18. Prior accepted r17 evidence is in EVIDENCE.json, and its build is at build/key-quest-markers/candidates/r17/."
   },
   "dependencies": [
     {
