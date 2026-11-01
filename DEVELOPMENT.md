@@ -82,7 +82,7 @@ requested colour. Native alpha stays 255.
 Groups 47..54 are four special Village encounter pairs that Kiranico lists as
 Urgent. They lack the rank-up urgency bit and use the full native counter
 availability predicate instead of the rank-up offered set. Completion of either
-record in a family makes both grey. Native details are in the r13 entry below.
+record in a family makes both grey. Native details are under "Native reference".
 
 ## Settings
 
@@ -111,7 +111,7 @@ explicit commit before reporting success. Only the plugin's primary INI is used.
 
 Startup is one INFO line. Actual hook/resource failures are reported once per
 reason from onUpdate; creation/validation failures carry their numeric stage on
-the same line (stage meanings are in the history below). Successful rows,
+the same line (stage meanings are in `src/gui.rs`). Successful rows,
 pages, saves and frames produce no warnings or errors. r17 removed the r8–r16
 snapshots, hook-entry atomics and diagnostic ID/flag packets after an Eden r16
 log showed 21 false ERROR lines; `research/log-cleanup.json` records that
@@ -323,193 +323,11 @@ and progression advancement. Check size, four-pixel gap, clipping and colors.
 Disable the old prefix plugin during a trial; preserve accepted releases and
 installed rollback payloads. See EVIDENCE.json `historical` → `docs/RUNTIME_RESULTS.json` for the scoped r9 confirmation.
 
-## Release history
+## Native reference
 
-Each runtime change got its own version and build/work folders. Preserved
-releases and pre-change records are under `backups/accepted/key-quest-markers/`
-(and `key-quest-markers-rs/` for the first Rust candidates).
+Native `Tex_icon` settings and the setters that apply them (main-relative):
 
-| Version | Status | Change |
-| --- | --- | --- |
-| r18 | READY_TO_DISTRIBUTE 2026-10-18 | `-nostartfiles` and `-Wl,-z,text` link rebuild. Candidate records in `r18-distribution-approved/`. |
-| r17 | READY_TO_DISTRIBUTE 2026-10-15 | Game UI default colours and quiet logs. User-accepted on Eden/Linux, with and without HD; NRO `ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6`. Preserved in `r17-before-hardware-link/`. |
-| r16 | DEVELOPMENT, never accepted | Configurable Key/Urgent/Completed colours. |
-| r15 | release | Stock Forge 1.5.1; the Rust implementation (r1–r14 were developed as key-quest-markers-rs) renamed to replace the C++ project. Preserved in `r15-before-colours/`. |
-| r14 | READY_TO_DISTRIBUTE 2026-10-15 | Purple active urgents (#9B4DCA). NRO `79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65`. |
-| r13 | candidate | Special Village urgent pairs, original and small emblem builds. |
-| r12 / r12-small | candidates | 32×32 badges; small-emblem atlas comparison (archived, not a release option). |
-| r11 | user-confirmed Eden/Linux | Correct Message title binding. |
-| r10 | failed | Request-slot placement and title fitting rejected by a wrong title class. |
-| r9 | user-confirmed Eden/Linux | First visible badges: material correction. |
-| r1–r8 | failed or diagnostic | See below. |
-
-Before r17, keys were orange-red #E74725; active urgents were purple #9B4DCA
-from r14 and yellow #FFD239 before that. Individual settings, persistence, ranks, quest states and
-transitions were never separately enumerated in any acceptance. Checks still
-worth a dedicated run: picker/hex edits, pending/reset, Save & apply without
-scrolling or reopening the counter, restart persistence, all three badge
-states, request overlap, selection, confirmation, scrolling and menu
-transitions, on Eden and Ryujinx separately.
-
-The sections below are the dated runtime reports and corrections that produced
-the current design. Each keeps its original scope; "yellow" and 24×24 sizes are
-the colours and geometry of that time.
-
-### r2 runtime report and native insertion
-
-The user reported Rust Damage Numbers in Plugin UI but absent from Loaded Plugins,
-and no quest badges. The installed badge NRO/archive matched r2. The checked Eden
-logs show Forge1.5.0; its config filters at ERROR, hiding r2's INFO/WARN messages.
-forge-rs's entry macro writes only the version prefix; Forge's list skips empty
-names. The candidate supplies the full 70-byte metadata record (name at offset6) and retains
-Forge logging with failures at ERROR. Vendored pins are unchanged.
-
-The installed HD Project and r2 badge package both replace common_eng.arc. The
-inspected Eden source selects the alphabetically first file, letting HD Project's
-unmodified counter win. Individual live file ownership was not logged. The user
-then explicitly chose native runtime insertion with all ARC files untouched.
-The candidate implements that choice and contains only the NRO. Remove/disable the old Rust
-candidate as a whole so its old ARC cannot remain as a leftover installation file.
-Installed packages/settings/saves were read only; no installation or launch occurred.
-
-### r3 runtime failure and r4 correction
-
-The reported Eden r3 trial reached the row callback but returned GUI validation
-error64 before creating a badge. The installed NRO matched r3, its folder contained
-no ARC, and the installed HD common archive matched the copied input.
-
-The wrong check compared object+0x74 with the animation instance. Native function
-0xa38828 instead passes instance+0x6c as the first argument to 0xa38bc0; the latter
-writes that cGUI owner to every child+0x74. r4 compares and copies this owner.
-The regression fixture executes both original ARM functions with distinct GUI and
-animation addresses, using the original counter object records for hierarchy/IDs.
-Factories, property initialization and GPU calls remain doubles.
-
-Future row validation failures log their precise guard stage outside the hot hook.
-This correction passed the owner regression. The later r4 trial passed these row
-checks but failed during object creation, as described below. Neither r3 nor r4
-has gameplay acceptance.
-
-### r4 runtime failure and r5 correction
-
-The fresh Eden trial used the exact r4 NRO and reached error16 (object/cache
-creation), with no row validation error. The cGUIObjTexture DTI vtable at
-main+0x178ff90 contains destructor0x32c, destructor0xa568a8 and factory0xa4f550;
-the following word at +0x0c is zero. r4 required that nonexistent placement slot
-before allocating anything, so it could not create a badge.
-
-r5 retains checked MT allocation and calls the actual placement constructor
-0xa4f60c with storage in r0. Both that function and its Polygon base constructor
-0xa4d0d8 have checked instruction windows. Native texture constructors, setters,
-cache allocation/free and texture destructors now execute in the compiled fixture.
-DTI +0x0c stays null, reproducing r4's failure and allowing r5 to proceed.
-Creation errors report a bounded stage number outside the hot hook. No archive,
-installed payload, emulator setting or save is changed by preparation.
-
-The real GPU renderer and live current-progression queries remain manual gates.
-The Eden report also contains a later unmapped-memory message during shutdown;
-no evidence here attributes that separate message to this failed creation path.
-
-### r5 startup failure and r6 correction
-
-The latest Eden log used the exact r5 NRO and reported “Forge hook failed;
-restored originals” during initialization. No row or creation callback ran.
-Adding constructor signature windows at the beginning of SIGNATURES shifted the
-table, but the installer still compared the first hook trampoline with
-SIGNATURES[0] and the second with SIGNATURES[1]. Those were constructor bytes,
-so the installer rejected valid hooks and rolled them back.
-
-r6 compares each trampoline with its own Patch original-byte snapshot. The full
-signature table is still validated before any write; adding/reordering supporting
-windows cannot change which original bytes a hook must preserve.
-
-The compiled fixture now starts at forge_onInit, supplies the native 20-byte Patch
-and 24-byte Hook return ABIs, runs the real installer, enters both patched game
-addresses, and then performs native texture creation, setters, drawing traversal
-and cleanup. It never forces ACTIVE. Additional cases corrupt the first/second
-trampoline independently and verify both target bytes are restored. The unchanged
-r5 NRO fails this startup regression with the same error as the user’s log; r6
-passes. Forge/kernel allocation/query operations, original menu builders, native
-quest query results and GPU commands remain doubles. Live pixels/gameplay remain
-manual acceptance gates. No installed mod or emulator configuration was changed.
-
-### r6 freeze and r7 object-map lifetime correction
-
-The preserved Eden r6 log reports an unmapped Read32 and null instruction fetch.
-The return address maps to main+0x5457c8 in native GUI resource cleanup0x5456e4;
-r7 (the register) is 12, identifying the first slot beyond the original map.
-Native count getter0xa38ffc calls tree traversal0xa47d2c and adds the root. It
-therefore returns 13 after child insertion, while r6 kept only twelve pointers.
-The cleanup loop then dereferences map[12] as an object. The unchanged r6 NRO
-reproduces this fault at index12 in the compiled fixture.
-
-r7 allocates a thirteen-pointer map with cGUIInstance's MT allocator (alloc1 at
-vft+0x1c). The allocator class is verified from the shared GOT slot0x18422b4,
-used by original map construction0xa38bc0 and destruction0xa38b58/0xa38828.
-The first twelve pointers are copied without reordering; slot12 holds the new
-texture. Both instance+0xd8 and root+0xa0 are published before linking the child,
-then the old map is freed with the same allocator class. Native instance cleanup
-frees the replacement after destroying the root and its children. Unpublished
-map allocations use scoped rollback alongside the badge and cache allocations.
-The resource descriptor still names twelve original sequence-bound objects; no
-shared descriptor, ARC, sequence or original object binding is changed.
-
-The fixture executes the actual crashing cleanup function and the actual
-animation clear function, with distinct map and texture allocator doubles. It
-checks map allocation failure, preserved original bindings, repeated updates,
-both aliases, and destruction of all new allocations. The other three callers of
-the native tree count (0x546360,0x547a14,0x548438) likewise iterate the live map;
-none needs a new object's resource property descriptor. Live GPU pixels and
-progression queries still require manual acceptance.
-
-
-### r7 invisible report and r8 diagnostic build
-
-The fresh Eden log ending 2026-10-15 06:56:17 +0700 has no native badge
-rejection or guest exception. The installed NRO matches r7:
-`0bc68c1053cfee62a442645d5144e87f6c15e455f218cd495168e19c63f68d36`.
-The user reported no icons. This does not establish successful hook execution,
-classification, geometry emission or visible pixels. The shutdown unmap is not
-attributed to the badges.
-
-r8 retains r7's functional insertion/classification and adds bounded diagnostics;
-it is not a confirmed visibility repair. Initialization records successful hook
-installation. Parent/row entry bits and two immutable scalar snapshots are
-published in callbacks and logged outside them in forge_onUpdate. A snapshot
-records eight quest IDs, group categories, urgency flags, badge decisions, native
-visibility flags and both progression tiers. It retains no pointers. Release/acquire
-publication prevents partial records; each snapshot is claimed once for logging.
-The first classified page and first page with a visible decision are independent,
-so an ordinary first page cannot suppress the useful key-page record.
-
-DEVELOPMENT diagnostic lines intentionally use ERROR severity to pass the user's
-existing error-only Forge filter, with an explicit diagnostic label. No loader
-configuration is changed. ARM fixtures now run with that same ERROR threshold and
-verify hook entries, exact scalar records and absence of per-frame repeated logs.
-They still do not execute the actual GPU geometry/draw path or establish pixels.
-The next manual trial must open a page containing a key and retain its Eden log;
-these records will separate absent hooks, all-hidden decisions and a rendering
-failure before another functional change is proposed.
-
-### r8 runtime trace and r9 material correction
-
-The user's completed r8 Eden run (log mtime 2026-10-15 07:15:34 +0700)
-confirmed installation, both hook entries, Village stage4 and Hub/G stage2.
-Quest402 received grey (badge2); quest409 received red (badge1), both with the
-native Visible bit set. No guest exception or badge rejection was logged.
-Installed r8 SHA: `d06c32389f39f2e227d9e7fad4dc926c5d07b26ac525f6d721a152d8e8aa4d4d`.
-This establishes callback/classification execution, not visible pixels.
-
-The source of the incorrect material was the read-only GUI decoder. It treated
-INIT_PARAM types17/18 as offsets into kv8. The native loader at main+0xb7f988
-leaves these two immediate types unrelocated. The dispatcher at 0xb344f4 reads
-kind17 as the low byte of value (bool), and kind18 as the value word itself.
-Only kind3 references kv8; kinds1/2/7 and others use kv32, while kind4 uses kv128.
-The first kv8 bytes happen to be 1, masking the parsing error.
-
-The original Tex_icon's actual settings and r9's native setters are:
-
-| Setting | Actual value | Setter (main-relative) |
+| Setting | Actual value | Setter |
 | --- | --- | --- |
 | BlendState | 1 | 0xa4dc24 |
 | ControlPoint | 0 (top-left) | 0xa4a9f4 |
@@ -521,207 +339,45 @@ The original Tex_icon's actual settings and r9's native setters are:
 | Reverse | 0 | 0xa4dc54 |
 | SamplerState | 0 | 0xa4fa5c |
 
-r8 incorrectly used Mask1, a centre anchor, fixed-frame mode, scale mode1 and
-horizontal reversal. Its unchanged NRO reproduces entry from the real native
-prepaint function 0xa4e628 into mask setup 0xb375c4. This reproduction bypasses
-the style-table assertion, so it checks the native dispatch rather than merely
-comparing constants. No r8 package/receipt is overwritten.
+The native loader at main+0xb7f988 leaves INIT_PARAM types 17 and 18 unrelocated. Dispatcher 0xb344f4 reads kind 17 as the low byte of the value (bool) and kind 18 as the value word. Only kind 3 references kv8; kinds 1, 2 and 7 and others use kv32; kind 4 uses kv128.
 
-r9 corrects the decoder and setter values. Resource checks assert the actual
-immediates; the compiled adapter's setter arguments must agree with those decoded
-source properties. The fixture now executes native prepaint dispatch, Texture
-Draw0xa4fc9c, quad generation0xa4feb4 and postpaint through the real draw walker.
-GPU allocation/binding/submission are doubles; bounding-box calculation is marked
-already complete to isolate material dispatch. The fixture rejects every native
-mask-pass entry and checks emitted 24x24 colour vertices, all four opaque state
-colours and logical atlas UVs. With top-left anchoring, row-local X=-28 plus
-quad X=0..24 leaves the requested four-pixel gap.
-
-The host fixture does not establish actual clipping, world transforms or visible
-GPU pixels. The later user-confirmed r9 Eden success is recorded below;
-no emulator launch, install, archive replacement, settings or save change by the agent is part
-of this repair.
-
-
-### Confirmed working baseline — r9, 2026-10-15
-
-The user confirmed: “ok then save this knowledge somewhere in this project
-because this is working, nice job”. The installed NRO matches the r9 candidate
-SHA `331adf1f4ec406c5da9d1b661ebf85f881a67852d6dacde1d0943486ab80e576`.
-The fresh Eden log identifies MHGU 1.4.0, Forge1.5.0, r9 initialization and both
-hook entries. Visible success is established by the user report. The snapshot
-ends partway through a diagnostic line, so it proves no clean-shutdown result.
-Full hashes, snapshot identity and coverage limits are in EVIDENCE.json `historical` → `docs/RUNTIME_RESULTS.json`.
-
-Preserve this native GUI implementation: the game's own cGUIObjTexture objects,
-row hierarchy, loaded HD atlas and native renderer provide the badges. Forge
-supplies lifecycle, hooks, logging, singleton/DTI lookup and supporting APIs.
-There is no ImGui or forge_onImGuiFreeRender drawing, ARC replacement or shipped
-extracted emblem. For this row, Mask0 is the normal colour path; the immediate
-INIT_PARAM kinds17/18 must not be decoded as kv8 offsets. Preserve the expanded
-13-entry object map and 168-byte draw cache with native allocation/cleanup.
-
-This is confirmation of working r9 badges on Eden/Linux, with individual rank,
-colour and transition checks unenumerated. It grants no Ryujinx/native Switch
-acceptance or distribution promotion. Keep r9 runtime/ZIP bytes unchanged; future
-runtime changes need a new candidate version. Its packaged pretrial validation
-is a historical snapshot; this record is the later manual evidence.
-
-
-### r10 request-slot placement and title fitting
-
-The unchanged English HD resource has request Texture ID20 at lookup index3,
-position (365,2), size32×32; title Message ID6 at index4, X=62, size355×38. Both are
-children of the same row Null. The native builder calls 0x56e530/0x545630 to set
-the request object's visibility immediately through 0xa47950; +0x54 bit0 is
-therefore the current displayed request state after the original returns.
-
-The child stays 24×24 at Y=8. X=369 centres it in the free 32px request slot;
-X=337 ends at361, leaving four pixels before the request bubble. Title widths
-303/271 leave four pixels before these respective positions. No request object,
-resource animation, original map binding, colour classifier or progression record
-is modified. Shared identity is possible: copied quest107, Another Pack Attack,
-is native key category1 with mRequestVillage=8, which the builder's 0x11e0 mask
-shows as a request bubble.
-
-r10 incorrectly required Text size384. r11 validates the resource's Message
-size352, Texture size304, IDs, native types, owning cGUI,
-resource and common parent. Handles remain synchronous callback locals. Existing
-badges are hidden and valid titles restored before classification can fail.
-A bad request/title binding skips only its decoration and reports error128 once;
-a valid title is restored even when its request binding is invalid.
-
-Verified native title operations (main-relative):
+Title `cGUIObjMessage`, CRC `0x2fb82eae`, size 352, at row binding 4, ID 6. Native operations:
 
 | Operation | Address / contract |
 | --- | --- |
-| AutoScale setter | 0xa53348, two integers, preserves all but +0xf0 bit0 |
-| AutoWrap setter | 0xa53324, two integers, +0xf8 bits18..19; enum0 disables wrapping |
+| AutoScale setter | 0xa53348, two integers, preserves all but +0xf0 bit 0 |
+| AutoWrap setter | 0xa53324, two integers, +0xf8 bits 18..19; enum 0 disables wrapping |
 | Size setter | 0xa53528, object and float2 pointer, writes +0xc8/+0xcc |
-| Native FontSize invalidation tail | 0xa5350c, ORs +0xf0 bit16 |
-| Cached-layout refresh | 0xa53aa8 checks bit16, calls virtual+0x70, then clears it |
-| Message type getter (r11) | 0xa56ab8; replaces the inappropriate Text getter0xa56b4c |
+| FontSize invalidation tail | 0xa5350c, ORs +0xf0 bit 16 |
+| Cached-layout refresh | 0xa53aa8 checks bit 16, calls virtual +0x70, then clears it |
+| Message type getter | 0xa56ab8, GOT input main+0x183f0b0 |
 
-Size and AutoScale setters do not invalidate cached glyphs. The adapter sets the
-same bit16 as FontSize after an actual layout change. It changes neither font,
-font size, colours nor title strings. Restore uses width355, height38, AutoScale=0
-and AutoWrap=0, matching the hashed source. Badge movement marks native transform
-state dirty. These six added supporting windows are checked before hook installation.
+Size and AutoScale do not invalidate cached glyphs, so the adapter sets bit 16 after an actual layout change. Restore uses width 355, height 38, AutoScale 0 and AutoWrap 0. AutoScale dispatch is at 0xa42374..0xa423cc and clamp function 0xa449c0.
 
-ARM fixtures run the native AutoScale flag dispatch at 0xa42374..0xa423cc and
-complete clamp function0xa449c0, using supplied glyph bounds. An 80px title stays
-at scale1; a 500px title fits width303/271, without enlargement. The final glyph
-scaler and GPU submission are doubles. Fixture results establish dispatch,
-geometry and restoration, not font measurement, visible clipping or GPU pixels.
-The r9 acceptance record remains historical; r10 needs its own manual trial.
+Row layout on the unchanged English HD resource: request Texture ID 20 at lookup index 3, (365,2), 32x32; title Message ID 6 at index 4, X 62, 355x38, both children of the same row Null. The builder sets the request's visibility through 0xa47950, so `+0x54` bit 0 is the displayed request state after the original returns. Badge 32x32 at Y 3, X 365 free or X 329 before a bubble, title widths 299 and 263. The bubble case keeps a four-pixel gap.
 
+Object map: count getter 0xa38ffc calls tree traversal 0xa47d2c and adds the root, so one more child means 13 entries, read by cleanup 0x5456e4 and by 0x546360, 0x547a14 and 0x548438. The allocator is `cGUIInstance`'s MT allocator (alloc1 at vft+0x1c), confirmed by GOT slot 0x18422b4, used by map construction 0xa38bc0 and destruction 0xa38b58/0xa38828. Native 0xa38828 passes instance+0x6c to 0xa38bc0, which writes that cGUI owner to every child +0x74. The cGUIObjTexture DTI vtable at main+0x178ff90 has destructors 0x32c and 0xa568a8, factory 0xa4f550, and a null +0x0c; placement constructor 0xa4f60c, Polygon base 0xa4d0d8.
 
-### r10 Eden failure and r11 correction — 2026-10-15
+Special encounter urgents (groups 47..54) are urgent by Kiranico's label although cQuestData +0x10c bit 0 is clear (flags 0x300/0x308). Family getter 0x3b21f0 reads main+0x162a8a0 (first eight words 1,1,2,2,3,3,4,4); 0x3b85d8 uses it with repeat-category predicate 0x3b2214. Availability predicate 0x54af8c, called with category 0xff and null menu context, checks scene query 0x3b2174 and a 51-entry enabled-bit table; all eight IDs are entries 0..7 at 0x162cde4, stride 8, bits at owner +0x35d4. The mod uses that predicate, completion 0x523da4, and completion of either record in the same family. Available unfinished unsatisfied pairs show the urgent colour; completed or satisfied pairs and unavailable records are grey. No rank is inferred from the viewed star page. `EVIDENCE.json` `historical` holds hashes, URLs and limits.
 
-The tested installed NRO matched r10 SHA
-`df8099a24b8c4f33e033b8eb99d59972cee1899569ce724ea3b587e8baeba1a9`.
-Fresh Eden logs at59.07s show both hooks, correct key/urgent decisions, every
-GUI flags snapshot zero, and error128 (request/title binding invalid). No badge
-objects reached rendering. The copied source GUI's object34/row binding4/ID6
-has type CRC800599726 (`0x2fb82eae`), cGUIObjMessage, size352. Its derived
-cGUIObjText class has a different CRC826240196 (`0x313f6cc4`) and size384.
-Exact-type validation in r10 therefore rejected the genuine title.
+## Checks still open
 
-The old fixture forced a Text type onto that resource and missed the rejection.
-r11 reads the source class CRC and resolves its own factory DTI accordingly.
-Message's actual getDTI instructions at0xa56ab8 run against their GOT input
-main+0x183f0b0. The saved Message DTI and original vtable confirm shared Size,
-AutoScale, AutoWrap, font invalidation and cached-layout refresh operations.
-Those property fields and setters did not need changing. Only the required
-class/size and its supporting type-getter signature change in the native adapter.
+Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions. r18 itself has no runtime test; it differs from accepted r17 only in link flags and build identification.
 
-The unchanged r10 NRO reproduces all-eight-row rejection and creates no badges
-against the corrected fixture. A new negative fixture gives ID6 valid ownership
-but substitutes the Text subclass; r11 must reject that one row while other badges
-continue working. Original r9 and r10 payloads are preserved; r11 is a new
-DEVELOPMENT candidate, requiring separate manual acceptance. This evidence
-establishes the pre-render rejection, not the absence of every possible later
-clipping or layering problem.
+## Do not
 
+- **Replace `common_eng.arc`.** HD Project also replaces it, and Eden takes the alphabetically first file. The user chose native runtime insertion with all ARC files untouched. Remove an old ARC-based install as a whole.
+- **Compare a child's `+0x74` with the animation instance.** It holds the cGUI owner from instance+0x6c.
+- **Require the DTI's placement slot at +0x0c.** It is null. Call constructor 0xa4f60c with storage in r0.
+- **Compare trampolines by index into the signature table.** Adding a window shifts the table and rolls back valid hooks. Compare each with its own Patch snapshot.
+- **Grow the tree without growing the map.** Cleanup dereferenced map[12], an unmapped Read32 and a null fetch. Publish instance +0xd8 and root +0xa0 before linking the child.
+- **Trust the row's visible bit as success.** Callback, classification and the Visible bit do not prove pixels.
+- **Decode INIT_PARAM kinds 17 and 18 as kv8 offsets.** The first kv8 bytes happen to be 1, which hid this and produced Mask 1 and an invisible badge. Mask 0 is normal colour drawing.
+- **Require `cGUIObjText` size 384 for the title, or force a type onto a fixture.** Derive fixture classes from the real resource's CRC. The Text subclass, CRC `0x313f6cc4`, must be rejected.
+- **Skip restoring titles before classification can fail.** Restore valid titles first, and let a bad request or title binding skip only its own decoration.
+- **Call a screenshot's pixels native units.** The 32 px mark and 39x37 bubble were screen measurements.
+- **Use Size or AutoScale's title contract on Texture objects.** Saved Texture DTI's Size has a getter and no setter.
+- **Infer the current rank from the viewed star page, or count rank-up prerequisites as a special encounter's activation.** The two pools are separate.
+- **Log below ERROR and expect to see it.** The user's Forge filter is ERROR only. Keep diagnostics process-capped and outside hot hooks.
 
-### r11 acceptance and r12 badge geometry — 2026-10-15
-
-The user confirmed r11 works and supplied a screenshot showing red/grey badges,
-request bubbles and a completion ribbon. The installed NRO matches r11 SHA
-`12b56381c6b1aee0934bd1c5a3b0128942a9e088d57cacf651a3291d4adb7e48`;
-the fresh Eden log identifies r11, both hooks and visible native GUI flags.
-Details and preserved screenshot/log hashes are in EVIDENCE.json `historical` → `docs/RUNTIME_R11.json`.
-This accepts the binding correction on Eden/Linux without exhaustive coverage.
-
-The screenshot's visible red mark is about32px square, versus a request bubble
-about39×37px. Its white row spans Y222..270 while the red pixels span231..263,
-putting the visible centre slightly low. These are screenshot pixel measurements,
-not native GUI units. r12 uses the native request slot's 32×32 quad size, raised
-to row-local Y=3. The full quad fits Y3..35 within the native 40px row envelope;
-its visible emblem content remains inset by the atlas shape. Exact pixels and
-clipping still require a manual r12 trial.
-
-Free-slot X365..397 matches the request slot width. With a bubble, X329..361
-preserves four pixels before X365. The title widths become299/263 rather than
-303/271. Existing geometry fixtures verify all four native quad vertices, both
-positions, source UVs, colours, title sizing/restoration and row-height bounds.
-The accepted r11 payload is unchanged; no new objects, cache/map capacity or
-hooks are introduced. Layer priority and native Message bindings stay intact.
-
-
-### r12-small atlas comparison — 2026-10-15
-
-This variant preserves r12 geometry and native calls, changing the source UV
-from `(136,344,198,406)` to `(342,0,372,30)` on existing texture22. The new region
-is the smaller outlined top emblem, matching the 32px orange preview. In the
-2048² HD atlas the crop is `(1368,0,1488,120)`; coordinates divide by four for
-the native 512² logical atlas. Its black outline remains in the source pixels.
-The compiled native fixture checks the UV setter and stored rectangle, then
-quad UV corners at X342.5/371.5 and Y0.5/29.5. The quad remains 32×32 at Y3
-and X365/329. No resources, ownership, hooks, title fitting or classification
-change. Original r12 delivery hashes are retained in EVIDENCE.json `historical` → `docs/R12_COMPARISON.json`.
-Actual sampling and visual preference require the user's in-game comparison.
-
-
-### r13: special encounter urgent pairs — 2026-10-15
-
-The earlier historical-urgent correlation covered only rank-up groups24..46.
-It omitted groups47..54, whose eight records Kiranico labels Urgent even though
-cQuestData +0x10c bit0 is clear (flags0x300/0x308). The actual category-to-family
-getter0x3b21f0 reads main+0x162a8a0; first eight words are1,1,2,2,3,3,4,4.
-Native selector counter0x3b85d8 uses that getter and the repeat-category predicate
-0x3b2214 when distinguishing first-run/repeat versions. The patch limits this
-pair policy to47..54, leaving other family-like categories outside the feature.
-
-The native counter availability predicate0x54af8c, called with category0xff and
-null menu context, checks the scene query0x3b2174 and a 51-entry quest enabled-bit
-table. All eight
-special IDs occupy entries0..7 of the original table at0x162cde4, with stride8.
-The enabled bits are read at native flag owner+0x35d4; scene availability alone
-is insufficient to distinguish first-run/repeat offers. The separate rank-up
-pool and rank-key prerequisite count are not the special encounters' activation
-requirements. r13 calls that full three-argument availability predicate and uses
-actual completion0x523da4 plus
-completion of either record in the same family. Available unfinished unsatisfied
-pairs are yellow; completed/satisfied pairs and unavailable records are grey.
-No current rank is inferred from the viewed star page.
-
-The adapter still requires valid UI, metadata, progress and parent offer context.
-Rank-up quests keep both their urgent flag and offered/prerequisite checks.
-The full availability predicate already has a checked signature; its new call
-uses the audited three-integer ABI. No hook sites, allocation or renderer change.
-Static ARM cases
-exercise all eight real ID/category/flag records, missing offer context, availability,
-independent pair completion and native drawing/cleanup in both emblem builds.
-See EVIDENCE.json `historical` → `docs/SPECIAL_URGENTS.json` for hashes, URLs, user-report evidence and runtime limits.
-
-
-### r14: urgent colour — 2026-10-15
-
-Only the active urgent colour changes: native packed RGBA0xffca4d9b gives
-bytes155,77,202,255 (#9B4DCA). The badge state remains ordinal3, now named Purple
-in source and startup diagnostics. Both original/small emblem builds use the
-same mapping. Needed keys remain #E74725 and completed/inactive badges #808080.
-The game's yellow request objects are untouched. r13 special-urgent semantics,
-all native calls, hooks, row geometry and ownership remain unchanged. Existing
-exact-byte host assertions and every coloured native quad check cover this change.
+Older colours and sizes (orange-red keys, purple or yellow urgents, 24x24 badges, the small emblem) are retired. Use the current policy above.
