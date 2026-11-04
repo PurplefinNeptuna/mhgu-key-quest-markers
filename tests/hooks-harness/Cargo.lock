@@ -3,5 +3,12 @@
 version = 4
 
 [[package]]
+name = "quest-badges-core"
+version = "0.1.0"
+
+[[package]]
 name = "quest-badges-hook-fixtures"
 version = "0.1.0"
+dependencies = [
+ "quest-badges-core",
+]

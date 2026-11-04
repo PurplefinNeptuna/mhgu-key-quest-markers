@@ -2087,7 +2087,7 @@
     "research/sysroot-Cargo.lock": "45e36114b9fbeb1a778c470ea4e3a6e31b9ac2029de0d9a7077abac757ec0b29",
     "link/switch32.ld": "dfa3102bf0a910ad89aaa60e286153a087f44d74cb19c5f694a9542866540aa5",
     "src/svc.S": "ad8af8eadfe25a122ee2f0e4e5b1722a947b7d0747f52f30ac9373190fc7ac2c",
-    "tests/hooks-harness/Cargo.lock": "9f0bd48dfaed0a6bfb71ce56a6d4f1afb672a926dad8f9306b33b027b7ef07b3"
+    "tests/hooks-harness/Cargo.lock": "266865fe32d4d88613f17243d50aefaf0947013b2f3bd00a6ae8b77f99f3c615"
   },
   "inputs": {
     "main": "b3935415499549adaf4c0e89822831daa175cfd456a7990791c79be3997645ef",

@@ -4531,5 +4531,14 @@
       "release_nro_sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1",
       "publication": "UNPUBLISHED"
     }
+  },
+  "static_r19": {
+    "version": "r19",
+    "date": "2026-11-04",
+    "summary": "r19: pinned toolchain build; 17 Rust host tests passed plus the mod's ARM and native suites in ./build.sh test; verify: \"PASS: native imports/signatures, Hook ABI compilation, active callback path and payload inventory\". Stacking on a foreign Forge hook is covered by host fixtures and Forge's hook.c source, with no ARM execution of a stacked chain and no run on any emulator.",
+    "nro_sha256": {
+      "key_quest_markers.nro": "e29a162f5dfe5cf3dc9847af9630e292e3208bf6455480cf2caca6c59a0d25e7"
+    },
+    "runtime": "NOT RUN"
   }
 }

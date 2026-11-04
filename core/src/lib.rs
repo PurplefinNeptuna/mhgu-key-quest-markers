@@ -2,6 +2,13 @@
 #![no_std]
 pub mod colors;
 
+/// A required code window as it may legitimately be found: the original bytes, or the original bytes
+/// with another plugin's Forge entry hook (`ldr pc, [pc, #-4]` plus its detour address) over the first
+/// eight. Both of this mod's hooks only run code around the original, so they chain onto such a hook.
+pub fn window_matches(actual: &[u8; 32], expected: &[u8; 32]) -> bool {
+    actual == expected || (actual[..4] == 0xe51f_f004u32.to_le_bytes() && actual[8..] == expected[8..])
+}
+
 /// The native group record's category is key tier or urgent tier, not quest type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Group {
@@ -124,6 +131,21 @@ mod tests {
             category,
             alternative: 0,
         }
+    }
+    #[test]
+    fn a_window_accepts_only_a_foreign_forge_entry_hook() {
+        let original = [7u8; 32];
+        assert!(window_matches(&original, &original));
+        let mut hooked = original;
+        hooked[..4].copy_from_slice(&0xe51f_f004u32.to_le_bytes());
+        hooked[4..8].copy_from_slice(&0x0320_1000u32.to_le_bytes());
+        assert!(window_matches(&hooked, &original));
+        let mut stray = original;
+        stray[0] ^= 1;
+        assert!(!window_matches(&stray, &original));
+        let mut later = hooked;
+        later[8] ^= 1;
+        assert!(!window_matches(&later, &original));
     }
     #[test]
     fn current_completed_and_obsolete_keys() {

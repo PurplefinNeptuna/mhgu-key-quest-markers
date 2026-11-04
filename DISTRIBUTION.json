@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "READY_TO_DISTRIBUTE",
+  "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "User explicitly approved distribution of the unchanged validated r18 NRO. This promotion adds no gameplay or hardware test result.",
+  "reason": "r19 is r18 with one compatibility change. Both of its hooks now accept another plugin's Forge hook on the same function entry. Not approved and gameplay not run.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r18",
+  "version": "r19",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r18.zip",
-  "runtime_test": "NOT RUN",
-  "runtime_active": true,
+  "archive": "key-quest-markers-r19-candidate.zip",
+  "runtime_test": "NOT RUN for r19. NOT RUN",
+  "runtime_active": false,
   "gamebanana": {
     "ai_code": {
       "used": true,
@@ -61,6 +61,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
+    "r19 has no run on any emulator: loading beside another plugin's hook on the same entry rests on Forge's hook.c and host fixtures",
     "No runtime test of this rebuild on Switch, Eden or Ryujinx.",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
   ],
@@ -83,7 +84,7 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r18: target build and complete host/native fixtures passed; DT_TEXTREL absent and every dynamic relocation target is writable. See EVIDENCE.json and research/hardware-link.json.",
+    "static_summary": "r19: pinned toolchain build; 17 Rust host tests passed plus the mod's ARM and native suites in ./build.sh test; verify: \"PASS: native imports/signatures, Hook ABI compilation, active callback path and payload inventory\". Stacking on a foreign Forge hook is covered by host fixtures and Forge's hook.c source, with no ARM execution of a stacked chain and no run on any emulator.",
     "manual_summary": "NOT RUN for r18. Prior accepted r17 evidence is in EVIDENCE.json, and its build is at build/key-quest-markers/candidates/r17/."
   },
   "dependencies": [
@@ -99,12 +100,10 @@
   },
   "payloads": {
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
-      "source": "build/key-quest-markers/candidates/r18/package/romfs/nativeNX/plugins/key_quest_markers.nro",
-      "sha256": "feb49bc2d4556ca242b51591c816c02ce95003a3b408b45f84560d22780417b1"
+      "source": "build/key-quest-markers/candidates/r19/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "sha256": "e29a162f5dfe5cf3dc9847af9630e292e3208bf6455480cf2caca6c59a0d25e7"
     }
   },
-  "approval": {
-    "date": "2026-10-18",
-    "basis": "User requested: promote key quest marker to ready to distribure. Promote existing validated r18 bytes unchanged; runtime coverage remains unconfirmed."
-  }
+  "candidate": "build/key-quest-markers/candidates/r19/delivery",
+  "candidate_builder": "scripts/build.py"
 }

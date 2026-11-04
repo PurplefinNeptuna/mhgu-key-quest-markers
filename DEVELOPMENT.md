@@ -1,10 +1,10 @@
 # Key Quest Markers: development and research
 
-**Current state.** r18 is READY_TO_DISTRIBUTE after user approval on
-2026-10-18. The validated NRO was promoted unchanged; the local, unpublished ZIP
-is `build/key-quest-markers/releases/r18/key-quest-markers-r18.zip`. r18 has no
-runtime test of its own; it differs from the Eden/Linux-accepted r17 only in
-link flags and build identification. Ryujinx and native Switch gameplay remain
+**Current state.** r19 DEVELOPMENT candidate at `build/key-quest-markers/candidates/r19/`,
+gameplay not run. r19 is r18 with one compatibility change: both hooks accept another
+plugin's Forge hook on the same function. r18 is the approved release, preserved in
+`backups/accepted/key-quest-markers/r18-before-chaining/`, and differs from the
+Eden/Linux-accepted r17 only in link flags and build identification. Ryujinx and native Switch gameplay remain
 unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact
 results, with the pre-compaction `docs/*.json` records under `historical`.
 
@@ -258,6 +258,11 @@ Direct row callers 0x616bfc/0x618bbc set their own condition flags before use;
 likewise branch/call unconditionally or replace flags with CMP before conditional
 use. Their continuations contain no GE-dependent SEL before the next call. No
 MSR status writes occur in the compiled plugin; APSR_g is not a prerequisite.
+
+Both detours call the original once with their arguments and return, so every window
+accepts another plugin's Forge hook over its first eight bytes (see "Chaining" in the forge-modding hooks reference).
+`window_matches` in core is the check, and the trampoline is compared against the
+pre-hook snapshot.
 
 Rollback checks original/owned branch words, including partial publication, and
 restores patches in reverse order. Foreign modifications retain ownership.

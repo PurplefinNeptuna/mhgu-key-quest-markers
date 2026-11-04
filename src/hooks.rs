@@ -113,7 +113,7 @@ pub fn install() -> Result<Vec<Patch>, &'static str> {
         let mut actual = [0; 32];
         if !memory::executable(base + offset, 32)
             || !memory::copy(base + offset, &mut actual)
-            || actual != bytes
+            || !quest_badges_core::window_matches(&actual, &bytes)
         {
             return Err("MHGU 1.4.0 code mismatch at a required function");
         }
