@@ -4540,5 +4540,18 @@
       "key_quest_markers.nro": "e29a162f5dfe5cf3dc9847af9630e292e3208bf6455480cf2caca6c59a0d25e7"
     },
     "runtime": "NOT RUN"
+  },
+  "runtime_r19_2026_11_05": {
+    "version": "r19",
+    "emulators": [
+      "Eden master-07677aa500-master",
+      "suyu v14.1.0-v14.1.0 (Android), the other player; its installed hashes were not available"
+    ],
+    "installed_nro_sha256": "e29a162f5dfe5cf3dc9847af9630e292e3208bf6455480cf2caca6c59a0d25e7",
+    "scope": "Logs only. Two-player session with one quest. No player report of what appeared on screen.",
+    "lines_eden": [],
+    "note": "No line from this mod: Forge's config.ini has level = error and this mod logs below it, so the log shows neither a loaded line nor a refusal. The hooks are not shown installed. better-inputs holds the constant 0x7aef68, the start of a supporting window; whether it hooks there before this mod's check is unknown.",
+    "foreign_plugins": "Foreign plugins active on Eden: 11 NRO loads match the 11 NROs in the load folder, including BetterBox, better-inputs and MHGU-DPS-Meter-v1.2.0; only 'finish cheat' is disabled. No foreign hook is shown over an entry at this mod's install. KatLib and UIScale were not installed.",
+    "exceptions": "No exception, data abort or panic text in either log. Eden stopped through ForceStop."
   }
 }

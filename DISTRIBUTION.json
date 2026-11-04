@@ -12,7 +12,7 @@
   "version": "r19",
   "package_name": "key-quest-markers",
   "archive": "key-quest-markers-r19-candidate.zip",
-  "runtime_test": "NOT RUN for r19. NOT RUN",
+  "runtime_test": "LOG ONLY for r19: Eden master-07677aa500-master, 2026-11-05, installed NRO matches, no player report. See EVIDENCE.json runtime_r19_2026_11_05.",
   "runtime_active": false,
   "gamebanana": {
     "ai_code": {
@@ -61,7 +61,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r19 has no run on any emulator: loading beside another plugin's hook on the same entry rests on Forge's hook.c and host fixtures",
+    "r19 ran on Eden master-07677aa500-master with logs only and no player report; loading beside a foreign hook on the same entry has not been exercised and rests on Forge's hook.c and host fixtures",
     "No runtime test of this rebuild on Switch, Eden or Ryujinx.",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
   ],

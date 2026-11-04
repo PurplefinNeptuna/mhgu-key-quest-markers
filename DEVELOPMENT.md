@@ -1,7 +1,7 @@
 # Key Quest Markers: development and research
 
 **Current state.** r19 DEVELOPMENT candidate at `build/key-quest-markers/candidates/r19/`,
-gameplay not run. r19 is r18 with one compatibility change: both hooks accept another
+installed on Eden with logs read from one Eden session and no player report; this mod logs nothing at Forge's error level. r19 is r18 with one compatibility change: both hooks accept another
 plugin's Forge hook on the same function. r18 is the approved release, preserved in
 `backups/accepted/key-quest-markers/r18-before-chaining/`, and differs from the
 Eden/Linux-accepted r17 only in link flags and build identification. Ryujinx and native Switch gameplay remain
