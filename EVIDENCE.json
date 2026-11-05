@@ -4572,5 +4572,14 @@
       "repeat update finds the badge after another plugin child"
     ],
     "runtime_test": "NOT RUN"
+  },
+  "runtime_r20_2026_11_05": {
+    "date": "2026-11-05",
+    "emulator": "Eden",
+    "tester": "\"its working\"",
+    "itemized": false,
+    "installed_nro_matches": true,
+    "nro_sha256": "5efd5d35cb67ce649ebd4979ca25e3d287efa7c73d2a5f3c9d830345e7ed23b0",
+    "context": "Run beside Wishlist r2."
   }
 }

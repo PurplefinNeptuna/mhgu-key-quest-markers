@@ -12,7 +12,7 @@
   "version": "r20",
   "package_name": "key-quest-markers",
   "archive": "key-quest-markers-r20-candidate.zip",
-  "runtime_test": "NOT RUN",
+  "runtime_test": "User reported it working on Eden: \"its working\". Not itemized.",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -61,7 +61,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r20 gameplay NOT RUN on any platform; r19 is the accepted build for quest badges on Eden",
+    "r20 ran only on Eden, on an unitemized report",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
     "on MHGURecomp the plugin loads, and its badges have no player report there",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
@@ -86,7 +86,7 @@
       "mods/key-quest-markers/EVIDENCE.json"
     ],
     "static_summary": "r20: pinned toolchain build; Rust host tests, ARM suite and 44 native adapter cases passed, including another plugin child already on the row, run through the real draw walker, cleanup and destructors; verify passed.",
-    "manual_summary": "r20 NOT RUN. r19, one change earlier, has the user report for quest badges on Eden."
+    "manual_summary": "User reported it working on Eden: \"its working\". Not itemized. Installed NRO matches; see EVIDENCE.json."
   },
   "dependencies": [
     {
