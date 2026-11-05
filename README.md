@@ -30,7 +30,7 @@ Badges appear automatically when you open the quest counter.
 
 The badge appears in the quest row's request bubble slot. When a quest also
 has a yellow request bubble, the badge appears beside it. Long quest names
-automatically shrink to fit before the badge.
+shrink to fit before the badge.
 
 ### Settings
 
