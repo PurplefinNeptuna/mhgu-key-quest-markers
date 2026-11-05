@@ -4554,5 +4554,13 @@
     "foreign_plugins": "Foreign plugins active on Eden: 11 NRO loads match the 11 NROs in the load folder, including BetterBox, better-inputs and MHGU-DPS-Meter-v1.2.0; only 'finish cheat' is disabled. No foreign hook is shown over an entry at this mod's install. KatLib and UIScale were not installed.",
     "exceptions": "No exception, data abort or panic text in either log. Eden stopped through ForceStop.",
     "user_report": "Damage numbers, quest badges, the ZR remap and luck highlights, asked together: \"all working well\""
+  },
+  "approval_r19_2026_11_05": {
+    "version": "r19",
+    "user_request": "\"ok, make notes about them and promote all the lenient patched mods to ready to distribute, and maybe other mods that still has dev status that i use in eden, while notes the recomp incompabilities when exists (like in please do better)\"",
+    "nro_sha256": {
+      "romfs/nativeNX/plugins/key_quest_markers.nro": "e29a162f5dfe5cf3dc9847af9630e292e3208bf6455480cf2caca6c59a0d25e7"
+    },
+    "basis": "The user reported quest badges working on Eden in the same session: \"all working well\". On MHGURecomp 0.14.0 it logged \"Key Quest Markers r19 loaded\"; badges there were not reported."
   }
 }

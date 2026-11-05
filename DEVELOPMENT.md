@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r19 DEVELOPMENT candidate at `build/key-quest-markers/candidates/r19/`,
+**Current state.** r19 READY_TO_DISTRIBUTE (2026-11-05), unpublished, release at `build/key-quest-markers/releases/r19/`,
 the gameplay-accepted build for quest badges on Eden, on the user's report (see `EVIDENCE.json`); it logs nothing at Forge's error level. r19 is r18 with one compatibility change: both hooks accept another
 plugin's Forge hook on the same function. r18 is the approved release, preserved in
 `backups/accepted/key-quest-markers/r18-before-chaining/`, and differs from the

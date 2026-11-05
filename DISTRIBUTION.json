@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
-  "reason": "r19 is r18 with one compatibility change. Both of its hooks now accept another plugin's Forge hook on the same function entry. Not approved. The user reported quest badges working on Eden.",
+  "reason": "r19 approved for distribution. Both hooks accept another plugin's Forge hook on the same function.",
   "publication": {
     "published": false,
     "url": null,
@@ -11,9 +11,9 @@
   },
   "version": "r19",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r19-candidate.zip",
-  "runtime_test": "USER REPORTED for r19 on Eden, 2026-11-05, installed NRO matches: Damage numbers, quest badges, the ZR remap and luck highlights, asked together: \"all working well\". See EVIDENCE.json runtime_r19_2026_11_05.",
-  "runtime_active": false,
+  "archive": "key-quest-markers-r19.zip",
+  "runtime_test": "The user reported quest badges working on Eden in the same session: \"all working well\". On MHGURecomp 0.14.0 it logged \"Key Quest Markers r19 loaded\"; badges there were not reported.",
+  "runtime_active": true,
   "gamebanana": {
     "ai_code": {
       "used": true,
@@ -61,6 +61,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
+    "on MHGURecomp the plugin loads, and its badges have no player report there",
     "r19 ran on Eden master-07677aa500-master with a player report for quest badges; loading beside a foreign hook on the same entry has not been exercised and rests on Forge's hook.c and host fixtures",
     "No runtime test of this rebuild on Switch, Eden or Ryujinx.",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
@@ -85,7 +86,7 @@
       "mods/key-quest-markers/EVIDENCE.json"
     ],
     "static_summary": "r19: pinned toolchain build; 17 Rust host tests passed plus the mod's ARM and native suites in ./build.sh test; verify: \"PASS: native imports/signatures, Hook ABI compilation, active callback path and payload inventory\". Stacking on a foreign Forge hook is covered by host fixtures and Forge's hook.c source, with no ARM execution of a stacked chain and no run on any emulator.",
-    "manual_summary": "NOT RUN for r18. Prior accepted r17 evidence is in EVIDENCE.json, and its build is at build/key-quest-markers/candidates/r17/."
+    "manual_summary": "The user reported quest badges working on Eden in the same session: \"all working well\". On MHGURecomp 0.14.0 it logged \"Key Quest Markers r19 loaded\"; badges there were not reported."
   },
   "dependencies": [
     {
@@ -104,6 +105,8 @@
       "sha256": "e29a162f5dfe5cf3dc9847af9630e292e3208bf6455480cf2caca6c59a0d25e7"
     }
   },
-  "candidate": "build/key-quest-markers/candidates/r19/delivery",
-  "candidate_builder": "scripts/build.py"
+  "approval": {
+    "date": "2026-11-05",
+    "basis": "The user approved this on 2026-11-05: \"ok, make notes about them and promote all the lenient patched mods to ready to distribute, and maybe other mods that still has dev status that i use in eden, while notes the recomp incompabilities when exists (like in please do better)\". The user reported quest badges working on Eden in the same session: \"all working well\". On MHGURecomp 0.14.0 it logged \"Key Quest Markers r19 loaded\"; badges there were not reported. Ryujinx and Switch hardware are unconfirmed."
+  }
 }
