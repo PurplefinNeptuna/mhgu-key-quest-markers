@@ -38,7 +38,7 @@ def verify():
         raise ValueError('Texture DTI vtable differs; placement virtual is unavailable')
     if struct.unpack_from('<I',image,0x18422b4)[0]!=0x2123210:
         raise ValueError('Native object-map allocator DTI differs')
-    if len(windows)!=48:raise ValueError('Supporting signature windows missing')
+    if len(windows)!=49:raise ValueError('Supporting signature windows missing')
     assert image[0x616cb0:0x616cb8]==bytes.fromhex('f04f2de904d04de2')
     if 'kqm_verified_contract' in names:raise ValueError('Inactive release gate remains in production')
     disasm=subprocess.check_output([Path(CONFIG['devkitarm'])/'bin/arm-none-eabi-objdump','-d',elf],text=True)

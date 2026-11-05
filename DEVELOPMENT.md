@@ -1,12 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r19 READY_TO_DISTRIBUTE (2026-11-05), unpublished, release at `build/key-quest-markers/releases/r19/`,
-the gameplay-accepted build for quest badges on Eden, on the user's report (see `EVIDENCE.json`); it logs nothing at Forge's error level. r19 is r18 with one compatibility change: both hooks accept another
-plugin's Forge hook on the same function. r18 is the approved release, preserved in
-`backups/accepted/key-quest-markers/r18-before-chaining/`, and differs from the
-Eden/Linux-accepted r17 only in link flags and build identification. Ryujinx and native Switch gameplay remain
-unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact
-results, with the pre-compaction `docs/*.json` records under `historical`.
+**Current state.** r20 DEVELOPMENT candidate, gameplay NOT RUN, at `build/key-quest-markers/candidates/r20/`. It sizes the row's object map and draw cache from the live tree, so another mod can add children to the same quest rows; badges and settings are unchanged. r19 is the gameplay-accepted build for quest badges on Eden, on the user's report (see `EVIDENCE.json`), kept at `build/key-quest-markers/candidates/r19/`, with its release preserved in `backups/accepted/key-quest-markers/r19-before-tree-sizing/`. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results, with the pre-compaction `docs/*.json` records under `historical`.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -214,8 +208,9 @@ pointer arguments. No texture pixels or new atlas are embedded in the NRO.
 
 A new drawable must also fit the root's cached command list. Native root setup
 0xa49b28 allocates `(drawableCount * 16 + 8)` bytes when its secondary prefix count
-is zero. The unmodified row has nine drawables (152 bytes); the new child needs
-168 bytes. The descriptor/counts stay unchanged because native draw walker
+is zero. The unmodified row has nine drawables (152 bytes), and this mod's child alone
+needs 168. The size comes from the live tree: twelve resource nodes and nine drawables,
+plus one node and one drawable per child already added by any plugin. The descriptor/counts stay unchanged because native draw walker
 0xa494a0 traverses the linked tree, while animation/property updates retain their
 original twelve lookup entries. The new child is static and excluded from those
 sequence updates, preserving its state color.
@@ -231,7 +226,7 @@ and commands. Ordinary row/menu visibility is inherited through the native tree.
 Root destruction frees its new cache, then recursively destroys children. Texture
 child destruction releases native graphics buffers and its MT allocation. No
 additional destructor hook, process-lifetime object cache or second renderer is
-introduced. The instance-owned index map grows from twelve to thirteen entries. A failed allocation leaves the old
+introduced. The instance-owned index map grows by one entry from the live count `0xa38ffc`, and the badge can sit at any index past the resource's twelve. A failed allocation leaves the old
 root/cache/index arrays valid and destroys unpublished storage.
 
 ### ARM and Forge boundaries
@@ -339,7 +334,7 @@ Size and AutoScale do not invalidate cached glyphs, so the adapter sets bit 16 a
 
 Row layout on the unchanged English HD resource: request Texture ID 20 at lookup index 3, (365,2), 32x32; title Message ID 6 at index 4, X 62, 355x38, both children of the same row Null. The builder calls 0x56e530/0x545630 to set the request's visibility immediately through 0xa47950, so `+0x54` bit 0 is the displayed request state after the original returns. Badge 32x32 at Y 3, X 365 free or X 329 before a bubble, title widths 299 and 263. The bubble case keeps a four-pixel gap. A quest can be both: quest 107, Another Pack Attack, is native key category 1 with mRequestVillage 8, which the builder's 0x11e0 mask shows as a request bubble.
 
-Object map: count getter 0xa38ffc calls tree traversal 0xa47d2c and adds the root, so one more child means 13 entries, read by cleanup 0x5456e4 and by 0x546360, 0x547a14 and 0x548438. The allocator is `cGUIInstance`'s MT allocator (alloc1 at vft+0x1c), confirmed by GOT slot 0x18422b4, used by map construction 0xa38bc0 and destruction 0xa38b58/0xa38828. Native 0xa38828 passes instance+0x6c to 0xa38bc0, which writes that cGUI owner to every child +0x74. The cGUIObjTexture DTI vtable at main+0x178ff90 has destructors 0x32c and 0xa568a8, factory 0xa4f550, and a null +0x0c; placement constructor 0xa4f60c, Polygon base 0xa4d0d8.
+Object map: count getter 0xa38ffc calls tree traversal 0xa47d2c and adds the root, so each added child needs one more entry, read by cleanup 0x5456e4 and by 0x546360, 0x547a14 and 0x548438. The allocator is `cGUIInstance`'s MT allocator (alloc1 at vft+0x1c), confirmed by GOT slot 0x18422b4, used by map construction 0xa38bc0 and destruction 0xa38b58/0xa38828. Native 0xa38828 passes instance+0x6c to 0xa38bc0, which writes that cGUI owner to every child +0x74. The cGUIObjTexture DTI vtable at main+0x178ff90 has destructors 0x32c and 0xa568a8, factory 0xa4f550, and a null +0x0c; placement constructor 0xa4f60c, Polygon base 0xa4d0d8.
 
 Special encounter urgents (groups 47..54) are urgent by Kiranico's label although cQuestData +0x10c bit 0 is clear (flags 0x300/0x308). Family getter 0x3b21f0 reads main+0x162a8a0 (first eight words 1,1,2,2,3,3,4,4); 0x3b85d8 uses it with repeat-category predicate 0x3b2214. Availability predicate 0x54af8c, called with category 0xff and null menu context, checks scene query 0x3b2174 and a 51-entry enabled-bit table; all eight IDs are entries 0..7 at 0x162cde4, stride 8, bits at owner +0x35d4. The mod uses that predicate, completion 0x523da4, and completion of either record in the same family. Available unfinished unsatisfied pairs show the urgent colour; completed or satisfied pairs and unavailable records are grey. No rank is inferred from the viewed star page. `EVIDENCE.json` `historical` holds hashes, URLs and limits.
 

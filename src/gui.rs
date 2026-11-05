@@ -8,8 +8,9 @@ use quest_badges_core::Badge;
 const ID: u32 = 0x4b514d33; // KQM3, outside the counter's existing object IDs.
 const TEXTURE_BYTES: usize = 304;
 const MESSAGE_BYTES: usize = 352;
-const MAP_BYTES: usize = 13 * 4; // Original twelve bindings plus our native child.
-const CACHE_BYTES: usize = 10 * 16 + 8; // Ten drawable begin/end pairs plus terminator.
+const BASE_NODES: u32 = 12; // The row resource's lookup objects, root included.
+const BASE_DRAWABLES: u32 = 9;
+const MAX_NODES: u32 = 64;
 static FAILURE: AtomicU32 = AtomicU32::new(0);
 pub fn take_failure() -> u32 {
     FAILURE.swap(0, Ordering::Relaxed)
@@ -54,6 +55,7 @@ struct Row {
     resource: u32,
     cache: u32,
     badge: u32,
+    nodes: u32,
 }
 impl Row {
     // Lookup indices stay those of the original resource, even after appending
@@ -169,11 +171,19 @@ impl Row {
                 }
                 let next = memory::word(tail + 0x6c)?;
                 if next == 0 {
-                    // Native resource cleanup counts the linked tree, not the
-                    // resource descriptor. A retained child needs its 13th binding.
+                    // Native cleanup 0x5456e4 indexes the map up to this linked-tree
+                    // count, which includes children added by other plugins.
+                    let count: unsafe extern "C" fn(u32) -> u32 =
+                        unsafe { core::mem::transmute((base() + 0xa38ffc) as usize) };
+                    let nodes = unsafe { count(instance) };
+                    if !(BASE_NODES..=MAX_NODES).contains(&nodes)
+                        || !memory::readable(objects, nodes as usize * 4)
+                    {
+                        return None;
+                    }
                     if badge != 0
-                        && (!memory::readable(objects, MAP_BYTES)
-                            || memory::word(objects + 48)? != badge)
+                        && !(BASE_NODES..nodes)
+                            .any(|i| memory::word(objects + i * 4) == Some(badge))
                     {
                         return None;
                     }
@@ -187,6 +197,7 @@ impl Row {
                         resource,
                         cache,
                         badge,
+                        nodes,
                     });
                 }
                 tail = next;
@@ -207,7 +218,7 @@ struct Allocation {
     pointer: u32,
 }
 impl Allocation {
-    fn mapping() -> Option<Self> {
+    fn mapping(bytes: usize) -> Option<Self> {
         // Native map construction and destruction both use cGUIInstance's DTI
         // (verified GOT slot main+0x18422b4), independently of the Texture allocator.
         let dti = MtDti::find("cGUIInstance")?;
@@ -218,13 +229,13 @@ impl Allocation {
         let free = method(allocator, 0x34)?;
         let f: unsafe extern "C" fn(u32, u32, u32) -> u32 =
             unsafe { core::mem::transmute(allocate as usize) };
-        let pointer = unsafe { f(allocator, MAP_BYTES as u32, 16) };
+        let pointer = unsafe { f(allocator, bytes as u32, 16) };
         let result = Self {
             allocator,
             free,
             pointer,
         };
-        if !memory::writable(pointer, MAP_BYTES) || pointer & 15 != 0 {
+        if !memory::writable(pointer, bytes) || pointer & 15 != 0 {
             return None;
         }
         Some(result)
@@ -349,32 +360,39 @@ fn create(row: Row, dti: &MtDti) -> Result<u32, u32> {
     unsafe { f(object, rect.as_ptr()) };
     set(object, Badge::Hidden, 0);
 
-    let mut mapping = Allocation::mapping().ok_or(9u32)?;
-    // Preserve every resource/sequence binding at its original index. The native
-    // cleanup walker asks for the tree count (13), so slot 12 must hold the child.
+    // One map slot per linked node, and one begin/end pair per drawable plus the
+    // terminator. Nodes beyond the resource's twelve count as drawable children.
+    let map_bytes = (row.nodes as usize + 1) * 4;
+    let cache_bytes = ((BASE_DRAWABLES + row.nodes - BASE_NODES + 1) * 16 + 8) as usize;
+    let mut mapping = Allocation::mapping(map_bytes).ok_or(9u32)?;
+    // Preserve every binding at its index, including another plugin's children.
     unsafe {
-        core::ptr::copy_nonoverlapping(row.objects as *const u8, mapping.pointer as *mut u8, 48);
-        word(mapping.pointer + 48, object);
+        core::ptr::copy_nonoverlapping(
+            row.objects as *const u8,
+            mapping.pointer as *mut u8,
+            map_bytes - 4,
+        );
+        word(mapping.pointer + row.nodes * 4, object);
     }
     let allocate = method(row.root, 0x58).ok_or(6u32)?;
     let release = method(row.root, 0x5c).ok_or(6u32)?;
     let f: unsafe extern "C" fn(u32, u32) -> u32 =
         unsafe { core::mem::transmute(allocate as usize) };
-    let cache = unsafe { f(row.root, CACHE_BYTES as u32) };
+    let cache = unsafe { f(row.root, cache_bytes as u32) };
     if cache == 0 {
         return Err(7);
     }
     let free: unsafe extern "C" fn(u32, u32) = unsafe { core::mem::transmute(release as usize) };
-    if !memory::writable(cache, CACHE_BYTES) || cache & 15 != 0 {
+    if !memory::writable(cache, cache_bytes) || cache & 15 != 0 {
         unsafe { free(row.root, cache) };
         return Err(8);
     }
-    unsafe { core::ptr::write_bytes(cache as *mut u8, 0, CACHE_BYTES) };
+    unsafe { core::ptr::write_bytes(cache as *mut u8, 0, cache_bytes) };
     // Publish only after both allocations and complete initialization succeed.
     // The game's draw walker emits begin/end pairs for the new child, so its
-    // original nine-drawable cache must grow by sixteen bytes. Root destruction
-    // frees the new cache; child destruction frees the badge. Publish both map
-    // aliases before linking the child, so a 13-node tree always has 13 entries.
+    // cache must grow by sixteen bytes. Root destruction frees the new cache;
+    // child destruction frees the badge. Publish both map aliases before linking
+    // the child, so the tree never has more nodes than the map has entries.
     unsafe {
         word(row.instance + 0xd8, mapping.pointer);
         word(row.root + 0xa0, mapping.pointer);

@@ -11,7 +11,7 @@ whether you still need them for progression.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r19.zip`.
+2. Extract `key-quest-markers-r20.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.

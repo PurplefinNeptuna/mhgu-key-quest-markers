@@ -33,6 +33,7 @@ ROOT_DTI,ALLOCATOR,ATLAS,GUI_RESOURCE=DATA+0x25100,DATA+0x25200,DATA+0x61000,DAT
 GUI_OWNER,GUI_HEADER,OBJECT_TABLE=DATA+0x65000,DATA+0x66000,DATA+0x67000
 MESSAGE_DTI=DATA+0x25700
 MAP_DTI,MAP_ALLOCATOR,ANIM_DTI,NULL_DTI=(DATA+x for x in [0x25300,0x25400,0x25500,0x25600])
+FOREIGN=DATA+0x82000
 INSTANCE_ARRAY=DATA+0x27000
 REGS=[getattr(arm,'UC_ARM_REG_R'+str(i))for i in range(13)]
 BADGE_ID=0x4b514d33
@@ -50,7 +51,7 @@ KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=0xff056300,0xff0000a3,0xff808080
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
               simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False,
-              custom_palette=False,log_level=3,requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
+              custom_palette=False,foreign=False,log_level=3,requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
     global CASES
     KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=(0xff563412,0xff3264a8,0xff807060) if custom_palette else (0xff056300,0xff0000a3,0xff808080)
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
@@ -344,7 +345,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             if r[1]==48:ret(cpu,DATA+0x2a000+constructing*0x100)
             elif r[1]==152:ret(cpu,original_caches[constructing])
             else:
-                assert r[1]==168;ret(cpu,0 if fail_cache else allocate(168))
+                assert r[1]==(184 if foreign else 168);ret(cpu,0 if fail_cache else allocate(r[1]))
             return
         if address==GAME+0x1064:
             objects=DATA+0x2a000+constructing*0x100
@@ -356,8 +357,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert r[0]==MAP_ALLOCATOR and r[2]==16
             if r[1]==48:ret(cpu,DATA+0x2a000+constructing*0x100)
             else:
-                assert r[1]==52
-                pointer=0 if fail_mapping else allocate(52)
+                assert r[1]==(56 if foreign else 52)
+                pointer=0 if fail_mapping else allocate(r[1])
                 if pointer:mapping_allocations.append(pointer)
                 ret(cpu,pointer)
             return
@@ -467,6 +468,14 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert read(pointer+0x50)==struct.unpack_from('<I',row_objects[j])[0]
         assert GUI_OWNER!=instance
         word(roots[i]+0x8c,3) # A newly constructed native row needs its first draw-list build.
+        if foreign:
+            # Another plugin's drawable child, added first: its map slot 12 and a
+            # ten-drawable cache are already published when our callback runs.
+            other=FOREIGN+i*0x200;tail=read(read(parents[i]+0x68)+0x6c)
+            while read(tail+0x6c):tail=read(tail+0x6c)
+            word(other,VFT);word(other+0x50,0x574c5032);word(other+0x54,0x2000001);word(other+0x70,parents[i])
+            word(other+0x74,GUI_OWNER);word(other+0x78,GUI_RESOURCE);word(tail+0x6c,other)
+            word(DATA+0x2a000+i*0x100+48,other)
     constructing=None
     if invalid_request:word(read(DATA+0x2a000+12)+0x50,99)
     if invalid_title=='subclass':
@@ -639,7 +648,9 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         for i,root in enumerate(roots):
             instance=DATA+0x28000+i*0x200;table=read(instance+0xd8)
             assert table==read(root+0xa0) and bytes(u.mem_read(table,48))==arrays[i]
-            if not(i==0 and (invalid_request or invalid_title)):assert read(read(table+48)+0x50)==BADGE_ID
+            if not(i==0 and (invalid_request or invalid_title)):
+                assert read(read(table+(52 if foreign else 48))+0x50)==BADGE_ID
+                if foreign:assert read(table+48)==FOREIGN+i*0x200
             call(GAME+0xa38b58,instance)
             assert read(instance+0xd8)==read(instance+0xdc)==0
         assert all(p in freed for p in allocations),('native cleanup leaked new allocations',allocations,freed)
@@ -670,6 +681,8 @@ results=[test_case('one INFO startup and no logs for successful native rows',log
          test_case('secondary table',primary_count=16),test_case('both tables',primary_count=20),test_case('primary table empty',primary_count=0),
          test_case('object allocation failure',fail_object=True),test_case('cache allocation failure',fail_cache=True),test_case('map allocation failure',fail_mapping=True),
          test_case('repeated row update reuses native children',repeat=True),
+         test_case('another plugin child already on every row',foreign=True),
+         test_case('repeat update finds the badge after another plugin child',foreign=True,repeat=True),
          test_case('partial allocation failure recovers without duplicate children',fail_at=4)]
 record('native-adapter.json',{'status':'PASSED','compiled_nro':True,'cases':CASES,'results':results,
           'successful_rows_quiet_at_INFO_and_ERROR':True,'no_development_snapshots':True,'genuine_failures_deduplicated':True,

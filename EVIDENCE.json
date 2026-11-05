@@ -4562,5 +4562,15 @@
       "romfs/nativeNX/plugins/key_quest_markers.nro": "e29a162f5dfe5cf3dc9847af9630e292e3208bf6455480cf2caca6c59a0d25e7"
     },
     "basis": "The user reported quest badges working on Eden in the same session: \"all working well\". On MHGURecomp 0.14.0 it logged \"Key Quest Markers r19 loaded\"; badges there were not reported."
+  },
+  "static_r20": {
+    "date": "2026-11-05",
+    "nro_sha256": "5efd5d35cb67ce649ebd4979ca25e3d287efa7c73d2a5f3c9d830345e7ed23b0",
+    "native_adapter_cases": 44,
+    "new_cases": [
+      "another plugin child already on every row",
+      "repeat update finds the badge after another plugin child"
+    ],
+    "runtime_test": "NOT RUN"
   }
 }
