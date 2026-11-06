@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
-  "reason": "r20 sizes the row's object map and draw cache from the live tree, so another mod can add children to the same quest rows. Badges and settings are unchanged.",
+  "reason": "r20 approved for distribution. It sizes the row from the live tree, so it no longer crashes the quest counter beside another mod that adds row children, such as Wishlist.",
   "publication": {
     "published": false,
     "url": null,
@@ -11,7 +11,7 @@
   },
   "version": "r20",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r20-candidate.zip",
+  "archive": "key-quest-markers-r20.zip",
   "runtime_test": "User reported it working on Eden: \"its working\". Not itemized.",
   "runtime_active": true,
   "gamebanana": {
@@ -105,6 +105,8 @@
       "sha256": "5efd5d35cb67ce649ebd4979ca25e3d287efa7c73d2a5f3c9d830345e7ed23b0"
     }
   },
-  "candidate": "build/key-quest-markers/candidates/r20/delivery",
-  "candidate_builder": "scripts/build.py"
+  "approval": {
+    "date": "2026-11-06",
+    "basis": "The user approved this on 2026-11-06: \"forgot to promote kqm\". The user reported r20 on Eden beside Wishlist: \"its working\", unitemized. Ryujinx and Switch hardware are unconfirmed."
+  }
 }
