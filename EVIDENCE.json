@@ -4581,5 +4581,15 @@
     "installed_nro_matches": true,
     "nro_sha256": "5efd5d35cb67ce649ebd4979ca25e3d287efa7c73d2a5f3c9d830345e7ed23b0",
     "context": "Run beside Wishlist r2."
+  },
+  "recomp_load_r20_2026_11_06": {
+    "version": "r20",
+    "emulator": "MHGURecomp 0.14.3 Linux, recomplog.txt 2026-11-06 13:59, launched with run.sh",
+    "installed_nro_sha256": "5efd5d35cb67ce649ebd4979ca25e3d287efa7c73d2a5f3c9d830345e7ed23b0",
+    "lines": [
+      "[forge] [INFO] Key Quest Markers r20 loaded"
+    ],
+    "context": "Wishlist r6 loaded in the same run.",
+    "user_report": "none for this run; badges not itemized"
   }
 }
