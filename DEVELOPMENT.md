@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r20 READY_TO_DISTRIBUTE (2026-11-06), unpublished, release at `build/key-quest-markers/releases/r20/`, reported working on Eden beside Wishlist r2, unitemized (see `EVIDENCE.json`). It sizes the row's object map and draw cache from the live tree, so another mod can add children to the same quest rows; badges and settings are unchanged. r19 is the gameplay-accepted build for quest badges on Eden, on the user's report (see `EVIDENCE.json`), kept at `build/key-quest-markers/candidates/r19/`, with its release, the previous one, preserved in `backups/accepted/key-quest-markers/r19-before-tree-sizing/`. On MHGURecomp 0.14.3 r20 loads beside Wishlist r6, with no player report. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results, with the pre-compaction `docs/*.json` records under `historical`.
+**Current state.** r20 READY_TO_DISTRIBUTE, unpublished, release at `build/key-quest-markers/releases/r20/`, reported working on Eden beside Wishlist, unitemized; it loads on MHGURecomp 0.14.3 with no player report. It sizes the row's object map and draw cache from the live tree, so another mod can add children to the same quest rows. The previous gameplay-accepted build is r19 at `build/key-quest-markers/candidates/r19/`. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results, with the pre-compaction `docs/*.json` records under `historical`.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -39,7 +39,7 @@ Run from any directory:
 
 `prepare` verifies inputs and the read-only native GUI layout fixture. All
 commands are offline; there is no download, install, game launch or settings
-command. Outputs use the workspace's `build/key-quest-markers/candidates/r18/`
+command. Outputs use the workspace's `build/key-quest-markers/candidates/VERSION/`
 and matching `work/` folder, or the independent checkout's own `build/` and
 `work/` folders after export. The target keeps PIC and adds `-nostartfiles` and
 `-Wl,-z,text`; the final NRO verifier rejects DT_TEXTREL/DF_TEXTREL.
@@ -299,7 +299,7 @@ in-game pixels, clipping or gameplay acceptance.
 
 The package check rejects any ARC payload. Protected quest, completion and progression records stay unchanged in every fixture. Pixel rendering and the game's actual query results still need a manual trial.
 
-Runtime evidence: r17 was accepted by the user on Eden/Linux, with and without HD, and its build is at `build/key-quest-markers/candidates/r17/`. See `EVIDENCE.json`.
+Gameplay with and without HD was accepted on r17 (`build/key-quest-markers/candidates/r17/`); see `EVIDENCE.json`.
 
 ## Native reference
 
