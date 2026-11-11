@@ -29,6 +29,7 @@ the selected HD English `common_eng.arc`. Never edit originals.
 Run from any directory:
 
 ```sh
+./build.sh fetch     # once: downloads forge-rs and crates into vendor/
 ./build.sh doctor
 ./build.sh build
 ./build.sh test

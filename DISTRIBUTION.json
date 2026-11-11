@@ -70,10 +70,10 @@
   "notices": [
     "mods/key-quest-markers/DISTRIBUTION_NOTICES.md",
     "mods/key-quest-markers/LICENSE",
-    "mods/key-quest-markers/vendor/forge-rs/LICENSE",
+    "mods/key-quest-markers/licenses/FORGE-RS-MIT.txt",
     "mods/key-quest-markers/vendor/libnx/LICENSE-MIT",
     "mods/key-quest-markers/licenses/FORGE-MIT.txt",
-    "mods/key-quest-markers/vendor/crates/log-0.4.34/LICENSE-MIT",
+    "mods/key-quest-markers/licenses/LOG-MIT.txt",
     "mods/key-quest-markers/licenses/RUST-MIT.txt",
     "mods/key-quest-markers/licenses/UNICODE-3.0.txt",
     "mods/key-quest-markers/licenses/COMPILER_BUILTINS.txt"

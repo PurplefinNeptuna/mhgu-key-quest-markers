@@ -37,6 +37,7 @@ def doctor():
                         for name in lock['tool_sha256'] if name.startswith('arm-none-eabi-'))
     for n,p in pinned_tools:
         if digest(p)!=lock['tool_sha256'][n]: raise ValueError('Pinned tool differs: '+n)
+    if not (MOD/'vendor/crates').is_dir(): raise ValueError('Dependencies missing: run ./build.sh fetch')
     for n,h in lock['files'].items():
         if digest(MOD/n)!=h: raise ValueError('Pinned source differs: '+n)
     for n,h in lock['inputs'].items():
@@ -112,8 +113,8 @@ def package():
     import mod_distribution as distribution
     (dest/'README.html').write_bytes(distribution.readme_html(guide))
     (dest/'GAMEBANANA_README.html').write_bytes(distribution.gamebanana_readme_html(guide,spec['gamebanana']))
-    notices='\n\n'.join((MOD/n).read_text() for n in ['DISTRIBUTION_NOTICES.md','LICENSE','vendor/forge-rs/LICENSE',
-        'vendor/libnx/LICENSE-MIT','licenses/FORGE-MIT.txt','vendor/crates/log-0.4.34/LICENSE-MIT','licenses/RUST-MIT.txt','licenses/UNICODE-3.0.txt','licenses/COMPILER_BUILTINS.txt'])
+    notices='\n\n'.join((MOD/n).read_text() for n in ['DISTRIBUTION_NOTICES.md','LICENSE','licenses/FORGE-RS-MIT.txt',
+        'vendor/libnx/LICENSE-MIT','licenses/FORGE-MIT.txt','licenses/LOG-MIT.txt','licenses/RUST-MIT.txt','licenses/UNICODE-3.0.txt','licenses/COMPILER_BUILTINS.txt'])
     (dest/'NOTICES.txt').write_text(notices);(dest/'NOTICES.html').write_text('<pre>'+escape(notices)+'</pre>\n')
     evidence={n:json.loads((BUILD_ROOT/(n+'.json')).read_text()) for n in ['resource','build','arm','native-adapter','verify','tests']}
     (dest/'VALIDATION.json').write_text(json.dumps(evidence,indent=2)+'\n')
@@ -133,8 +134,10 @@ def package():
     distribution.verify_candidate(spec, ROOT)
     print('Verified active DEVELOPMENT candidate:',archive)
 
+def fetch():
+    import fetch_vendor;fetch_vendor.main()
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['doctor','prepare','build','test','verify','package','export'])
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['doctor','fetch','prepare','build','test','verify','package','export'])
     p.add_argument('--output',type=Path);a=p.parse_args()
     if a.command=='export':
         if a.output is None: p.error('export requires --output')
