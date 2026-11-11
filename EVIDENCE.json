@@ -4,7 +4,7 @@
       "comparison": "r12 original versus r12-small alternate",
       "original": {
         "version": "r12",
-        "source_commit": "fbd8647",
+        "source_commit": "1ebb55c",
         "delivery": "build/key-quest-markers-rs/candidates/r12/delivery",
         "sha256": {
           "GAMEBANANA_README.html": "7ffef39cd4c64e96eb16315ce83dd9f84927e92a0fe1fc79c116a9a6df77424b",
@@ -63,7 +63,7 @@
       "version": "r14",
       "date": "2026-10-15",
       "status": "READY_TO_DISTRIBUTE",
-      "source_commit": "96fcd21",
+      "source_commit": "7ac027e",
       "chosen_emblem": "original",
       "nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65",
       "candidate_zip_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db",
@@ -112,7 +112,7 @@
       "nro_sha256": "79783ac8c236af966160a962218b9d5d36e2088da477cd0f1dc1de88bc09ca65",
       "candidate_zip_sha256": "4fde4d48a515ca84c2626a4ee6fb8405a5105a7b2714aadd189cfce56a38a5db",
       "installed_matches_candidate": true,
-      "source_commit": "96fcd21",
+      "source_commit": "7ac027e",
       "renderer": "MHGU native GUI",
       "emblem": "Original large lobby emblem; logical UV (136,344,198,406), displayed 32x32",
       "active_urgent_colour": "#9B4DCA",
@@ -717,7 +717,7 @@
     "docs/RUNTIME_RESULTS.json": {
       "date": "2026-10-15",
       "version": "r9",
-      "implementation_commit": "346de56",
+      "implementation_commit": "cdd01ca",
       "distribution_status": "DEVELOPMENT",
       "user_confirmation": {
         "quote": "ok then save this knowledge somewhere in this project because this is working, nice job",
@@ -4374,7 +4374,7 @@
         "package/romfs/nativeNX/plugins/key_quest_markers.nro": "ebc209c1695a38acb3e3b15d198a89e56dba651484c8b968db152f77570dc9e6"
       },
       "release_directory": "build/key-quest-markers/releases/r17",
-      "source_commit": "befdea5",
+      "source_commit": "2dff44d",
       "publication": false
     }
   },
