@@ -37,6 +37,11 @@ shrink to fit before the badge.
 Open **Plugin UI > Key Quest Markers** in Forge's overlay. Click a colour
 swatch to open its picker, or enter a hexadecimal RGB value.
 
+Forge opens its overlay with the Insert key on a keyboard; `[menu] key` in Forge's
+`config.ini` changes the key. On Ryujinx, turn on Direct Keyboard Access in the input
+settings first. On MHGU Recomp, press Insert or choose **Open the Forge menu** on the
+Mods tab of its settings menu (F1, or Plus and Minus on a controller).
+
 | Setting | Default | Effect |
 | --- | --- | --- |
 | Key | `006305` | Key quest badge colour. |
