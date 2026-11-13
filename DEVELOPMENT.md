@@ -320,22 +320,11 @@ Native `Tex_icon` settings and the setters that apply them (main-relative):
 
 The native loader at main+0xb7f988 leaves INIT_PARAM types 17 and 18 unrelocated. Dispatcher 0xb344f4 reads kind 17 as the low byte of the value (bool) and kind 18 as the value word. Only kind 3 references kv8; kinds 1, 2 and 7 and others use kv32; kind 4 uses kv128.
 
-Title `cGUIObjMessage`, CRC `0x2fb82eae`, size 352, at row binding 4, ID 6. Native operations:
-
-| Operation | Address / contract |
-| --- | --- |
-| AutoScale setter | 0xa53348, two integers, preserves all but +0xf0 bit 0 |
-| AutoWrap setter | 0xa53324, two integers, +0xf8 bits 18..19; enum 0 disables wrapping |
-| Size setter | 0xa53528, object and float2 pointer, writes +0xc8/+0xcc |
-| FontSize invalidation tail | 0xa5350c, ORs +0xf0 bit 16 |
-| Cached-layout refresh | 0xa53aa8 checks bit 16, calls virtual +0x70, then clears it |
-| Message type getter | 0xa56ab8, GOT input main+0x183f0b0 |
-
-Size and AutoScale do not invalidate cached glyphs, so the adapter sets bit 16 after an actual layout change. Restore uses width 355, height 38, AutoScale 0 and AutoWrap 0. AutoScale dispatch is at 0xa42374..0xa423cc and clamp function 0xa449c0.
+Title `cGUIObjMessage`, CRC `0x2fb82eae`, size 352, at row binding 4, ID 6. Its native operations (AutoScale, AutoWrap, Size, the glyph-cache invalidation bit and refresh) are in `.agents/skills/mhgu-understanding/references/native-gui.md` (Classes and identities). Size and AutoScale do not invalidate cached glyphs, so the adapter sets +0xf0 bit 16 after an actual layout change. Restore uses width 355, height 38, AutoScale 0 and AutoWrap 0.
 
 Row layout on the unchanged English HD resource: request Texture ID 20 at lookup index 3, (365,2), 32x32; title Message ID 6 at index 4, X 62, 355x38, both children of the same row Null. The builder calls 0x56e530/0x545630 to set the request's visibility immediately through 0xa47950, so `+0x54` bit 0 is the displayed request state after the original returns. Badge 32x32 at Y 3, X 365 free or X 329 before a bubble, title widths 299 and 263. The bubble case keeps a four-pixel gap. A quest can be both: quest 107, Another Pack Attack, is native key category 1 with mRequestVillage 8, which the builder's 0x11e0 mask shows as a request bubble.
 
-Object map: count getter 0xa38ffc calls tree traversal 0xa47d2c and adds the root, so each added child needs one more entry, read by cleanup 0x5456e4 and by 0x546360, 0x547a14 and 0x548438. The allocator is `cGUIInstance`'s MT allocator (alloc1 at vft+0x1c), confirmed by GOT slot 0x18422b4, used by map construction 0xa38bc0 and destruction 0xa38b58/0xa38828. Native 0xa38828 passes instance+0x6c to 0xa38bc0, which writes that cGUI owner to every child +0x74. The cGUIObjTexture DTI vtable at main+0x178ff90 has destructors 0x32c and 0xa568a8, factory 0xa4f550, and a null +0x0c; placement constructor 0xa4f60c, Polygon base 0xa4d0d8.
+Object map, allocators, destructors and the Texture DTI vtable: `.agents/skills/mhgu-understanding/references/native-gui.md` (Classes and identities, allocation and ownership).
 
 Special encounter urgents (groups 47..54) are urgent by Kiranico's label although cQuestData +0x10c bit 0 is clear (flags 0x300/0x308). Family getter 0x3b21f0 reads main+0x162a8a0 (first eight words 1,1,2,2,3,3,4,4); 0x3b85d8 uses it with repeat-category predicate 0x3b2214. Availability predicate 0x54af8c, called with category 0xff and null menu context, checks scene query 0x3b2174 and a 51-entry enabled-bit table; all eight IDs are entries 0..7 at 0x162cde4, stride 8, bits at owner +0x35d4. The mod uses that predicate, completion 0x523da4, and completion of either record in the same family. Available unfinished unsatisfied pairs show the urgent colour; completed or satisfied pairs and unavailable records are grey. No rank is inferred from the viewed star page. `EVIDENCE.json` `historical` holds hashes, URLs and limits.
 
