@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
-  "reason": "r23 candidate: an orange (#FF7F00) badge for quests that grant Hunter Arts or Felyne ingredients and for the quests their unlock chains require, and a blue badge for quests that unlock others; both lists are built from the pinned 1.4.0 unlock script and NPC talk tables. Not run.",
+  "reason": "r23 approved for distribution: coloured badges on quest counter rows for key quests and urgent quests, orange for quests that grant Hunter Arts or Felyne ingredients and the quests their unlock chains require, and blue for quests that unlock others.",
   "publication": {
     "published": false,
     "url": null,
@@ -11,8 +11,8 @@
   },
   "version": "r23",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r23-candidate.zip",
-  "runtime_test": "NOT RUN",
+  "archive": "key-quest-markers-r23.zip",
+  "runtime_test": "r23 loaded on Eden and on MHGURecomp beside WishFinder r143 with the candidate NRO; the user reports it working after many runs, unitemized.",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -65,10 +65,9 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r23 has not run on any emulator or hardware; r21 ran only on MHGU Recomp, on an unitemized report",
+    "r23 ran on Eden and MHGURecomp on the user's report, unitemized; Ryujinx and Switch hardware have no run",
     "The orange and blue badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
-    "on MHGURecomp r20 loads, and its badges have no player report there",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
   ],
   "readme": "mods/key-quest-markers/README.md",
@@ -91,7 +90,7 @@
       "mods/key-quest-markers/EVIDENCE.json"
     ],
     "static_summary": "r23: pinned toolchain build; 18 core tests, the quest-list test (557 unlock and 80 reward IDs, hand-traced cases), the ARM suite and 46 native adapter cases passed, including blue on quest 220, orange over blue on quest 233 and their completion; verify passed.",
-    "manual_summary": "r23 not run. r21 on MHGU Recomp 0.18.3: \"it run perfectly in recomp now and it marks chained quests\", unitemized. r20, the last accepted build, was reported working on Eden; see EVIDENCE.json."
+    "manual_summary": "r23 on Eden and MHGURecomp, beside WishFinder r143: \"its working well\", after many runs, unitemized. r21 on MHGU Recomp 0.18.3: \"it run perfectly in recomp now and it marks chained quests\". r20 reported working on Eden; see EVIDENCE.json."
   },
   "dependencies": [
     {
@@ -114,6 +113,8 @@
       "sha256": "ff1a1d5d7de0205e2b6418c8f9221c18ae74edff0779d8a17e23282508b531cd"
     }
   },
-  "candidate": "build/key-quest-markers/candidates/r23/delivery",
-  "candidate_builder": "scripts/build.py"
+  "approval": {
+    "date": "2026-11-23",
+    "basis": "The user approved r23 on 2026-11-23: \"key quest markers already ran too much times already, its working well too, and i want to promote it\". The promoted bytes are the r23 candidate: key_quest_markers.nro ff1a1d5d7de0205e2b6418c8f9221c18ae74edff0779d8a17e23282508b531cd, installed with that hash in Eden and MHGURecomp, whose logs show \"Key Quest Markers r23 loaded\". Ryujinx and Switch hardware have no r23 run."
+  }
 }
