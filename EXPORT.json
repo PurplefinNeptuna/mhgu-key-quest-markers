@@ -32,6 +32,7 @@
     "licenses/UNICODE-3.0.txt",
     "link/exported.txt",
     "link/switch32.ld",
+    "manifest.json",
     "mod.json",
     "requirements-arm.txt",
     "research/hardware-link.json",
@@ -49,6 +50,7 @@
     "scripts/mod_distribution.py",
     "scripts/native_support.py",
     "scripts/paths.py",
+    "scripts/quest_unlocks.py",
     "scripts/verify.py",
     "src/config.rs",
     "src/gui.rs",
@@ -57,6 +59,7 @@
     "src/memory.rs",
     "src/native.rs",
     "src/offers.rs",
+    "src/quest_lists.rs",
     "src/settings.rs",
     "src/signatures.rs",
     "src/svc.S",
@@ -66,6 +69,7 @@
     "tests/hooks-harness/src/lib.rs",
     "tests/native_adapter.py",
     "tests/resource.py",
+    "tests/unlocks.py",
     "vendor/libnx/LICENSE-MIT"
   ]
 }

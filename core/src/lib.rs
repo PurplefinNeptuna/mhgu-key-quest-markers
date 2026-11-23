@@ -22,6 +22,8 @@ pub enum Badge {
     Key,
     Completed,
     Urgent,
+    Unlocks,
+    Reward,
 }
 /// None means the adapter could not prove relevance/availability. These facts
 /// must come from native progression, never from the page currently being viewed.
@@ -33,6 +35,10 @@ pub struct Evidence {
     pub prerequisites_done: bool,
     pub alternative_done: bool,
     pub urgent_listed: bool,
+    /// Clearing this quest unlocks a different quest (build-time unlock list).
+    pub unlocks: bool,
+    /// Grants Hunter Arts or ingredients, or leads to a quest that does (build-time list).
+    pub reward: bool,
 }
 pub const fn key(category: u8) -> bool {
     (category >= 1 && category <= 17) || (category >= 19 && category <= 22)
@@ -78,7 +84,24 @@ pub fn needed_key(group: Group, village: u16, hub: u16) -> Option<bool> {
 /// Village encounter groups use their native availability and pair completion.
 /// Completion and satisfied alternatives cannot turn key/urgent. An unresolved
 /// unfinished quest stays hidden instead of assuming that its rank is current.
+/// Key and urgent quests keep their own badge. Any other reward or reward-chain
+/// quest is gold, and any other quest that unlocks another is blue; both turn grey once cleared.
 pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
+    let badge = rank_badge(group, urgent_flag, state);
+    // An urgent flag on a non-urgent group is conflicting metadata and stays hidden.
+    let ranked = urgent_flag || urgent(group.category) || key(group.category);
+    if badge != Badge::Hidden || group.id == 0 || ranked || !(state.reward || state.unlocks) {
+        return badge;
+    }
+    if state.completed {
+        Badge::Completed
+    } else if state.reward {
+        Badge::Reward
+    } else {
+        Badge::Unlocks
+    }
+}
+fn rank_badge(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
     if group.id == 0 {
         return Badge::Hidden;
     }
@@ -123,6 +146,45 @@ mod tests {
             prerequisites_done: true,
             alternative_done: false,
             urgent_listed: true,
+            unlocks: false,
+            reward: false,
+        }
+    }
+    #[test]
+    fn unlocking_quests_are_blue_until_cleared_and_never_outrank_keys() {
+        let mut s = state();
+        s.unlocks = true;
+        for category in [0, 18, 23, 55, 129, 255] {
+            assert_eq!(decide(group(category), false, s), Badge::Unlocks);
+            let mut done = s;
+            done.completed = true;
+            assert_eq!(decide(group(category), false, done), Badge::Completed);
+            assert_eq!(decide(group(category), false, state()), Badge::Hidden);
+            // Conflicting urgent flag on a non-urgent group stays hidden.
+            assert_eq!(decide(group(category), true, s), Badge::Hidden);
+        }
+        assert_eq!(decide(group(1), false, s), Badge::Key);
+        assert_eq!(decide(group(25), true, s), Badge::Urgent);
+        let mut unknown = s;
+        unknown.needed_key = None;
+        unknown.active_urgent = None;
+        assert_eq!(decide(group(1), false, unknown), Badge::Hidden);
+        assert_eq!(decide(group(25), true, unknown), Badge::Hidden);
+        assert_eq!(decide(Group { id: 0, ..group(0) }, false, s), Badge::Hidden);
+    }
+    #[test]
+    fn reward_quests_are_gold_over_blue_and_under_keys() {
+        let mut s = state();
+        s.reward = true;
+        for unlocks in [false, true] {
+            s.unlocks = unlocks;
+            assert_eq!(decide(group(0), false, s), Badge::Reward);
+            let mut done = s;
+            done.completed = true;
+            assert_eq!(decide(group(0), false, done), Badge::Completed);
+            assert_eq!(decide(group(0), true, s), Badge::Hidden);
+            assert_eq!(decide(group(1), false, s), Badge::Key);
+            assert_eq!(decide(group(25), true, s), Badge::Urgent);
         }
     }
     fn group(category: u8) -> Group {
@@ -378,6 +440,14 @@ mod tests {
         assert_eq!(
             colors::Palette::DEFAULT.color(Badge::Urgent).to_le_bytes(),
             [163, 0, 0, 255]
+        );
+        assert_eq!(
+            colors::Palette::DEFAULT.color(Badge::Unlocks).to_le_bytes(),
+            [0, 50, 194, 255]
+        );
+        assert_eq!(
+            colors::Palette::DEFAULT.color(Badge::Reward).to_le_bytes(),
+            [155, 101, 0, 255]
         );
     }
 }

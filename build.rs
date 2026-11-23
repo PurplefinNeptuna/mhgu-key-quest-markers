@@ -15,4 +15,10 @@ fn main() {
         "cargo:rustc-env=KQM_VERSION={}",
         env::var("KQM_VERSION").unwrap()
     );
+    // scripts/build.py prepare derives these sorted ID lists from the pinned game inputs.
+    let lists = env::var("KQM_QUEST_LISTS").unwrap();
+    println!("cargo:rerun-if-env-changed=KQM_QUEST_LISTS");
+    println!("cargo:rerun-if-changed={lists}");
+    let out = env::var("OUT_DIR").unwrap();
+    std::fs::copy(&lists, format!("{out}/quest_lists.rs")).unwrap();
 }

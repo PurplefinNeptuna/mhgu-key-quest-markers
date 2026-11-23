@@ -7,14 +7,20 @@ pub struct Palette {
     pub key: u32,
     pub urgent: u32,
     pub completed: u32,
+    pub unlocks: u32,
+    pub reward: u32,
 }
 impl Palette {
-    // Exact game UI colours: counter_down Gathering object16 and objective
-    // instance14. Provenance and offsets are in research/theme-colours.json.
+    // Exact game UI colours: counter_down Gathering object16, objective
+    // instance14, the Capture category's blue and the Prowler category's gold.
+    // Provenance and offsets are in
+    // research/theme-colours.json.
     pub const DEFAULT: Self = Self {
         key: 0x006305,
         urgent: 0xa30000,
         completed: 0x808080,
+        unlocks: 0x0032c2,
+        reward: 0x9b6500,
     };
     pub fn color(self, badge: Badge) -> u32 {
         let rgb = match badge {
@@ -22,19 +28,21 @@ impl Palette {
             Badge::Key => self.key,
             Badge::Urgent => self.urgent,
             Badge::Completed => self.completed,
+            Badge::Unlocks => self.unlocks,
+            Badge::Reward => self.reward,
         };
         // Config uses RRGGBB; native ARM colour words store bytes R,G,B,A.
         0xff000000 | ((rgb & 255) << 16) | (rgb & 0xff00) | ((rgb >> 16) & 255)
     }
     pub fn valid(self) -> bool {
-        [self.key, self.urgent, self.completed]
+        [self.key, self.urgent, self.completed, self.unlocks, self.reward]
             .iter()
             .all(|v| *v <= 0xffffff)
     }
     pub fn parse(bytes: &[u8]) -> Result<Self, Error> {
         let text = core::str::from_utf8(bytes).map_err(|_| Error::Invalid)?;
         let mut section = false;
-        let mut values = [None; 3];
+        let mut values = [None; 5];
         for line in text.lines().map(str::trim) {
             if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
                 continue;
@@ -54,6 +62,8 @@ impl Palette {
                 "key" => 0,
                 "urgent" => 1,
                 "completed" => 2,
+                "unlocks" => 3,
+                "reward" => 4,
                 _ => continue,
             };
             let value = value.trim();
@@ -69,6 +79,9 @@ impl Palette {
             key: values[0].ok_or(Error::Invalid)?,
             urgent: values[1].ok_or(Error::Invalid)?,
             completed: values[2].ok_or(Error::Invalid)?,
+            // Absent in configs saved before these colours existed; they keep their other colours.
+            unlocks: values[3].unwrap_or(Self::DEFAULT.unlocks),
+            reward: values[4].unwrap_or(Self::DEFAULT.reward),
         })
     }
     pub fn text(self) -> Result<Text, Error> {
@@ -78,8 +91,8 @@ impl Palette {
         let mut out = Text::new();
         write!(
             out,
-            "[Colors]\nkey = {:06X}\nurgent = {:06X}\ncompleted = {:06X}\n",
-            self.key, self.urgent, self.completed
+            "[Colors]\nkey = {:06X}\nurgent = {:06X}\ncompleted = {:06X}\nunlocks = {:06X}\nreward = {:06X}\n",
+            self.key, self.urgent, self.completed, self.unlocks, self.reward
         )
         .map_err(|_| Error::Invalid)?;
         Ok(out)
@@ -283,6 +296,8 @@ mod tests {
         assert_eq!(p.color(Badge::Key), 0xff056300);
         assert_eq!(p.color(Badge::Urgent), 0xff0000a3);
         assert_eq!(p.color(Badge::Completed), 0xff808080);
+        assert_eq!(p.color(Badge::Unlocks), 0xffc23200);
+        assert_eq!(p.color(Badge::Reward), 0xff00659b);
         assert_eq!(p.color(Badge::Hidden), 0);
         assert_eq!(
             Palette::parse(&p.text().unwrap().bytes[..p.text().unwrap().len]),
@@ -306,6 +321,34 @@ mod tests {
             Palette::parse(b"; comment\n[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\n"),
             Ok(Palette::DEFAULT)
         );
+        // A config saved before the unlocks colour keeps its colours and gains the default blue.
+        assert_eq!(
+            Palette::parse(b"[Colors]\nkey=123456\nurgent=a30000\ncompleted=808080\n"),
+            Ok(Palette {
+                key: 0x123456,
+                ..Palette::DEFAULT
+            })
+        );
+        assert_eq!(
+            Palette::parse(b"[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nunlocks=0000ff\n"),
+            Ok(Palette {
+                unlocks: 0x0000ff,
+                ..Palette::DEFAULT
+            })
+        );
+        assert_eq!(
+            Palette::parse(b"[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nreward=ffd700\n"),
+            Ok(Palette {
+                reward: 0xffd700,
+                ..Palette::DEFAULT
+            })
+        );
+        for text in [
+            "[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nunlocks=00ff\n",
+            "[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nunlocks=0000ff\nunlocks=0000ff\n",
+        ] {
+            assert_eq!(Palette::parse(text.as_bytes()), Err(Error::Invalid));
+        }
     }
     #[test]
     fn pending_reset_save_and_restart() {
@@ -317,6 +360,8 @@ mod tests {
             key: 0x123456,
             urgent: 0x987654,
             completed: 0xabcdef,
+            unlocks: 0x13579b,
+            reward: 0x2468ac,
         };
         p.edit(custom);
         assert_eq!(p.applied, Palette::DEFAULT);

@@ -145,6 +145,8 @@
     "main": "b3935415499549adaf4c0e89822831daa175cfd456a7990791c79be3997645ef",
     "forge": "469f425dd02a37b7a5d84ddde5f769922bc5e0d5fbc8adb0ca270e2c0773cd7d",
     "common_eng.arc": "fd8cd4521cb5c5d07e0d1e5e7275aaf5ecbcfd34d20aae2b6f880ab65b22f438",
-    "sdk": "9a9b7035266637ee693a32da6b0fde54bda00e897bef05b1c8d8cda30f8ac8b0"
+    "sdk": "9a9b7035266637ee693a32da6b0fde54bda00e897bef05b1c8d8cda30f8ac8b0",
+    "village_common.arc": "8b5e466ad141fcaafd187cafcf0adcf7648bca327536a722f9faa69778e27231",
+    "talk.arc": "d1a9625e2840e6508164df0697a03f172f25c31627af9a87ecc1945e91a45c4a"
   }
 }

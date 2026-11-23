@@ -14,10 +14,11 @@ for key in ('rust_bin','cargo_home','cargo_forge','devkitarm','inputs','arm_pyth
 # Separate output trees prevent either package from overwriting the other.
 SMALL_MARK=os.environ.get('KQM_SMALL_MARK','0')
 if SMALL_MARK not in ('0','1'): raise ValueError('KQM_SMALL_MARK must be 0 or 1')
-VERSION='r20-small' if SMALL_MARK=='1' else 'r20'
+VERSION='r22-small' if SMALL_MARK=='1' else 'r22'
 BUILD_ROOT=ROOT/('build/key-quest-markers/candidates/'+VERSION)
 WORK_ROOT=ROOT/('work/key-quest-markers/candidates/'+VERSION)
 CARGO_TARGET=WORK_ROOT/'cargo-target'
+QUEST_LISTS=WORK_ROOT/'quest_lists.rs'
 FORGE=MOD/'vendor/forge-rs'
 DEPS=MOD/'vendor'
 PYTHON=Path(CONFIG.get('python',sys.executable))

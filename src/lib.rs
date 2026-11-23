@@ -9,6 +9,7 @@ mod native;
 mod offers;
 mod settings;
 mod signatures;
+mod quest_lists;
 use core::sync::atomic::{AtomicU32, Ordering};
 static REPORTED: AtomicU32 = AtomicU32::new(0);
 // forge-rs exposes only the six-byte version prefix. The matching native loader

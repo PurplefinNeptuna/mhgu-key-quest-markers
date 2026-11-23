@@ -3,12 +3,12 @@
 import argparse, hashlib, json, os, shutil, subprocess, sys, zipfile, zlib
 from html import escape
 from pathlib import Path
-from paths import MOD, ROOT, CONFIG, BUILD_ROOT, WORK_ROOT, CARGO_TARGET, PYTHON, VERSION, SMALL_MARK, input_path
+from paths import MOD, ROOT, CONFIG, BUILD_ROOT, WORK_ROOT, CARGO_TARGET, PYTHON, VERSION, SMALL_MARK, QUEST_LISTS, input_path
 
 def digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def source_hashes():
     """Tie receipts to the exact owned executable/resource recipe inputs."""
-    files=['Cargo.toml','Cargo.lock','.cargo/config.toml','armv7a-none-eabi.json','build.rs','scripts/gui_layout.py']
+    files=['Cargo.toml','Cargo.lock','.cargo/config.toml','armv7a-none-eabi.json','build.rs','scripts/gui_layout.py','scripts/quest_unlocks.py']
     files += [str(p.relative_to(MOD)) for folder in ['src','core/src','link']
               for p in sorted((MOD/folder).rglob('*')) if p.is_file()]
     return {n:digest(MOD/n) for n in files}
@@ -17,7 +17,7 @@ def record(name, value):
     (BUILD_ROOT/name).write_text(json.dumps(value,indent=2)+'\n')
 def run(args, **kw): subprocess.run(list(map(str,args)),check=True,**kw)
 def environment():
-    env=os.environ.copy();env.update(KQM_SMALL_MARK=SMALL_MARK,KQM_VERSION=VERSION);runtime=ROOT/'tools/mhgu-dti-dumper'
+    env=os.environ.copy();env.update(KQM_SMALL_MARK=SMALL_MARK,KQM_VERSION=VERSION,KQM_QUEST_LISTS=str(QUEST_LISTS));runtime=ROOT/'tools/mhgu-dti-dumper'
     rust=Path(CONFIG.get('rust_bin',runtime/'rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin'))
     compiler=CONFIG.get('devkitarm') or env.get('DEVKITARM')
     if not compiler: raise ValueError('Set devkitarm in build.local.json or DEVKITARM')
@@ -56,6 +56,12 @@ def prepare():
     image,_=main_image(input_path('main').read_bytes())
     info['theme_colours']=inspect_theme(input_path('common_eng.arc'),image)
     record('resource.json',info)
+    # Game-derived IDs stay out of Git: build.rs embeds these generated lists.
+    from quest_unlocks import from_inputs, rust_lists
+    unlocks,rewards=from_inputs(input_path)
+    QUEST_LISTS.parent.mkdir(parents=True,exist_ok=True);QUEST_LISTS.write_text(rust_lists(unlocks,rewards))
+    record('quest-lists.json',{'unlocks':len(unlocks),'rewards':len(rewards),'sha256':digest(QUEST_LISTS),
+        'inputs':{n:digest(input_path(n)) for n in ['village_common.arc','talk.arc','main']}})
 
 def build():
     prepare();env,_=environment();lock=digest(MOD/'Cargo.lock')
@@ -69,6 +75,8 @@ def build():
     if digest(MOD/'Cargo.lock')!=lock: raise ValueError('Cargo.lock changed during build')
     dest=BUILD_ROOT/'package/romfs/nativeNX/plugins/key_quest_markers.nro'
     dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(CARGO_TARGET/output.name,dest)
+    # Mod managers read manifest.json beside romfs/ (docs/DEVELOPMENT.md, Releases).
+    shutil.copy2(MOD/'manifest.json',BUILD_ROOT/'package/manifest.json')
     record('build.json',{'version':VERSION,'status':'BUILT','nro_sha256':digest(dest),'forge_rs_revision':
         'd1865b68e9b194eb3eacc8bd71bbf601a5fac63e','runtime_active':True,'source_sha256':source_hashes(),'runtime_test':'NOT RUN'})
 
@@ -78,6 +86,7 @@ def test():
         run([rust/'cargo','test','--locked','--config',MOD/'.cargo/vendor.toml','--manifest-path',MOD/manifest,
              '--target','x86_64-unknown-linux-gnu'],cwd=MOD.parent,env=env)
     run([PYTHON,MOD/'tests/resource.py'])
+    run([PYTHON,MOD/'tests/unlocks.py'])
     arm_python=CONFIG.get('arm_python',ROOT/'tools/mwc-analysis-venv/bin/python')
     run([arm_python,MOD/'tests/arm.py'])
     run([arm_python,MOD/'tests/native_adapter.py'])
@@ -105,7 +114,7 @@ def package():
     previous={str(p.relative_to(named)) for p in named.rglob('*') if p.is_file()}
     if previous-payloads.keys(): raise ValueError('Preserving unexpected previous candidate files')
     shutil.copytree(source,named,dirs_exist_ok=True)
-    guide=(MOD/'README.md').read_text().replace('r20',VERSION).encode();(dest/'README.md').write_bytes(guide)
+    guide=(MOD/'README.md').read_text().replace('r22',VERSION).encode();(dest/'README.md').write_bytes(guide)
     archive=dest/('key-quest-markers-'+VERSION+'-candidate.zip')
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
         z.writestr('README.md',guide)

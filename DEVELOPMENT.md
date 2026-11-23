@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r20 READY_TO_DISTRIBUTE, unpublished, release at `build/key-quest-markers/releases/r20/`, reported working on Eden beside Wishlist, unitemized; it loads on MHGURecomp 0.14.3 with no player report. It sizes the row's object map and draw cache from the live tree, so another mod can add children to the same quest rows. The previous gameplay-accepted build is r19 at `build/key-quest-markers/candidates/r19/`. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results, with the pre-compaction `docs/*.json` records under `historical`.
+**Current state.** r22 DEVELOPMENT candidate at `build/key-quest-markers/candidates/r22/delivery/`, not run. It adds a gold badge for quests that grant Hunter Arts or Felyne ingredients and the quests their unlock chains require, from the same build-time lists as r21's blue badge, and a fifth colour setting. r21 (`build/key-quest-markers/candidates/r21/`) was reported working on MHGU Recomp 0.18.3, unitemized. The last gameplay-accepted build is r20 at `build/key-quest-markers/candidates/r20/` (release ZIP kept there; the r20 release is preserved in `backups/accepted/key-quest-markers/r20-before-unlock-badges/`), reported working on Eden beside Wishlist, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -23,8 +23,11 @@ ARM execution fixtures use Unicorn 2.1.4. Tool binary hashes are also pinned.
 Registry sources, including build-std resolver inputs, are vendored for offline builds.
 
 Copy `build.local.example.json` to `build.local.json` and set the tools and input
-folder. Inputs are copied `main`, `sdk`, a matching Forge NSO named `forge`, and
-the selected HD English `common_eng.arc`. Never edit originals.
+folder. Inputs are copied `main`, `sdk`, a matching Forge NSO named `forge`,
+the selected HD English `common_eng.arc`, and the 1.4.0 RomFS
+`loc/arc/village/common.arc` and `loc/arc/npc/talk.arc` named
+`village_common.arc` and `talk.arc` (HD Project's copies of the entries read
+are byte-identical). Never edit originals.
 
 Run from any directory:
 
@@ -65,8 +68,10 @@ this one environment flag.
 | Key | 1 | `#006305` (RGB 0,99,5) | Needed key quest for the current progression tier |
 | Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests |
 | Urgent | 3 | `#A30000` (RGB 163,0,0) | Offered, available, unfinished urgent |
+| Unlocks | 4 | `#0032C2` (RGB 0,50,194) | Other quest whose clear unlocks a different quest; grey once cleared |
+| Reward | 5 | `#9B6500` (RGB 155,101,0) | Other quest that grants Hunter Arts or ingredients, or one its unlock chain requires; outranks Unlocks; grey once cleared |
 
-The defaults are the exact game UI colour properties. See
+The defaults are the exact game UI colour properties (blue is the Capture category's, gold the Prowler category's). See
 `research/theme-colours.json` for copied input hashes, object/instance IDs, file
 offsets and native category/message bindings; `inspect_theme` verifies the
 pinned resource and executable at build time. The base and HD `counter_down`
@@ -81,13 +86,14 @@ record in a family makes both grey. Native details are under "Native reference".
 
 ## Settings
 
-Configuration keys are exactly `key`, `urgent`, `completed`; values are six
-hexadecimal RGB digits. Saved custom values are never rewritten; Reset defaults
+Configuration keys are exactly `key`, `urgent`, `completed` and optional
+`unlocks` and `reward`; values are six hexadecimal RGB digits. An INI without
+one of them keeps its colours and uses that colour's default. Saved custom values are never rewritten; Reset defaults
 then Save & apply uses the game palette. The settings panel uses Forge ImGui only.
 
 `core/src/colors.rs` owns bounded RGB INI parsing, formatting and the tested
 mount/write/readback/commit policy. `src/settings.rs` protects UI drafts and load
-state with a Forge mutex. Three independent atomic RGB settings are copied once
+state with a Forge mutex. Five independent atomic RGB settings are copied once
 per native row update, avoiding settings locks or file I/O in game hooks.
 Editing/resetting marks loading complete so delayed storage availability cannot
 overwrite choices. Save publishes only after write, flush, readback and checked
@@ -101,6 +107,34 @@ Reader asserts on short reads, Writer ignores short writes, and checked flush
 and commit are absent. Handles and filesystem abort context use scoped guards.
 Forge's unmount performs its normal additional commit; the plugin checks an
 explicit commit before reporting success. Only the plugin's primary INI is used.
+
+## Quest lists
+
+`scripts/quest_unlocks.py` runs in `prepare` and writes the two sorted ID lists
+that `build.rs` embeds (`src/quest_lists.rs`, binary search). Game-derived IDs stay
+out of Git; `quest-lists.json` in the candidate records counts, hash and input
+hashes. `tests/unlocks.py` checks hand-traced cases. A quest is listed when its clear is
+loaded by a case of the unlock script, or is a talk condition of a row that sets a
+flag such a case loads, directly or through further talk rows. The 1.4.0 inputs
+give 557 IDs; 468 are neither key nor urgent, and the 429 of those outside the reward list show blue. Event/DLC IDs
+(1,000,000 and up) appear in no unlock rule. An ID another mod adds is absent,
+so it gets no badge; MHGU Definitive Edition adds 48 such IDs and patches no
+checked window.
+
+The reward list holds the cleared-quest conditions of talk rows whose mAction2
+grants Hunter Arts or ingredients, plus every quest their unlock requires,
+recursively: 33 reward quests (7 Hunter Arts, 26 ingredients) and 47 chain
+quests, 80 IDs; 49 are neither key nor urgent. Talk rows that grant without a
+quest condition (the 92-art base set on flag 847, level-gated ingredients) add
+nothing.
+
+| Source | Verified behaviour |
+| --- | --- |
+| `script\check_quest_unlocked` (rCommonScript, `village/common.arc`) | sCommonScript (0x8e8 bytes) query 0x3d7e90 runs it with the quest in `[WORK0]`, cached per quest at +0x8e0. Records: u32 index, u8 command, two strings; header f32 1.0, count. |
+| VM 0x3d17f8 | Command - 1 indexes the jump table at 0x3d5874. 0x0e labels a case; a body ends at 0x23 (or 0x24 at a switch boundary). 0xa1 requires A == B, 0xa7 A >= B (failure returns 0); 0x03 returns 1. 0x75..0x78 load quest cleared (0x523da4); 0x40..0x43 load story flag bit P of `[0x18390e0]+0x500`; 0x50 adds, 0x52 sets. Loaded values are only compared == 1 or counted >= N, so a clear never locks a quest. |
+| rNpcTalkData (`npc/talk.arc`, 171 tables) | 37-byte packed records (cNpcTalkData fields). Evaluator 0x2451c8 returns 1 when a tag holds: 1 flag set, 2 not set, 11 quest cleared, 12 not cleared; quest = param plus `[10000,100000,40000][fixed-10002]` for fixed 10002..10004 (table via literal at 0x2464f0). Tags combine with AND except kinds 16..21, 119, 147. Action switch at 0x2479d8 on mAction1: 1 and 4 set flag mAction1Param in the same array (0x247a14), 2 clears; mAction2 writes no flag. |
+| mAction2 grants (switch 0x247c58, kinds 1..26) | 4 Wycademy points (DialogMsg 92); 5..8 `0x523a80` point counters; 9..16, 24, 25 Hunter Arts sets through `0x3f0c3c` mode 0 (DialogMsg 100/101; mode 1 from the tag evaluator only checks them); 17..21 ingredient groups through `0x3f1380` (DialogMsg 73); 22 Poogie/Moofy costumes (25/26); 23 shop music (112). The grant functions have no other direct or table callers. |
+| Other flag writers | Helper 0x244f14 (43 callers), the script VM (clear only, 0x3d2e1c) and the progress table 0x3f1778 (flags 233..239) write no unlock-chain flag except 1503, set in-quest at 0x3aee44. |
 
 ## Logging
 
@@ -277,7 +311,8 @@ or allocator is introduced. Diagnostics are deduplicated outside hot hooks.
 ## Fixtures and validation
 
 Core policy fixtures cover all badge states, alternatives, obsolete unfinished
-keys, simultaneous urgents, viewing versus completing and conflicting records.
+keys, simultaneous urgents, unlocking quests, viewing versus completing,
+conflicting records and INIs without `unlocks`.
 The hook harness executes production ownership-aware rollback with Forge doubles.
 
 `resource.py` only reads the copied native GUI/atlas layout and rejects corrupt
@@ -290,7 +325,7 @@ patterns, checks callee-saved state, named 70-byte metadata with canaries, the
 
 `native_adapter.py` runs the compiled parent/row/GUI adapter with native-shaped
 memory, MT constructor/query doubles and real game ARM draw-list/destructor code.
-Its twenty-one cases cover states, progression evidence, both holder tables, missing
+Its cases cover states, the blue badge on real quest 220 and gold on 233 from the generated lists, progression evidence, both holder tables, missing
 context, bad objects, object/cache allocation failure and repeated insertion.
 It checks colors, pose/size, unchanged index arrays and saved records, actual native
 draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
@@ -346,6 +381,8 @@ Individual settings, persistence, ranks, quest states and transitions were never
 - **Call a screenshot's pixels native units.** The 32 px mark and 39x37 bubble were screen measurements.
 - **Use Size or AutoScale's title contract on Texture objects.** Saved Texture DTI's Size has a getter and no setter.
 - **Infer the current rank from the viewed star page, or count rank-up prerequisites as a special encounter's activation.** The two pools are separate.
+- **Read the unlock script or talk tables at the counter.** The script module loads only in some scenes and talk tables per NPC; the list is built from the pinned RomFS.
+- **Treat mAction2 kind 1 as a flag set.** Only mAction1 writes flags; mAction2 rows look like item and count (`1, 1875, 3`).
 - **Log below ERROR and expect to see it.** The user's Forge filter is ERROR only. Keep diagnostics process-capped and outside hot hooks.
 
 Older colours and sizes (orange-red keys, purple or yellow urgents, 24x24 badges, the small emblem) are retired. Use the current policy above.

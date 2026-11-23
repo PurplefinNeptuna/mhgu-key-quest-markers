@@ -7,23 +7,27 @@ use core::{
 use forge::os::{lock::ScopedLock, mutex::Mutex, once_lock::OnceLock};
 use quest_badges_core::colors::{Error, Palette, Preferences};
 // Independent settings use atomic words so game hooks never borrow the UI or
-// wait for its mutex. Each row-builder invocation copies the three words once.
+// wait for its mutex. Each row-builder invocation copies the five words once.
 core::arch::global_asm!(".hidden kqm_palette");
 #[unsafe(no_mangle)]
-pub static kqm_palette: [AtomicU32; 3] = [
+pub static kqm_palette: [AtomicU32; 5] = [
     AtomicU32::new(Palette::DEFAULT.key),
     AtomicU32::new(Palette::DEFAULT.urgent),
     AtomicU32::new(Palette::DEFAULT.completed),
+    AtomicU32::new(Palette::DEFAULT.unlocks),
+    AtomicU32::new(Palette::DEFAULT.reward),
 ];
 pub fn palette() -> Palette {
     Palette {
         key: kqm_palette[0].load(Ordering::Acquire),
         urgent: kqm_palette[1].load(Ordering::Acquire),
         completed: kqm_palette[2].load(Ordering::Acquire),
+        unlocks: kqm_palette[3].load(Ordering::Acquire),
+        reward: kqm_palette[4].load(Ordering::Acquire),
     }
 }
 fn publish(p: Palette) {
-    for (slot, value) in kqm_palette.iter().zip([p.key, p.urgent, p.completed]) {
+    for (slot, value) in kqm_palette.iter().zip([p.key, p.urgent, p.completed, p.unlocks, p.reward]) {
         slot.store(value, Ordering::Release);
     }
 }
@@ -125,6 +129,8 @@ pub fn panel() {
             (c"Key##kqm-key", &mut draft.key),
             (c"Urgent##kqm-urgent", &mut draft.urgent),
             (c"Completed##kqm-completed", &mut draft.completed),
+            (c"Unlocks a quest##kqm-unlocks", &mut draft.unlocks),
+            (c"Gives a reward##kqm-reward", &mut draft.reward),
         ] {
             let mut components = rgb(*value);
             if ui::color_edit3(label, &mut components, Flags::DisplayHex | Flags::Uint8) {

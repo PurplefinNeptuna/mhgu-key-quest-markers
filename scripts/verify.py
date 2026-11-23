@@ -51,9 +51,10 @@ def verify():
     if 'forge_onImGuiFreeRender' in exports: raise ValueError('Native badges must not use free rendering')
     if any(marker in data for marker in [b'diagnostic:', b'first classified page', b'gui_flags=', b'waiting for quest counter']):
         raise ValueError('Development log dumps remain in production runtime')
-    expected={'romfs/nativeNX/plugins/key_quest_markers.nro'}
+    expected={'romfs/nativeNX/plugins/key_quest_markers.nro','manifest.json'}
     source=BUILD_ROOT/'package';actual={str(p.relative_to(source)) for p in source.rglob('*') if p.is_file()}
     if actual!=expected:raise ValueError('Unexpected runtime payload files')
+    if json.loads((source/'manifest.json').read_text())['version']!=f'0.{VERSION.split("-")[0][1:]}.0':raise ValueError('manifest.json names another version')
     resources=json.loads((BUILD_ROOT/'resource.json').read_text())
     if resources['archive_replacements']!=0:
         raise ValueError('Unexpected archive replacement')

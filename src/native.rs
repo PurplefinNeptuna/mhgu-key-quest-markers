@@ -233,6 +233,8 @@ pub fn update(ui: u32, quests: u32) {
                 prerequisites_done: prereq,
                 alternative_done: alternative(&groups, profile, g),
                 urgent_listed: in_list,
+                unlocks: crate::quest_lists::unlocks_another(id),
+                reward: crate::quest_lists::leads_to_reward(id),
             },
         );
     }

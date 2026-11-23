@@ -4599,5 +4599,69 @@
       "romfs/nativeNX/plugins/key_quest_markers.nro": "5efd5d35cb67ce649ebd4979ca25e3d287efa7c73d2a5f3c9d830345e7ed23b0"
     },
     "basis": "The user reported r20 on Eden beside Wishlist r2: \"its working\", unitemized; installed NRO matched."
+  },
+  "static_r21": {
+    "date": "2026-11-23",
+    "nro_sha256": "50867f8336495acfe08a69b97c3c1a2baf0dd301377b0849d21d23ac9f714194",
+    "manifest_sha256": "f2552de244d1a8d7eebacc8baca9a78ee3beb6c199c3855ac350241c8d68aacd",
+    "core_tests": 17,
+    "native_adapter_cases": 45,
+    "new_cases": [
+      "unlocking quest completion"
+    ],
+    "unlock_list": {
+      "count": 557,
+      "blue_eligible": 468,
+      "sha256": "1f3aa38470638f448a59069f19a4703933c2eb3c00135c9434921e6afaa3a511",
+      "inputs": {
+        "village_common.arc": "8b5e466ad141fcaafd187cafcf0adcf7648bca327536a722f9faa69778e27231",
+        "talk.arc": "d1a9625e2840e6508164df0697a03f172f25c31627af9a87ecc1945e91a45c4a"
+      },
+      "hd_project_entries_identical": true
+    },
+    "mhgu_definitive_edition_3_0_0": {
+      "new_quest_ids": 48,
+      "ips_records_overlapping_checked_windows": 0,
+      "basis": "static: installed MHGUDE files compared with base RomFS and the 49 signature windows"
+    },
+    "runtime_test": "NOT RUN"
+  },
+  "runtime_r21_recomp_2026_11_23": {
+    "version": "r21",
+    "host": "MHGU Recomp 0.18.3 (Linux)",
+    "installed_nro_sha256": "50867f8336495acfe08a69b97c3c1a2baf0dd301377b0849d21d23ac9f714194",
+    "tester_report": "it run perfectly in recomp now and it marks chained quests",
+    "log_lines": [
+      "[forge] [INFO] Key Quest Markers r21 loaded",
+      "MHGURecomp exited (0)."
+    ],
+    "beside": [
+      "WishFinder r143",
+      "KatSmithy (sha256 e6c198034f29da6145ba67fed191c43f3e0f9fb564c62fc99f4a22a89948526b)"
+    ],
+    "earlier_crash": "The previous launch aborted inside katsmithy.nro (+0x6b3c4 blx to 0x03480043) reading slot +0x38 past WishFinder r142's 56-byte API v9 table; not Key Quest Markers code.",
+    "itemized": false
+  },
+  "static_r22": {
+    "date": "2026-11-23",
+    "nro_sha256": "17342c8f3030c95afe69ce5eb10cf401c323c079e0e2317bf007c7e46faa0bd0",
+    "manifest_sha256": "711c22fec98baf8cb16af73bcd4c4b94c81e6537bb64c8459f8496986ad70e37",
+    "core_tests": 18,
+    "native_adapter_cases": 46,
+    "new_cases": [
+      "reward quest completion"
+    ],
+    "quest_lists": {
+      "unlocks": 557,
+      "rewards": 80,
+      "reward_quests": 33,
+      "hunter_arts_quests": 7,
+      "ingredient_quests": 26,
+      "chain_quests": 47,
+      "gold_eligible": 49,
+      "blue_eligible": 429,
+      "sha256": "a6978b20cabc301272ac8c3f61cecfc0266175b705896aae38bb81bfdb11180c"
+    },
+    "runtime_test": "NOT RUN"
   }
 }

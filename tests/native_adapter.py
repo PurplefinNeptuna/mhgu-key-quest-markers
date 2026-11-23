@@ -46,14 +46,14 @@ assert TITLE_CRC==0x2fb82eae # Derive the fixture's title class from the real re
 UNUSED_TEXT_DTI=DATA+0x25800
 UV=(342.,0.,372.,30.) if SMALL_MARK=='1' else (136.,344.,198.,406.)
 CASES=0
-KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=0xff056300,0xff0000a3,0xff808080
+KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR,UNLOCKS_COLOR,REWARD_COLOR=0xff056300,0xff0000a3,0xff808080,0xffc23200,0xff00659b
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
               simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False,
               custom_palette=False,foreign=False,log_level=3,requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
     global CASES
-    KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR=(0xff563412,0xff3264a8,0xff807060) if custom_palette else (0xff056300,0xff0000a3,0xff808080)
+    KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR,UNLOCKS_COLOR,REWARD_COLOR=(0xff563412,0xff3264a8,0xff807060,0xff9b5713,0xffac6824) if custom_palette else (0xff056300,0xff0000a3,0xff808080,0xffc23200,0xff00659b)
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
     u.mem_map(ENGINE,4096);u.mem_map(0x41000000,0x20000);u.mem_map(GAME,0x2000000)
@@ -173,12 +173,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     word(PROFILE+0x35d4,sum(1<<i for i in special_enabled))
     word(QUEST+0xb4,RESOURCE);word(RESOURCE+0x64,8);word(RESOURCE+0x6c,RECORDS)
     groups=[(207,2,int(alternative_done)),(105,1,0),(303,26,0),(206,26 if simultaneous else 25,0),
-            (213,2,int(alternative_done)),(202,0,0),(402,27,0),(215,2,0)]
+            (213,2,int(alternative_done)),(202,0,0),(233,0,0),(220,0,0)]
     if special:
         groups=[(id,47+i,i//2+1) for i,id in enumerate([308,309,319,320,324,325,329,330])]
     for i,(id,category,alt)in enumerate(groups):u.mem_write(RECORDS+i*12,struct.pack('<IIBBBB',0,id,category,alt,0,0))
     word(GAME+0x18979f0,PROGRESS);u.mem_write(PROGRESS+0x3e0,struct.pack('<HH',2,1))
-    ids=[202]*8 if ordinary else [207,105,303,206,213,202,0,402]
+    ids=[202]*8 if ordinary else [207,105,303,206,213,220,0,233] # Generated lists: 220 unlocks quests, 233 gives ingredients (and unlocks); 202 neither.
     if special:ids=[g[0] for g in groups]
     for i,id in enumerate(ids):
         q=DATA+0x30000+i*0x200;word(ROWS+i*4,q if id else 0);word(q+8,id);half(q+0x10c,(0x300 if id==308 else 0x308) if special else int(id in [303,206]))
@@ -275,7 +275,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             tree_balance+=int(panel_open);ret(cpu,int(panel_open));return
         if imported=='igTreePop':assert tree_balance==1;tree_balance-=1;ret(cpu);return
         if imported=='igColorEdit3':
-            label=text(cpu,r[0]);index=['Key##kqm-key','Urgent##kqm-urgent','Completed##kqm-completed'].index(label)
+            label=text(cpu,r[0]);index=['Key##kqm-key','Urgent##kqm-urgent','Completed##kqm-completed','Unlocks a quest##kqm-unlocks','Gives a reward##kqm-reward'].index(label)
             assert r[2]&(4194304|8388608)==4194304|8388608
             if picker_values is not None:
                 rgb=picker_values[index];cpu.mem_write(r[1],struct.pack('<3f',*((rgb>>shift&255)/255 for shift in (16,8,0))))
@@ -433,24 +433,24 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         fs_ready=True
         call(MODULE+names['forge_onImGuiInit'],DATA+0x180000,ENGINE+0x100,ENGINE+0x104)
         call(MODULE+names['forge_onImGuiRender'])
-        before=bytes(u.mem_read(MODULE+names['kqm_palette'],12))
-        picker_values=(0x123456,0xA86432,0x607080)
+        before=bytes(u.mem_read(MODULE+names['kqm_palette'],20))
+        picker_values=(0x123456,0xA86432,0x607080,0x13579B,0x2468AC)
         call(MODULE+names['forge_onImGuiRender'])
-        assert bytes(u.mem_read(MODULE+names['kqm_palette'],12))==before and disk is None
+        assert bytes(u.mem_read(MODULE+names['kqm_palette'],20))==before and disk is None
         picker_values=None;save_clicked=True
         for fs_fail in ['mount','create','open','resize','write','flush','size','read','verify','commit']:
             disk=None
             call(MODULE+names['forge_onImGuiRender'])
-            assert bytes(u.mem_read(MODULE+names['kqm_palette'],12))==before,fs_fail
+            assert bytes(u.mem_read(MODULE+names['kqm_palette'],20))==before,fs_fail
             assert not handles and mounted==contexts==tree_balance==0,fs_fail
         previous_commits=commits
         fs_fail='';call(MODULE+names['forge_onImGuiRender'])
-        assert struct.unpack('<3I',u.mem_read(MODULE+names['kqm_palette'],12))==(0x123456,0xA86432,0x607080)
-        assert disk==b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\n'
+        assert struct.unpack('<5I',u.mem_read(MODULE+names['kqm_palette'],20))==(0x123456,0xA86432,0x607080,0x13579B,0x2468AC)
+        assert disk==b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\nunlocks = 13579B\nreward = 2468AC\n'
         assert not handles and mounted==contexts==tree_balance==0 and commits==previous_commits+1
         save_clicked=False;reset_clicked=True
         call(MODULE+names['forge_onImGuiRender'])
-        assert struct.unpack('<3I',u.mem_read(MODULE+names['kqm_palette'],12))==(0x123456,0xA86432,0x607080)
+        assert struct.unpack('<5I',u.mem_read(MODULE+names['kqm_palette'],20))==(0x123456,0xA86432,0x607080,0x13579B,0x2468AC)
         reset_clicked=False;panel_open=False
         call(MODULE+names['forge_onImGuiRender'])
         # Native tests below expect the chosen custom palette throughout draw/cleanup.
@@ -497,12 +497,12 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         call(MODULE+names['forge_onImGuiRender'])
         assert colors[0]==0xff563412 # Saving does not write game GUI from ImGui.
         call(GAME+0x54d030,CONTROLLER,INFO)
-        assert colors[0]==0xff056300 and colors[2]==0xff0000a3 and colors[1]==0xff808080
+        assert colors[0]==0xff056300 and colors[2]==0xff0000a3 and colors[1]==0xff808080 and colors[5]==0xffc23200 and colors[7]==0xff00659b
         assert tuple(created)==before_objects and allocations==before_allocations
-        picker_values=(0x123456,0xA86432,0x607080)
+        picker_values=(0x123456,0xA86432,0x607080,0x13579B,0x2468AC)
         call(MODULE+names['forge_onImGuiRender'])
         call(GAME+0x54d030,CONTROLLER,INFO)
-        assert colors[0]==0xff563412 and colors[2]==0xff3264a8 and colors[1]==0xff807060
+        assert colors[0]==0xff563412 and colors[2]==0xff3264a8 and colors[1]==0xff807060 and colors[5]==0xff9b5713 and colors[7]==0xffac6824
         picker_values=None;save_clicked=False;panel_open=False
         assert not handles and mounted==contexts==tree_balance==0
     call(MODULE+names['forge_onUpdate'])
@@ -535,10 +535,10 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert states==dict.fromkeys(range(8),1)
             assert colors=={i:(COMPLETED_COLOR if not available or i not in special_enabled or any(id in completed for id in ids[(i//2)*2:(i//2)*2+2]) else URGENT_COLOR) for i in range(8)}
         else:
-            assert states=={i:v for i,v in enumerate([1,1,1,1,1,0,0,0]) if not(i==0 and (invalid_request or invalid_title))}
+            assert states=={i:v for i,v in enumerate([1,1,1,1,1,1,0,1]) if not(i==0 and (invalid_request or invalid_title))}
             urgency=URGENT_COLOR if 303 in offered and available and prerequisites else COMPLETED_COLOR
             expected_colors={0:COMPLETED_COLOR if 207 in completed or alternative_done else KEY_COLOR,1:COMPLETED_COLOR,
-                           2:COMPLETED_COLOR if 303 in completed else urgency,3:URGENT_COLOR if simultaneous and 206 in offered else COMPLETED_COLOR,4:COMPLETED_COLOR}
+                           2:COMPLETED_COLOR if 303 in completed else urgency,3:URGENT_COLOR if simultaneous and 206 in offered else COMPLETED_COLOR,4:COMPLETED_COLOR,5:COMPLETED_COLOR if 220 in completed else UNLOCKS_COLOR,7:COMPLETED_COLOR if 233 in completed else REWARD_COLOR}
             if invalid_request or invalid_title:expected_colors.pop(0)
             assert colors==expected_colors
         request_bytes=[]
@@ -627,7 +627,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             # scroll back to the first page does; no objects may be duplicated.
             requests=();invalid_info=False
             call(GAME+0x54d030,CONTROLLER,INFO)
-            assert created==old_created and states==dict(enumerate([1,1,1,1,1,0,0,0]))
+            assert created==old_created and states==dict(enumerate([1,1,1,1,1,1,0,1]))
         for i in range(8):
             table=read(DATA+0x28000+i*0x200+0xd8)
             assert bytes(u.mem_read(read(table+12),304))==request_bytes[i]
@@ -674,7 +674,7 @@ results=[test_case('one INFO startup and no logs for successful native rows',log
          test_case('second malformed trampoline rolls back both targets',fail_hook=2),
          test_case('all badge states and native draw traversal'),test_case('urgent inactive',offered=()),
          test_case('urgent unavailable',available=False),test_case('urgent prerequisites incomplete',prerequisites=False),
-         test_case('viewing does not complete key'),test_case('key completion',completed=(207,213)),test_case('urgent completion',completed=(303,213)),
+         test_case('viewing does not complete key'),test_case('key completion',completed=(207,213)),test_case('urgent completion',completed=(303,213)),test_case('unlocking quest completion',completed=(213,220)),test_case('reward quest completion',completed=(213,233)),
          test_case('resource object mismatch',invalid_object=True),test_case('animation address is not the GUI owner',invalid_owner=True),test_case('no offer context',invalid_info=True),
          test_case('ordinary rows',ordinary=True),test_case('invalid offer count',bad_count=True),test_case('different GUI',gui_identity=4),
          test_case('satisfied alternative',alternative_done=True),test_case('simultaneous urgents',simultaneous=True,offered=(303,206)),

@@ -74,6 +74,52 @@
     "color_control": 2,
     "distinct_from_slaying_category_red": "CC0000"
   },
+  "unlocks": {
+    "rgb": "0032C2",
+    "rgba": [
+      0,
+      50,
+      194,
+      255
+    ],
+    "label": "Capture",
+    "native_setup": "main+0x6135fc",
+    "category_table": "main+0x1634b88",
+    "category_index": 2,
+    "category_record": [
+      1000007,
+      8,
+      39
+    ],
+    "animation_id": 32,
+    "binding_index": 8,
+    "object_index": 13,
+    "message_resource": "eng\\GUI\\06_msg\\QuestCounter_eng",
+    "message_index": 39
+  },
+  "reward": {
+    "rgb": "9B6500",
+    "rgba": [
+      155,
+      101,
+      0,
+      255
+    ],
+    "label": "Prowler",
+    "native_setup": "main+0x6135fc",
+    "category_table": "main+0x1634b88",
+    "category_index": 6,
+    "category_record": [
+      1000012,
+      23,
+      43
+    ],
+    "animation_id": 32,
+    "binding_index": 23,
+    "object_index": 28,
+    "message_resource": "eng\\GUI\\06_msg\\QuestCounter_eng",
+    "message_index": 43
+  },
   "native_audit": {
     "imported_image_base": "0x9c9000",
     "functions": [
@@ -84,5 +130,5 @@
     "database_changed": false
   },
   "runtime_test": "NOT RUN",
-  "changes": "Default constants only. Existing INI values are not migrated or overwritten."
+  "changes": "Default constants only. Existing INI values are not migrated or overwritten; an INI without the unlocks or reward key uses that colour's default."
 }
