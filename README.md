@@ -22,28 +22,31 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 
 Badges appear automatically when you open the quest counter.
 
-| Quest state | Badge |
+| Quest | Badge |
 | --- | --- |
-| Key quest you still need to clear | Green |
 | Current urgent quest | Red |
-| Other quest that gives Hunter Arts or ingredients, or leads to one that does | Gold |
-| Other quest that unlocks another quest when you clear it | Blue |
-| Completed or inactive key or urgent quest, or a cleared gold or blue quest | Grey |
-| Other quest | No badge |
+| Key quest you still need to clear | Green |
+| Quest that gives Hunter Arts or ingredients, or leads to one that does | Gold |
+| Quest that unlocks another quest when you clear it | Blue |
+| A cleared quest from the rows above, or an urgent or key quest that is no longer current | Grey |
+| Any other quest | No badge |
+
+Each quest shows one badge. When a quest fits more than one row, the higher
+row wins. An urgent or key quest stays red or green even if it also gives a
+reward or unlocks a quest, and gold wins over blue.
+
+A quest is gold when clearing it gets you new Hunter Arts or Felyne kitchen
+ingredients. Someone hands you the reward when you talk to them after the
+quest. The quests you need to clear before a reward quest shows up are gold
+too.
+
+A quest is blue when clearing it unlocks a different quest, straight away or
+after you talk to someone. Some quests unlock only after several others are
+cleared, so a blue quest may be one of a few you need.
 
 The badge appears in the quest row's request bubble slot. When a quest also
 has a yellow request bubble, the badge appears beside it. Long quest names
 shrink to fit before the badge.
-
-A quest is blue when clearing it unlocks a different quest, either straight
-away or after you talk to someone. Some unlocks need several
-quests cleared, so a blue quest may be one of a few. Key and urgent quests keep
-their green or red badge even when they also unlock something.
-
-A quest is gold when clearing it gets you new Hunter Arts or Felyne kitchen
-ingredients. You get the reward from someone you talk to after clearing the
-quest. Quests you have to clear before a reward quest appears are gold too, so
-you can follow the chain. Gold replaces blue on the same quest.
 
 ### Settings
 
@@ -105,7 +108,7 @@ version 1.4.0 and that you are using Forge 1.5.1.
 
 It can load alongside plugins that hook the same game functions.
 
-The gold and blue badges know the unlock rules and rewards of the base game, its
+The gold and blue badges use the unlock rules and rewards of the base game, its
 updates and DLC. Quests that another mod adds, such as MHGU Definitive Edition,
-get no gold or blue badge, and changes
-a mod makes to unlock rules are not followed.
+get no gold or blue badge, and the badges don't follow another mod's changes to
+unlock rules.
