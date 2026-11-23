@@ -113,12 +113,6 @@ def inspect_theme(source, image):
     blue_obj = gui.table(48, 172, 36)[first_object + capture[1]]
     blue = gui.props(struct.unpack_from('<I', blue_obj, 24)[0], blue_obj[4])['Color']
     require(blue == (0.0, 50.0, 194.0, 255.0), 'Capture native blue differs')
-    # Category6 is Prowler: its Message colour is the default gold for reward quests.
-    prowler = struct.unpack_from('<3I', image, 0x1634b88 + 6 * 12)
-    require(prowler == (1000012, 23, 43) and texts[43] == b'Prowler', 'Prowler category mapping differs')
-    gold_obj = gui.table(48, 172, 36)[first_object + prowler[1]]
-    gold = gui.props(struct.unpack_from('<I', gold_obj, 24)[0], gold_obj[4])['Color']
-    require(gold == (155.0, 101.0, 0.0, 255.0), 'Prowler native gold differs')
     red = None
     for index, name in [(14, 'Mes_content00'), (20, 'Mes_content01')]:
         row = gui.table(68, 188, 36)[index]
@@ -127,9 +121,7 @@ def inspect_theme(source, image):
         require(props['ColorControl'] == 2 and props['Color'] == (163.0, 0.0, 0.0, 255.0), 'Objective native red differs')
         red = props['Color']
     return {'status': 'PASSED', 'source_gui_sha256': source_sha,
-            'key_rgb': '006305', 'urgent_rgb': 'A30000', 'completed_rgb': '808080', 'unlocks_rgb': '0032C2', 'reward_rgb': '9B6500',
-            'prowler': {'category': 6, 'sequence': prowler[0], 'binding': prowler[1],
-                        'object_index': first_object + prowler[1], 'message_index': prowler[2], 'rgba': gold},
+            'key_rgb': '006305', 'urgent_rgb': 'A30000', 'completed_rgb': '808080', 'unlocks_rgb': '0032C2',
             'capture': {'category': 2, 'sequence': capture[0], 'binding': capture[1],
                         'object_index': first_object + capture[1], 'message_index': capture[2], 'rgba': blue},
             'gathering': {'category_table': '0x1634b88', 'category': 3,

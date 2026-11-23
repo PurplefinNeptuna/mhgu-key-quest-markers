@@ -98,27 +98,15 @@
     "message_index": 39
   },
   "reward": {
-    "rgb": "9B6500",
+    "rgb": "FF7F00",
     "rgba": [
-      155,
-      101,
+      255,
+      127,
       0,
       255
     ],
-    "label": "Prowler",
-    "native_setup": "main+0x6135fc",
-    "category_table": "main+0x1634b88",
-    "category_index": 6,
-    "category_record": [
-      1000012,
-      23,
-      43
-    ],
-    "animation_id": 32,
-    "binding_index": 23,
-    "object_index": 28,
-    "message_resource": "eng\\GUI\\06_msg\\QuestCounter_eng",
-    "message_index": 43
+    "label": "User-chosen orange",
+    "source": "Chosen by the user; not a game UI colour, so the build does not verify it."
   },
   "native_audit": {
     "imported_image_base": "0x9c9000",

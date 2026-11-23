@@ -12,7 +12,7 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r22.zip`.
+2. Extract `key-quest-markers-r23.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -26,18 +26,18 @@ Badges appear automatically when you open the quest counter.
 | --- | --- |
 | Current urgent quest | Red |
 | Key quest you still need to clear | Green |
-| Quest that gives Hunter Arts or ingredients, or leads to one that does | Gold |
+| Quest that gives Hunter Arts or ingredients, or leads to one that does | Orange |
 | Quest that unlocks another quest when you clear it | Blue |
 | A cleared quest from the rows above, or an urgent or key quest that is no longer current | Grey |
 | Any other quest | No badge |
 
 Each quest shows one badge. When a quest fits more than one row, the higher
 row wins. An urgent or key quest stays red or green even if it also gives a
-reward or unlocks a quest, and gold wins over blue.
+reward or unlocks a quest, and orange wins over blue.
 
-A quest is gold when clearing it gets you new Hunter Arts or Felyne kitchen
+A quest is orange when clearing it gets you new Hunter Arts or Felyne kitchen
 ingredients. Someone hands you the reward when you talk to them after the
-quest. The quests you need to clear before a reward quest shows up are gold
+quest. The quests you need to clear before a reward quest shows up are orange
 too.
 
 A quest is blue when clearing it unlocks a different quest, straight away or
@@ -64,7 +64,7 @@ Mods tab of its settings menu (F1, or Plus and Minus on a controller).
 | Urgent | `A30000` | Urgent quest badge colour. |
 | Completed | `808080` | Badge colour for completed or inactive quests. |
 | Unlocks a quest | `0032C2` | Badge colour for quests that unlock another quest. |
-| Gives a reward | `9B6500` | Badge colour for quests that give Hunter Arts or ingredients, and the quests that lead to them. |
+| Gives a reward | `FF7F00` | Badge colour for quests that give Hunter Arts or ingredients, and the quests that lead to them. |
 
 Edits stay pending until you press **Save & apply**. The colours then take
 effect without restarting or reopening the quest counter. **Reset defaults**
@@ -83,11 +83,11 @@ key = 006305
 urgent = A30000
 completed = 808080
 unlocks = 0032C2
-reward = 9B6500
+reward = FF7F00
 ```
 
 A file saved by an older version may lack the `unlocks` or `reward` line; it
-keeps its colours and uses the default blue or gold. Missing or invalid configuration uses defaults. If saving fails, the previous
+keeps its colours and uses the default blue or orange. Missing or invalid configuration uses defaults. If saving fails, the previous
 colours stay in use and your pending choices remain in the panel. Load a player
 save and try saving again.
 
@@ -108,7 +108,7 @@ version 1.4.0 and that you are using Forge 1.5.1.
 
 It can load alongside plugins that hook the same game functions.
 
-The gold and blue badges use the unlock rules and rewards of the base game, its
+The orange and blue badges use the unlock rules and rewards of the base game, its
 updates and DLC. Quests that another mod adds, such as MHGU Definitive Edition,
-get no gold or blue badge, and the badges don't follow another mod's changes to
+get no orange or blue badge, and the badges don't follow another mod's changes to
 unlock rules.

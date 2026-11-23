@@ -45,5 +45,5 @@ print('PASS: native row/atlas fixture, resource bounds, all 15 original sequence
 
 image,_=main_image(input_path('main').read_bytes())
 theme=inspect_theme(input_path('common_eng.arc'),image)
-assert (theme['key_rgb'],theme['urgent_rgb'],theme['unlocks_rgb'],theme['reward_rgb'])==('006305','A30000','0032C2','9B6500')
+assert (theme['key_rgb'],theme['urgent_rgb'],theme['unlocks_rgb'])==('006305','A30000','0032C2')
 print('PASS: native Gathering/category binding and objective-instance colours; no image sampling')

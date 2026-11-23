@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r22 DEVELOPMENT candidate at `build/key-quest-markers/candidates/r22/delivery/`, not run. It adds a gold badge for quests that grant Hunter Arts or Felyne ingredients and the quests their unlock chains require, from the same build-time lists as r21's blue badge, and a fifth colour setting. r21 (`build/key-quest-markers/candidates/r21/`) was reported working on MHGU Recomp 0.18.3, unitemized. The last gameplay-accepted build is r20 at `build/key-quest-markers/candidates/r20/` (release ZIP kept there; the r20 release is preserved in `backups/accepted/key-quest-markers/r20-before-unlock-badges/`), reported working on Eden beside Wishlist, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r23 DEVELOPMENT candidate at `build/key-quest-markers/candidates/r23/delivery/`, not run. It marks quests that grant Hunter Arts or Felyne ingredients, and the quests their unlock chains require, in orange (`#FF7F00`), and quests that unlock others in blue, from build-time lists. r22 differed only in its gold default; r21 (blue badges only) was reported working on MHGU Recomp 0.18.3, unitemized. The last gameplay-accepted build is r20 at `build/key-quest-markers/candidates/r20/` (release ZIP kept there; the r20 release is preserved in `backups/accepted/key-quest-markers/r20-before-unlock-badges/`), reported working on Eden beside Wishlist, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -69,9 +69,9 @@ this one environment flag.
 | Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests |
 | Urgent | 3 | `#A30000` (RGB 163,0,0) | Offered, available, unfinished urgent |
 | Unlocks | 4 | `#0032C2` (RGB 0,50,194) | Other quest whose clear unlocks a different quest; grey once cleared |
-| Reward | 5 | `#9B6500` (RGB 155,101,0) | Other quest that grants Hunter Arts or ingredients, or one its unlock chain requires; outranks Unlocks; grey once cleared |
+| Reward | 5 | `#FF7F00` (RGB 255,127,0) | Other quest that grants Hunter Arts or ingredients, or one its unlock chain requires; outranks Unlocks; grey once cleared |
 
-The defaults are the exact game UI colour properties (blue is the Capture category's, gold the Prowler category's). See
+The defaults are the exact game UI colour properties (blue is the Capture category's), except Reward's orange, which the user chose. See
 `research/theme-colours.json` for copied input hashes, object/instance IDs, file
 offsets and native category/message bindings; `inspect_theme` verifies the
 pinned resource and executable at build time. The base and HD `counter_down`
@@ -325,7 +325,7 @@ patterns, checks callee-saved state, named 70-byte metadata with canaries, the
 
 `native_adapter.py` runs the compiled parent/row/GUI adapter with native-shaped
 memory, MT constructor/query doubles and real game ARM draw-list/destructor code.
-Its cases cover states, the blue badge on real quest 220 and gold on 233 from the generated lists, progression evidence, both holder tables, missing
+Its cases cover states, the blue badge on real quest 220 and orange on 233 from the generated lists, progression evidence, both holder tables, missing
 context, bad objects, object/cache allocation failure and repeated insertion.
 It checks colors, pose/size, unchanged index arrays and saved records, actual native
 draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.

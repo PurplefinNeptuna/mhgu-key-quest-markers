@@ -46,14 +46,14 @@ assert TITLE_CRC==0x2fb82eae # Derive the fixture's title class from the real re
 UNUSED_TEXT_DTI=DATA+0x25800
 UV=(342.,0.,372.,30.) if SMALL_MARK=='1' else (136.,344.,198.,406.)
 CASES=0
-KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR,UNLOCKS_COLOR,REWARD_COLOR=0xff056300,0xff0000a3,0xff808080,0xffc23200,0xff00659b
+KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR,UNLOCKS_COLOR,REWARD_COLOR=0xff056300,0xff0000a3,0xff808080,0xffc23200,0xff007fff
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
               invalid_info=False,invalid_owner=False,ordinary=False,bad_count=False,gui_identity=5,alternative_done=False,
               simultaneous=False,primary_count=63,fail_object=False,fail_cache=False,repeat=False,fail_at=0,fail_hook=0,fail_mapping=False,
               custom_palette=False,foreign=False,log_level=3,requests=(),invalid_request=False,invalid_title=False,recycle=False,late_invalid=False,selected=0,special=False,special_enabled=tuple(range(8))):
     global CASES
-    KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR,UNLOCKS_COLOR,REWARD_COLOR=(0xff563412,0xff3264a8,0xff807060,0xff9b5713,0xffac6824) if custom_palette else (0xff056300,0xff0000a3,0xff808080,0xffc23200,0xff00659b)
+    KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR,UNLOCKS_COLOR,REWARD_COLOR=(0xff563412,0xff3264a8,0xff807060,0xff9b5713,0xffac6824) if custom_palette else (0xff056300,0xff0000a3,0xff808080,0xffc23200,0xff007fff)
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
     u.mem_map(ENGINE,4096);u.mem_map(0x41000000,0x20000);u.mem_map(GAME,0x2000000)
@@ -497,7 +497,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         call(MODULE+names['forge_onImGuiRender'])
         assert colors[0]==0xff563412 # Saving does not write game GUI from ImGui.
         call(GAME+0x54d030,CONTROLLER,INFO)
-        assert colors[0]==0xff056300 and colors[2]==0xff0000a3 and colors[1]==0xff808080 and colors[5]==0xffc23200 and colors[7]==0xff00659b
+        assert colors[0]==0xff056300 and colors[2]==0xff0000a3 and colors[1]==0xff808080 and colors[5]==0xffc23200 and colors[7]==0xff007fff
         assert tuple(created)==before_objects and allocations==before_allocations
         picker_values=(0x123456,0xA86432,0x607080,0x13579B,0x2468AC)
         call(MODULE+names['forge_onImGuiRender'])

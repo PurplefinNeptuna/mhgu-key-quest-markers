@@ -4663,5 +4663,14 @@
       "sha256": "a6978b20cabc301272ac8c3f61cecfc0266175b705896aae38bb81bfdb11180c"
     },
     "runtime_test": "NOT RUN"
+  },
+  "static_r23": {
+    "date": "2026-11-23",
+    "nro_sha256": "ff1a1d5d7de0205e2b6418c8f9221c18ae74edff0779d8a17e23282508b531cd",
+    "manifest_sha256": "dbd61b1ca5d8b04da89ae43f5976dbc69195fbf75864088dd21636eb9fd2b6a2",
+    "change": "Reward default colour 9B6500 (game Prowler gold) to FF7F00, chosen by the user",
+    "core_tests": 18,
+    "native_adapter_cases": 46,
+    "runtime_test": "NOT RUN"
   }
 }

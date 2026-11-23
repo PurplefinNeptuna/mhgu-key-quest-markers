@@ -12,15 +12,14 @@ pub struct Palette {
 }
 impl Palette {
     // Exact game UI colours: counter_down Gathering object16, objective
-    // instance14, the Capture category's blue and the Prowler category's gold.
-    // Provenance and offsets are in
-    // research/theme-colours.json.
+    // instance14 and the Capture category's blue; provenance and offsets are in
+    // research/theme-colours.json. The reward orange was chosen by the user.
     pub const DEFAULT: Self = Self {
         key: 0x006305,
         urgent: 0xa30000,
         completed: 0x808080,
         unlocks: 0x0032c2,
-        reward: 0x9b6500,
+        reward: 0xff7f00,
     };
     pub fn color(self, badge: Badge) -> u32 {
         let rgb = match badge {
@@ -297,7 +296,7 @@ mod tests {
         assert_eq!(p.color(Badge::Urgent), 0xff0000a3);
         assert_eq!(p.color(Badge::Completed), 0xff808080);
         assert_eq!(p.color(Badge::Unlocks), 0xffc23200);
-        assert_eq!(p.color(Badge::Reward), 0xff00659b);
+        assert_eq!(p.color(Badge::Reward), 0xff007fff);
         assert_eq!(p.color(Badge::Hidden), 0);
         assert_eq!(
             Palette::parse(&p.text().unwrap().bytes[..p.text().unwrap().len]),

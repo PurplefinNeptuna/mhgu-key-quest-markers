@@ -85,7 +85,7 @@ pub fn needed_key(group: Group, village: u16, hub: u16) -> Option<bool> {
 /// Completion and satisfied alternatives cannot turn key/urgent. An unresolved
 /// unfinished quest stays hidden instead of assuming that its rank is current.
 /// Key and urgent quests keep their own badge. Any other reward or reward-chain
-/// quest is gold, and any other quest that unlocks another is blue; both turn grey once cleared.
+/// quest is orange, and any other quest that unlocks another is blue; both turn grey once cleared.
 pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
     let badge = rank_badge(group, urgent_flag, state);
     // An urgent flag on a non-urgent group is conflicting metadata and stays hidden.
@@ -173,7 +173,7 @@ mod tests {
         assert_eq!(decide(Group { id: 0, ..group(0) }, false, s), Badge::Hidden);
     }
     #[test]
-    fn reward_quests_are_gold_over_blue_and_under_keys() {
+    fn reward_quests_are_orange_over_blue_and_under_keys() {
         let mut s = state();
         s.reward = true;
         for unlocks in [false, true] {
@@ -447,7 +447,7 @@ mod tests {
         );
         assert_eq!(
             colors::Palette::DEFAULT.color(Badge::Reward).to_le_bytes(),
-            [155, 101, 0, 255]
+            [255, 127, 0, 255]
         );
     }
 }

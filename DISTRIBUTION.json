@@ -3,15 +3,15 @@
   "mod": "key-quest-markers",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "r22 candidate: adds a gold badge to quests that grant Hunter Arts or Felyne ingredients and to the quests their unlock chains require, beside r21's blue badge for quests that unlock others; both lists are built from the pinned 1.4.0 unlock script and NPC talk tables. Not run.",
+  "reason": "r23 candidate: an orange (#FF7F00) badge for quests that grant Hunter Arts or Felyne ingredients and for the quests their unlock chains require, and a blue badge for quests that unlock others; both lists are built from the pinned 1.4.0 unlock script and NPC talk tables. Not run.",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r22",
+  "version": "r23",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r22-candidate.zip",
+  "archive": "key-quest-markers-r23-candidate.zip",
   "runtime_test": "NOT RUN",
   "runtime_active": true,
   "gamebanana": {
@@ -27,7 +27,7 @@
           "url": "https://claude.com/claude-code"
         }
       ],
-      "scope": "Implementing Rust native callbacks, runtime GUI insertion and cleanup, progression classification, colour settings and checked configuration persistence, tests and standalone build/package tooling. Claude Code: the quest unlock and reward research, the build-time quest lists, the blue and gold badges and their colour settings."
+      "scope": "Implementing Rust native callbacks, runtime GUI insertion and cleanup, progression classification, colour settings and checked configuration persistence, tests and standalone build/package tooling. Claude Code: the quest unlock and reward research, the build-time quest lists, the blue and orange badges and their colour settings."
     },
     "ai_assets": [],
     "credits": [
@@ -65,8 +65,8 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r22 has not run on any emulator or hardware; r21 ran only on MHGU Recomp, on an unitemized report",
-    "The gold and blue badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
+    "r23 has not run on any emulator or hardware; r21 ran only on MHGU Recomp, on an unitemized report",
+    "The orange and blue badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
     "on MHGURecomp r20 loads, and its badges have no player report there",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
@@ -90,8 +90,8 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r22: pinned toolchain build; 18 core tests, the quest-list test (557 unlock and 80 reward IDs, hand-traced cases), the ARM suite and 46 native adapter cases passed, including blue on quest 220, gold over blue on quest 233 and their completion; verify passed.",
-    "manual_summary": "r22 not run. r21 on MHGU Recomp 0.18.3: \"it run perfectly in recomp now and it marks chained quests\", unitemized. r20, the last accepted build, was reported working on Eden; see EVIDENCE.json."
+    "static_summary": "r23: pinned toolchain build; 18 core tests, the quest-list test (557 unlock and 80 reward IDs, hand-traced cases), the ARM suite and 46 native adapter cases passed, including blue on quest 220, orange over blue on quest 233 and their completion; verify passed.",
+    "manual_summary": "r23 not run. r21 on MHGU Recomp 0.18.3: \"it run perfectly in recomp now and it marks chained quests\", unitemized. r20, the last accepted build, was reported working on Eden; see EVIDENCE.json."
   },
   "dependencies": [
     {
@@ -106,14 +106,14 @@
   },
   "payloads": {
     "manifest.json": {
-      "source": "build/key-quest-markers/candidates/r22/package/manifest.json",
-      "sha256": "711c22fec98baf8cb16af73bcd4c4b94c81e6537bb64c8459f8496986ad70e37"
+      "source": "build/key-quest-markers/candidates/r23/package/manifest.json",
+      "sha256": "dbd61b1ca5d8b04da89ae43f5976dbc69195fbf75864088dd21636eb9fd2b6a2"
     },
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
-      "source": "build/key-quest-markers/candidates/r22/package/romfs/nativeNX/plugins/key_quest_markers.nro",
-      "sha256": "17342c8f3030c95afe69ce5eb10cf401c323c079e0e2317bf007c7e46faa0bd0"
+      "source": "build/key-quest-markers/candidates/r23/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "sha256": "ff1a1d5d7de0205e2b6418c8f9221c18ae74edff0779d8a17e23282508b531cd"
     }
   },
-  "candidate": "build/key-quest-markers/candidates/r22/delivery",
+  "candidate": "build/key-quest-markers/candidates/r23/delivery",
   "candidate_builder": "scripts/build.py"
 }
