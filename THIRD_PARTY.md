@@ -1,5 +1,8 @@
 # Development provenance
 
+Project-owned code in this folder is copyright PurplefinNeptuna (2026), under the GNU General
+Public License version 3 or (at your option) any later version; see `LICENSE`.
+
 - forge-rs 1.5.0, revision `d1865b68e9b194eb3eacc8bd71bbf601a5fac63e`,
   https://github.com/Fexty12573/forge-rs. Vendored source and MIT license are unchanged.
 - Forge native Hook declaration matches the maintained 1.5.0 ordinary-hook API;

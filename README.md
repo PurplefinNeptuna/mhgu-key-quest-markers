@@ -112,3 +112,9 @@ The orange and blue badges use the unlock rules and rewards of the base game, it
 updates and DLC. Quests that another mod adds, such as MHGU Definitive Edition,
 get no orange or blue badge, and the badges don't follow another mod's changes to
 unlock rules.
+
+## License
+
+Copyright (c) 2026 PurplefinNeptuna. Key Quest Markers is licensed under the GNU GPL, version 3 or
+later. The source code and the license text are at
+https://github.com/PurplefinNeptuna/mhgu-key-quest-markers.
