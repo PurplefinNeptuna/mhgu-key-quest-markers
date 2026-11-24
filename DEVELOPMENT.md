@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r23 is READY_TO_DISTRIBUTE (2026-11-23), unpublished, release at `build/key-quest-markers/releases/r23/`. It marks quests that grant Hunter Arts or Felyne ingredients, and the quests their unlock chains require, in orange (`#FF7F00`), and quests that unlock others in blue, from build-time lists. r23 loaded on Eden and MHGURecomp beside WishFinder r143, and the user reports it working after many runs, unitemized. r20 at `build/key-quest-markers/candidates/r20/` is the previous accepted build. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r23 is PUBLISHED (2026-11-24) as the GitHub release `r23`, release at `build/key-quest-markers/releases/r23/`. It marks quests that grant Hunter Arts or Felyne ingredients, and the quests their unlock chains require, in orange (`#FF7F00`), and quests that unlock others in blue, from build-time lists. r23 loaded on Eden and MHGURecomp beside WishFinder r143, and the user reports it working after many runs, unitemized. r20 at `build/key-quest-markers/candidates/r20/` is the previous accepted build. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native

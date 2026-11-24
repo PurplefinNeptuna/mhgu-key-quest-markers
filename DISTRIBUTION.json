@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "READY_TO_DISTRIBUTE",
+  "status": "PUBLISHED",
   "runtime_platform": "switch",
   "reason": "r23 approved for distribution: coloured badges on quest counter rows for key quests and urgent quests, orange for quests that grant Hunter Arts or Felyne ingredients and the quests their unlock chains require, and blue for quests that unlock others.",
   "publication": {
-    "published": false,
-    "url": null,
-    "date": null
+    "published": true,
+    "url": "https://github.com/PurplefinNeptuna/mhgu-key-quest-markers/releases/tag/r23",
+    "date": "2026-11-24"
   },
   "version": "r23",
   "package_name": "key-quest-markers",
