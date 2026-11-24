@@ -179,7 +179,7 @@ Gameplay with and without HD was accepted on r17 (`build/key-quest-markers/candi
 
 ## Checks still open
 
-Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions. r18 itself has no runtime test; it differs from accepted r17 only in link flags and build identification.
+Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions.
 
 ## Do not
 
@@ -198,5 +198,3 @@ Individual settings, persistence, ranks, quest states and transitions were never
 - **Read the unlock script or talk tables at the counter.** The script module loads only in some scenes and talk tables per NPC; the list is built from the pinned RomFS.
 - **Treat mAction2 kind 1 as a flag set.** Only mAction1 writes flags; mAction2 rows look like item and count (`1, 1875, 3`).
 - **Log below ERROR and expect to see it.** The user's Forge filter is ERROR only. Keep diagnostics process-capped and outside hot hooks.
-
-Older colours and sizes (orange-red keys, purple or yellow urgents, 24x24 badges, the small emblem) are retired. Use the current policy above.
