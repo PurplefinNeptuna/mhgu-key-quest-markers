@@ -82,7 +82,7 @@ requested colour. Native alpha stays 255.
 Groups 47..54 are four special Village encounter pairs that Kiranico lists as
 Urgent. They lack the rank-up urgency bit and use the full native counter
 availability predicate instead of the rank-up offered set. Completion of either
-record in a family makes both grey. Native details are under [Native reference](../../.agents/skills/mhgu-forge-modding/references/worked/quest-badges.md#native-reference).
+record in a family makes both grey. Native details are under [Native reference](docs/worked/quest-badges.md#native-reference).
 
 ## Settings
 
@@ -146,7 +146,7 @@ records why the older diagnostic lines were removed.
 
 ## How it works
 
-Design, hooks and native detail live in the skills: [Key Quest Markers: classification and badges](../../.agents/skills/mhgu-forge-modding/references/worked/quest-badges.md).
+Design, hooks and native detail are in `docs/worked/`: [Key Quest Markers: classification and badges](docs/worked/quest-badges.md).
 
 ## Fixtures and validation
 
