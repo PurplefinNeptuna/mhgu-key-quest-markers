@@ -122,7 +122,7 @@ pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
         Badge::Unlocks
     }
 }
-/// With "keep colours on cleared quests", a cleared quest shows the badge it had before it was
+/// With grey badges set to Coloured, a cleared quest shows the badge it had before it was
 /// cleared: red for an urgent, green for a key, orange for a reward quest, blue for one that unlocks
 /// another. Grey that does not come from the quest's own clear (an old unfinished key, an inactive
 /// urgent, an alternative another quest satisfied) stays grey.

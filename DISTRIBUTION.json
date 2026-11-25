@@ -3,16 +3,16 @@
   "mod": "key-quest-markers",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "Add an option that keeps a cleared quest's own badge colour instead of grey",
+  "reason": "Replace the two badge switches with one Grey / Coloured / Hidden setting, a labels row in Mod Options",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r26",
+  "version": "r27",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r26-candidate.zip",
-  "runtime_test": "r26 has not run. See EVIDENCE.json.",
+  "archive": "key-quest-markers-r27-candidate.zip",
+  "runtime_test": "r27 has not run. See EVIDENCE.json.",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -65,7 +65,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r26, r25 and r24 have not run; r23 ran on Eden and MHGURecomp on the user's report, unitemized; Ryujinx and Switch hardware have no run",
+    "r24 to r27 have not run; r23 ran on Eden and MHGURecomp on the user's report, unitemized; Ryujinx and Switch hardware have no run",
     "The orange, blue and urgent-chain green badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
@@ -89,7 +89,7 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r26 built, tested (24 core tests, 46 native adapter cases with the save lock enforced and a cleared key kept in its colour) and packaged as a DEVELOPMENT candidate; NRO ab2668ce...; not run.",
+    "static_summary": "r27 built, tested (23 core tests, 46 native adapter cases with the save lock enforced and a cleared key shown Coloured) and packaged as a DEVELOPMENT candidate; NRO 0e697b39...; not run.",
     "manual_summary": "r23 on Eden and MHGURecomp, beside WishFinder r143: \"its working well\", after many runs, unitemized. r21 on MHGU Recomp 0.18.3: \"it run perfectly in recomp now and it marks chained quests\". r20 reported working on Eden; see EVIDENCE.json."
   },
   "dependencies": [
@@ -105,15 +105,15 @@
   },
   "payloads": {
     "manifest.json": {
-      "source": "build/key-quest-markers/candidates/r26/package/manifest.json",
+      "source": "build/key-quest-markers/candidates/r27/package/manifest.json",
       "sha256": ""
     },
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
-      "source": "build/key-quest-markers/candidates/r26/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "source": "build/key-quest-markers/candidates/r27/package/romfs/nativeNX/plugins/key_quest_markers.nro",
       "sha256": ""
     }
   },
-  "candidate": "build/key-quest-markers/candidates/r26/delivery",
+  "candidate": "build/key-quest-markers/candidates/r27/delivery",
   "candidate_builder": "scripts/build.py",
   "archives": {}
 }

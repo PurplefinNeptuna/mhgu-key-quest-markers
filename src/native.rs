@@ -133,7 +133,7 @@ fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
     })
 }
 fn set(object: Option<gui::Decoration>, badge: Badge, palette: quest_badges_core::colors::Palette) {
-    // With "Hide grey badges" on, a grey badge is hidden like a row without one.
+    // With Grey badges set to Hidden, a grey badge is hidden like a row without one.
     let badge = palette.visible(badge);
     if let Some(object) = object {
         object.set(badge, palette.color(badge));
@@ -239,7 +239,7 @@ pub fn update(ui: u32, quests: u32) {
             reward: crate::quest_lists::leads_to_reward(id),
         };
         *badge = quest_badges_core::decide(g, flags & 1 != 0, evidence);
-        if palette.keep_cleared {
+        if palette.grey == quest_badges_core::colors::GreyBadges::Coloured {
             *badge = quest_badges_core::kept_colour(g, evidence, *badge);
         }
     }

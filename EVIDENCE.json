@@ -4751,5 +4751,15 @@
     "native_adapter_cases": 46,
     "test_seconds": 12.0,
     "runtime_test": "NOT RUN"
+  },
+  "static_r27": {
+    "date": "2026-11-26",
+    "nro_sha256": "0e697b39d7d28ddefb096a0be2989faeebaf7305f70246470f4f75eba0a6d3f0",
+    "manifest_sha256": "f6caa66535c5e3548696cdf4ed6410d9ccae14b5851b1e9304ea2e88a9318381",
+    "change": "One Grey badges setting (Coloured, Grey, Hidden) replaces r25's and r26's two switches: panel radio buttons, one Mod Options labels row, INI [Badges] grey_badges",
+    "core_tests": 23,
+    "native_adapter_cases": 46,
+    "test_seconds": 10.0,
+    "runtime_test": "NOT RUN"
   }
 }

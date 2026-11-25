@@ -9,10 +9,27 @@ pub struct Palette {
     pub completed: u32,
     pub unlocks: u32,
     pub reward: u32,
-    /// Hide the grey badge instead of drawing it (INI `[Badges] hide_completed`).
-    pub hide_completed: bool,
-    /// A cleared quest keeps its own badge instead of grey (INI `[Badges] keep_cleared`).
-    pub keep_cleared: bool,
+    /// How grey badges show (INI `[Badges] grey_badges`).
+    pub grey: GreyBadges,
+}
+/// How a grey badge shows. The value is the Mod Options row's: Coloured, Grey, Hidden.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum GreyBadges {
+    /// A quest whose own clear made it grey keeps the badge it had before; other grey stays grey.
+    Coloured = 0,
+    Grey = 1,
+    /// Every grey badge is hidden.
+    Hidden = 2,
+}
+impl GreyBadges {
+    pub const ALL: [Self; 3] = [Self::Coloured, Self::Grey, Self::Hidden];
+    /// The INI value.
+    pub fn name(self) -> &'static str {
+        ["coloured", "grey", "hidden"][self as usize]
+    }
+    pub fn from_value(value: u32) -> Option<Self> {
+        Self::ALL.get(value as usize).copied()
+    }
 }
 impl Palette {
     // Exact game UI colours: counter_down Gathering object16, objective
@@ -24,12 +41,11 @@ impl Palette {
         completed: 0x808080,
         unlocks: 0x0032c2,
         reward: 0xff7f00,
-        hide_completed: false,
-        keep_cleared: false,
+        grey: GreyBadges::Grey,
     };
-    /// The badge a row shows: grey becomes hidden while `hide_completed` is on.
+    /// The badge a row shows: grey becomes hidden while grey badges are Hidden.
     pub fn visible(self, badge: Badge) -> Badge {
-        if self.hide_completed && badge == Badge::Completed {
+        if self.grey == GreyBadges::Hidden && badge == Badge::Completed {
             Badge::Hidden
         } else {
             badge
@@ -56,8 +72,7 @@ impl Palette {
         let text = core::str::from_utf8(bytes).map_err(|_| Error::Invalid)?;
         let mut section = "";
         let mut values = [None; 5];
-        // [Badges] hide_completed and keep_cleared.
-        let mut switches = [None; 2];
+        let mut grey = None;
         for line in text.lines().map(str::trim) {
             if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
                 continue;
@@ -70,18 +85,9 @@ impl Palette {
                 continue;
             }
             let (key, value) = line.split_once('=').ok_or(Error::Invalid)?;
-            let switch = match key.trim() {
-                "hide_completed" => Some(0),
-                "keep_cleared" => Some(1),
-                _ => None,
-            };
-            if let (Some(index), "[Badges]") = (switch, section) {
-                let on = match value.trim() {
-                    "0" => false,
-                    "1" => true,
-                    _ => return Err(Error::Invalid),
-                };
-                if switches[index].replace(on).is_some() {
+            if section == "[Badges]" && key.trim() == "grey_badges" {
+                let mode = GreyBadges::ALL.into_iter().find(|m| m.name() == value.trim());
+                if grey.replace(mode.ok_or(Error::Invalid)?).is_some() {
                     return Err(Error::Invalid);
                 }
                 continue;
@@ -113,9 +119,8 @@ impl Palette {
             // Absent in configs saved before these colours existed; they keep their other colours.
             unlocks: values[3].unwrap_or(Self::DEFAULT.unlocks),
             reward: values[4].unwrap_or(Self::DEFAULT.reward),
-            // Absent in configs saved before these settings existed: grey badges stay grey and shown.
-            hide_completed: switches[0].unwrap_or(false),
-            keep_cleared: switches[1].unwrap_or(false),
+            // Absent in configs saved before the setting existed: grey badges stay grey.
+            grey: grey.unwrap_or(GreyBadges::Grey),
         })
     }
     pub fn text(self) -> Result<Text, Error> {
@@ -129,9 +134,7 @@ impl Palette {
             self.key, self.urgent, self.completed, self.unlocks, self.reward
         )
         .map_err(|_| Error::Invalid)?;
-        let hide = u8::from(self.hide_completed);
-        let keep = u8::from(self.keep_cleared);
-        write!(out, "[Badges]\nhide_completed = {hide}\nkeep_cleared = {keep}\n")
+        write!(out, "[Badges]\ngrey_badges = {}\n", self.grey.name())
         .map_err(|_| Error::Invalid)?;
         Ok(out)
     }
@@ -228,9 +231,8 @@ pub struct Preferences {
     pub draft: Palette,
     pub applied: Palette,
     pub loaded: bool,
-    /// (hide_completed, keep_cleared) set through Mod Options, possibly before the INI loaded; a
-    /// later load keeps them.
-    pub badge_override: Option<(bool, bool)>,
+    /// Grey badges set through Mod Options, possibly before the INI loaded; a later load keeps it.
+    pub grey_override: Option<GreyBadges>,
 }
 impl Preferences {
     pub const fn new() -> Self {
@@ -238,7 +240,7 @@ impl Preferences {
             draft: Palette::DEFAULT,
             applied: Palette::DEFAULT,
             loaded: false,
-            badge_override: None,
+            grey_override: None,
         }
     }
     pub fn edit(&mut self, value: Palette) {
@@ -254,8 +256,8 @@ impl Preferences {
                 self.applied = value;
                 self.draft = value;
                 self.loaded = true;
-                if let Some((hide, keep)) = self.badge_override {
-                    self.apply_badges(hide, keep);
+                if let Some(grey) = self.grey_override {
+                    self.apply_grey(grey);
                 }
                 Ok(())
             }
@@ -274,12 +276,10 @@ impl Preferences {
     }
     /// A change made elsewhere (Mod Options) that already applies: it joins both the applied and
     /// the draft palette, and a disk load that has not happened yet keeps it.
-    pub fn apply_badges(&mut self, hide: bool, keep: bool) {
-        for palette in [&mut self.applied, &mut self.draft] {
-            palette.hide_completed = hide;
-            palette.keep_cleared = keep;
-        }
-        self.badge_override = Some((hide, keep));
+    pub fn apply_grey(&mut self, grey: GreyBadges) {
+        self.applied.grey = grey;
+        self.draft.grey = grey;
+        self.grey_override = Some(grey);
     }
     /// Save what is applied, leaving pending colour edits as drafts. The saved colours are loaded
     /// first, so a save never replaces them with defaults; storage that is not ready yet returns

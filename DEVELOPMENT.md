@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r26 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r26/`, not run. It adds Keep cleared colours (cleared quests keep their own badge instead of grey) beside r25's Hide grey badges, in the Plugin UI and the optional Purple-lib Mod Options page, with the game's save lock held around every INI mount. r25 and r24 (the quests The Scorching Blade needs shown as key quests at Village tier 5) never ran. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r27 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r27/`, not run. It adds the Grey badges setting (Coloured, Grey or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, with the game's save lock held around every INI mount. r24 to r26 never ran; r24 shows the quests The Scorching Blade needs as key quests at Village tier 5. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -66,7 +66,7 @@ this one environment flag.
 | Badge | Ordinal | Default | Meaning |
 | --- | --- | --- | --- |
 | Key | 1 | `#006305` (RGB 0,99,5) | Needed key quest for the current progression tier, or a non-key quest the current Village urgent needs |
-| Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests; with Keep cleared colours, only the latter two |
+| Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests; with Grey badges Coloured, only the latter two |
 | Urgent | 3 | `#A30000` (RGB 163,0,0) | Offered, available, unfinished urgent |
 | Unlocks | 4 | `#0032C2` (RGB 0,50,194) | Other quest whose clear unlocks a different quest; grey once cleared |
 | Reward | 5 | `#FF7F00` (RGB 255,127,0) | Other quest that grants Hunter Arts or ingredients, or one its unlock chain requires; outranks Unlocks; grey once cleared |
@@ -89,10 +89,10 @@ record in a family makes both grey. Native details are under [Native reference](
 Configuration keys are exactly `key`, `urgent`, `completed` and optional
 `unlocks` and `reward` under `[Colors]`; values are six hexadecimal RGB digits. An INI without
 one of them keeps its colours and uses that colour's default. Optional `[Badges]`
-`hide_completed` and `keep_cleared` are `0` or `1` (default 0). While `keep_cleared` is 1,
-`kept_colour` in core gives a quest whose own clear made it grey the badge it had before: urgent,
-key, reward or unlocks. While `hide_completed` is 1, `Palette::visible` then turns any badge still
-grey into a hidden one before the row draws it. Saved custom values are never rewritten; Reset defaults
+`grey_badges` is `coloured`, `grey` or `hidden` (default `grey`; the Mod Options row's values
+0, 1, 2 in that order, `GreyBadges` in core). Coloured: `kept_colour` gives a quest whose own clear
+made it grey the badge it had before (urgent, key, reward or unlocks). Hidden: `Palette::visible`
+turns every grey badge into a hidden one before the row draws it. Saved custom values are never rewritten; Reset defaults
 then Save & apply uses the game palette. The settings panel uses Forge ImGui only.
 
 `core/src/colors.rs` owns bounded RGB INI parsing, formatting and the tested
@@ -120,7 +120,7 @@ which the settings retry once a second.
 
 Purple-lib, when installed, calls `purplelib_on_register` (`src/purple_lib.rs`; records
 in `core/src/purple_lib.rs`, API version 3, Purple-lib r17 and later). Its one labels row
-sets the `HIDE_GREY` atomic directly from `set`. `forge_onUpdate` then records it in the
+sets the `GREY` atomic directly from `set`. `forge_onUpdate` then records it in the
 preferences as an override that a later INI load keeps. Closing the window saves the
 applied palette, loading the INI first so saved colours are never replaced by defaults;
 pending colour drafts stay drafts.
@@ -203,7 +203,7 @@ Its cases cover states, the blue badge on real quest 220 and orange on 233 from 
 context, bad objects, object/cache allocation failure and repeated insertion.
 It checks colors, pose/size, unchanged index arrays and saved records, actual native
 draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
-Its settings case also drives both badge checkboxes, checks that a cleared key's row turns
+Its settings case also drives the Grey badges radio buttons, checks that a cleared key's row turns
 from grey to the key colour, and drives the compiled
 `purplelib_on_register`, `row`, `get`, `set` and `closed` through a version 3 table. Every
 mount, write-mode open and commit must hold the faked save mutex, unlocked only after the
@@ -221,7 +221,7 @@ Gameplay with and without HD was accepted on r17 (`build/key-quest-markers/candi
 
 ## Checks still open
 
-Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, Hide grey badges and Keep cleared colours from the panel and from Purple-lib Mod Options, a save during a game save, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions.
+Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, each Grey badges value from the panel and from Purple-lib Mod Options, a save during a game save, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions.
 
 ## Do not
 

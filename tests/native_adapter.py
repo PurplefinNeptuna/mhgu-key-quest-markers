@@ -424,17 +424,17 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         call(GAME+0x54d030,CONTROLLER,INFO)
         assert colors[0]==0xff563412 and colors[2]==0xff3264a8 and colors[1]==0xff807060 and colors[5]==0xff9b5713 and colors[7]==0xffac6824
         settings.picker_values=None
-        # Keep cleared colours: cleared key 213 on row 4 turns from grey to the key colour and back.
+        # Grey badges Coloured: cleared key 213 on row 4 turns from grey to the key colour and back.
         assert colors[4]==0xff807060
-        settings.keep_ticked=True
+        settings.grey_choice=0
         call(MODULE+names['forge_onImGuiRender'])
         call(GAME+0x54d030,CONTROLLER,INFO)
         assert colors[4]==0xff563412 and colors[1]==0xff807060
-        settings.keep_ticked=False
+        settings.grey_choice=1
         call(MODULE+names['forge_onImGuiRender'])
         call(GAME+0x54d030,CONTROLLER,INFO)
         assert colors[4]==0xff807060
-        settings.keep_ticked=None
+        settings.grey_choice=None
         settings.save_clicked=False
         settings.panel_open=False
         assert settings.balanced()

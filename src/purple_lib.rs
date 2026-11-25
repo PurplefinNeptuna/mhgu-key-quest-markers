@@ -1,4 +1,4 @@
-//! Optional: the "Hide grey badges" and "Keep cleared colours" settings in Purple-lib's Mod Options.
+//! Optional: the "Grey badges" setting (Coloured, Grey, Hidden) in Purple-lib's Mod Options.
 //! Purple-lib calls the plugin's `purplelib_on_register` with its table of functions at start-up; without Purple-lib
 //! nothing calls it, this module does nothing and the Plugin UI panel stays the only way to
 //! change the setting.
@@ -9,6 +9,7 @@
 use crate::settings;
 use core::ffi::{c_char, c_void};
 use core::sync::atomic::{AtomicBool, Ordering};
+use quest_badges_core::colors::GreyBadges;
 use quest_badges_core::purple_lib::{self as api, Api, OptionRow, Options};
 
 /// A value changed through Mod Options: the preferences take it over.
@@ -24,42 +25,39 @@ extern "C" fn title(_: *mut c_void, _: u32) -> *const c_char {
 struct Shared<T>(T);
 // SAFETY: see above.
 unsafe impl<T> Sync for Shared<T> {}
-static LABELS: Shared<[*const c_char; 2]> = Shared([api::LABELS[0].as_ptr(), api::LABELS[1].as_ptr()]);
+static LABELS: Shared<[*const c_char; 3]> = Shared([
+    api::GREY_LABELS[0].as_ptr(),
+    api::GREY_LABELS[1].as_ptr(),
+    api::GREY_LABELS[2].as_ptr(),
+]);
 
 extern "C" fn row(_: *mut c_void, _: u32, index: u32, out: *mut OptionRow) -> bool {
-    if index >= api::ROWS || out.is_null() {
+    if index != api::ROW_GREY_BADGES || out.is_null() {
         return false;
     }
     // SAFETY: Purple-lib passes a writable `OptionRow`, zeroed before the call.
     unsafe {
-        (*out).name = api::ROW_NAMES[index as usize].as_ptr();
-        (*out).help = api::ROW_HELP[index as usize].as_ptr();
+        (*out).name = api::GREY_NAME.as_ptr();
+        (*out).help = api::GREY_HELP.as_ptr();
         (*out).labels = LABELS.0.as_ptr();
         (*out).label_count = LABELS.0.len() as u32;
     }
     true
 }
 
-extern "C" fn get(_: *mut c_void, index: u32) -> u32 {
-    let on = match index {
-        api::ROW_HIDE_GREY => settings::hide_grey(),
-        api::ROW_KEEP_CLEARED => settings::keep_cleared(),
-        _ => false,
-    };
-    api::switch_value(on)
+extern "C" fn get(_: *mut c_void, _: u32) -> u32 {
+    settings::grey_badges() as u32
 }
 
 /// Applied at once: the next row update reads the new value.
 extern "C" fn set(_: *mut c_void, index: u32, value: u32) {
-    let Some(on) = api::switch_from(value) else {
+    if index != api::ROW_GREY_BADGES {
         return;
-    };
-    match index {
-        api::ROW_HIDE_GREY => settings::set_hide_grey(on),
-        api::ROW_KEEP_CLEARED => settings::set_keep_cleared(on),
-        _ => return,
     }
-    EDITED.store(true, Ordering::Release);
+    if let Some(grey) = GreyBadges::from_value(value) {
+        settings::set_grey_badges(grey);
+        EDITED.store(true, Ordering::Release);
+    }
 }
 
 extern "C" fn closed(_: *mut c_void) {

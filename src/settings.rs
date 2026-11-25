@@ -2,10 +2,10 @@
 use crate::config::Storage;
 use core::{
     cell::UnsafeCell,
-    sync::atomic::{AtomicBool, AtomicU32, Ordering},
+    sync::atomic::{AtomicU8, AtomicU32, Ordering},
 };
 use forge::os::{lock::ScopedLock, mutex::Mutex, once_lock::OnceLock};
-use quest_badges_core::colors::{Error, Palette, Preferences};
+use quest_badges_core::colors::{Error, GreyBadges, Palette, Preferences};
 // Independent settings use atomic words so game hooks never borrow the UI or
 // wait for its mutex. Each row-builder invocation copies the five words once.
 core::arch::global_asm!(".hidden kqm_palette");
@@ -17,10 +17,9 @@ pub static kqm_palette: [AtomicU32; 5] = [
     AtomicU32::new(Palette::DEFAULT.unlocks),
     AtomicU32::new(Palette::DEFAULT.reward),
 ];
-/// Hide grey badges and keep cleared colours; read by the row hook and by Mod Options `get`,
+/// How grey badges show (`GreyBadges as u8`); read by the row hook and by Mod Options `get`,
 /// written without locks.
-static HIDE_GREY: AtomicBool = AtomicBool::new(Palette::DEFAULT.hide_completed);
-static KEEP_CLEARED: AtomicBool = AtomicBool::new(Palette::DEFAULT.keep_cleared);
+static GREY: AtomicU8 = AtomicU8::new(Palette::DEFAULT.grey as u8);
 pub fn palette() -> Palette {
     Palette {
         key: kqm_palette[0].load(Ordering::Acquire),
@@ -28,30 +27,27 @@ pub fn palette() -> Palette {
         completed: kqm_palette[2].load(Ordering::Acquire),
         unlocks: kqm_palette[3].load(Ordering::Acquire),
         reward: kqm_palette[4].load(Ordering::Acquire),
-        hide_completed: hide_grey(),
-        keep_cleared: keep_cleared(),
+        grey: grey_badges(),
     }
 }
-pub fn hide_grey() -> bool {
-    HIDE_GREY.load(Ordering::Acquire)
+pub fn grey_badges() -> GreyBadges {
+    GreyBadges::from_value(GREY.load(Ordering::Acquire) as u32).unwrap_or(Palette::DEFAULT.grey)
 }
 /// Mod Options `set`: applies at once; `update` then records it in the preferences.
-pub fn set_hide_grey(hide: bool) {
-    HIDE_GREY.store(hide, Ordering::Release);
+pub fn set_grey_badges(grey: GreyBadges) {
+    GREY.store(grey as u8, Ordering::Release);
 }
-pub fn keep_cleared() -> bool {
-    KEEP_CLEARED.load(Ordering::Acquire)
-}
-/// Mod Options `set`: applies at once; `update` then records it in the preferences.
-pub fn set_keep_cleared(keep: bool) {
-    KEEP_CLEARED.store(keep, Ordering::Release);
-}
+/// Panel radio buttons, in the Mod Options row's order: Coloured, Grey, Hidden.
+const GREY_LABELS: [&core::ffi::CStr; 3] = [
+    c"Coloured##kqm-grey-coloured",
+    c"Grey##kqm-grey-grey",
+    c"Hidden##kqm-grey-hidden",
+];
 fn publish(p: Palette) {
     for (slot, value) in kqm_palette.iter().zip([p.key, p.urgent, p.completed, p.unlocks, p.reward]) {
         slot.store(value, Ordering::Release);
     }
-    HIDE_GREY.store(p.hide_completed, Ordering::Release);
-    KEEP_CLEARED.store(p.keep_cleared, Ordering::Release);
+    GREY.store(p.grey as u8, Ordering::Release);
 }
 struct State {
     preferences: Preferences,
@@ -96,7 +92,7 @@ fn with_state(f: impl FnOnce(&mut State)) {
 pub fn update(delta: f32) {
     with_state(|state| {
         if crate::purple_lib::EDITED.swap(false, Ordering::AcqRel) {
-            state.preferences.apply_badges(hide_grey(), keep_cleared());
+            state.preferences.apply_grey(grey_badges());
         }
         if crate::purple_lib::SAVE.swap(false, Ordering::AcqRel) {
             state.save_pending = true;
@@ -229,11 +225,15 @@ pub fn panel() {
                 }
             }
         }
-        if ui::checkbox(c"Hide grey badges##kqm-hide-grey", &mut draft.hide_completed) {
-            changed = true;
-        }
-        if ui::checkbox(c"Keep cleared colours##kqm-keep-cleared", &mut draft.keep_cleared) {
-            changed = true;
+        ui::text("Grey badges");
+        for (i, (mode, label)) in GreyBadges::ALL.into_iter().zip(GREY_LABELS).enumerate() {
+            if i > 0 {
+                ui::same_line(0.0, -1.0);
+            }
+            if ui::radio_button(label, draft.grey == mode) && draft.grey != mode {
+                draft.grey = mode;
+                changed = true;
+            }
         }
         if ui::button(c"Reset defaults##kqm-reset", ImVec2::new(0.0, 0.0)) {
             draft = Palette::DEFAULT;

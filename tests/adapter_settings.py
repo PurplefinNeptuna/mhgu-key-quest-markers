@@ -18,11 +18,13 @@ COLOURS = ['Key##kqm-key', 'Urgent##kqm-urgent', 'Completed##kqm-completed', 'Un
 FAILURES = ['mount', 'create', 'open', 'resize', 'write', 'flush', 'size', 'read', 'verify', 'commit']
 CUSTOM = (0x123456, 0xA86432, 0x607080, 0x13579B, 0x2468AC)
 COLOURS_SAVED = b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\nunlocks = 13579B\nreward = 2468AC\n'
-SAVED = COLOURS_SAVED+b'[Badges]\nhide_completed = 0\nkeep_cleared = 0\n'
-HIDDEN = COLOURS_SAVED+b'[Badges]\nhide_completed = 1\nkeep_cleared = 0\n'
-KEPT = COLOURS_SAVED+b'[Badges]\nhide_completed = 0\nkeep_cleared = 1\n'
-CHECKBOXES = ['Hide grey badges##kqm-hide-grey', 'Keep cleared colours##kqm-keep-cleared']
-ROW_NAMES = ['Hide grey badges', 'Keep cleared colours']
+# Grey badges values, as the Mod Options row and the panel's radio buttons order them.
+COLOURED, GREY, HIDDEN_VALUE = 0, 1, 2
+INI = [COLOURS_SAVED+b'[Badges]\ngrey_badges = '+name+b'\n' for name in (b'coloured', b'grey', b'hidden')]
+SAVED = INI[GREY]
+HIDDEN = INI[HIDDEN_VALUE]
+RADIOS = ['Coloured##kqm-grey-coloured', 'Grey##kqm-grey-grey', 'Hidden##kqm-grey-hidden']
+LABELS = ['Coloured', 'Grey', 'Hidden']
 TRY_LOCK = '_ZN2nn2os12TryLockMutexEPNS0_9MutexTypeE'
 UNLOCK = '_ZN2nn2os11UnlockMutexEPNS0_9MutexTypeE'
 # ImGuiColorEditFlags DisplayHex | Uint8.
@@ -39,9 +41,8 @@ class Settings:
         self.save_locked = False
         self.game_saving = False
         self.lock_takes = 0
-        # None leaves a box alone; True or False ticks or unticks it (Hide grey badges, Keep cleared colours).
-        self.hide_ticked = None
-        self.keep_ticked = None
+        # The radio button the panel clicks next (a Grey badges value), or None.
+        self.grey_choice = None
         # Mod Options pages that Purple-lib's add_options double received.
         self.purple_pages = []
         self.text = text
@@ -181,12 +182,9 @@ class Settings:
             cpu.mem_write(r[1], struct.pack('<3f', *components))
         return int(self.picker_values is not None)
 
-    def checkbox(self, cpu, r, imported):
-        box = CHECKBOXES.index(self.text(cpu, r[0]))
-        ticked = (self.hide_ticked, self.keep_ticked)[box]
-        if ticked is not None:
-            cpu.mem_write(r[1], bytes([int(ticked)]))
-        return int(ticked is not None)
+    def radio(self, cpu, r, imported):
+        value = RADIOS.index(self.text(cpu, r[0]))
+        return int(self.grey_choice == value)
 
     def button(self, cpu, r, imported):
         label = self.text(cpu, r[0])
@@ -215,41 +213,36 @@ class Settings:
         assert struct.unpack('<5I', palette()) == CUSTOM
         assert self.disk == SAVED
         assert self.balanced() and self.commits == previous_commits+1
-        # Hide grey badges: ticking the box is pending until Save & apply, like a colour.
-        self.hide_ticked = True
+        # Grey badges: a choice is pending until Save & apply, like a colour.
+        self.grey_choice = HIDDEN_VALUE
         self.save_clicked = False
         render()
         assert self.disk == SAVED
-        self.hide_ticked = None
+        self.grey_choice = None
         self.save_clicked = True
         render()
         assert self.disk == HIDDEN
-        self.hide_ticked = False
+        self.grey_choice = COLOURED
+        render()
+        assert self.disk == INI[COLOURED]
+        self.grey_choice = GREY
         render()
         assert self.disk == SAVED
         # The game is saving: Save & apply writes nothing, then saves on the next second.
-        self.hide_ticked = True
+        self.grey_choice = HIDDEN_VALUE
         self.game_saving = True
         render()
         assert self.disk == SAVED and not self.save_locked
-        self.hide_ticked = None
+        self.grey_choice = None
         self.save_clicked = False
         self.game_saving = False
         update()
         assert self.disk == HIDDEN and not self.save_locked
-        self.hide_ticked = False
+        self.grey_choice = GREY
         self.save_clicked = True
         render()
         assert self.disk == SAVED
-        self.hide_ticked = None
-        # Keep cleared colours saves the same way, as its own line.
-        self.keep_ticked = True
-        render()
-        assert self.disk == KEPT
-        self.keep_ticked = False
-        render()
-        assert self.disk == SAVED
-        self.keep_ticked = None
+        self.grey_choice = None
         self.save_clicked = False
         self.reset_clicked = True
         render()
@@ -266,20 +259,20 @@ class Settings:
         assert len(self.purple_pages) == 1, self.purple_pages
         page = struct.unpack('<10I', read_bytes(self.purple_pages[0], 40))
         size, _, title, row_count, row, get, set_value, closed, value_text, action = page
-        assert size == 40 and row_count == 2 and value_text == action == 0
+        assert size == 40 and row_count == 1 and value_text == action == 0
         call(title)
         assert text(result()) == 'Key Quest Markers'
-        for index, expected in enumerate(ROW_NAMES):
-            write_bytes(out, bytes(40))
-            call(row, 0, 0, index, out)
-            assert result() & 255 == 1
-            name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
-            assert text(name) == expected and label_count == 2 and text(read(labels+4)) == 'On'
-        call(row, 0, 0, 2, out)
+        write_bytes(out, bytes(40))
+        call(row, 0, 0, 0, out)
+        assert result() & 255 == 1
+        name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
+        assert text(name) == 'Grey badges' and label_count == 3
+        assert [text(read(labels+4*i)) for i in range(3)] == LABELS
+        call(row, 0, 0, 1, out)
         assert result() & 255 == 0
         register()
         assert len(self.purple_pages) == 1
-        for value in (1, 0):
+        for value in (HIDDEN_VALUE, COLOURED, GREY):
             call(set_value, 0, 0, value)
             call(get)
             assert result() == value
@@ -289,31 +282,20 @@ class Settings:
             assert self.disk == before_close
             call(closed)
             update()
-            assert self.disk == (HIDDEN if value else SAVED), self.disk
-        call(set_value, 0, 0, 2)
+            assert self.disk == INI[value], self.disk
+        call(set_value, 0, 0, 3)
         call(get)
-        assert result() == 0
-        # The second row is Keep cleared colours, saved as its own line.
-        call(set_value, 0, 1, 1)
-        call(get, 0, 1)
-        assert result() == 1
-        call(closed)
-        update()
-        assert self.disk == KEPT, self.disk
-        call(set_value, 0, 1, 0)
-        call(closed)
-        update()
-        assert self.disk == SAVED
+        assert result() == GREY
         # The game is saving: the Mod Options save waits for the lock and saves on the next second.
         self.game_saving = True
-        call(set_value, 0, 0, 1)
+        call(set_value, 0, 0, HIDDEN_VALUE)
         call(closed)
         update()
         assert self.disk == SAVED and not self.save_locked
         self.game_saving = False
         update()
         assert self.disk == HIDDEN and not self.save_locked
-        call(set_value, 0, 0, 0)
+        call(set_value, 0, 0, GREY)
         call(closed)
         update()
         assert self.disk == SAVED and self.lock_takes > 0
@@ -371,7 +353,8 @@ DOUBLES = {
     'igTreePop': Settings.tree_pop,
     'igColorEdit3': Settings.colour,
     'igButton': Settings.button,
-    'igCheckbox': Settings.checkbox,
+    'igRadioButton_Bool': Settings.radio,
+    'igSameLine': Settings.nothing,
     TRY_LOCK: Settings.try_lock,
     UNLOCK: Settings.unlock,
     'igTextUnformatted': Settings.nothing,
