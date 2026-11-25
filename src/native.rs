@@ -228,20 +228,20 @@ pub fn update(ui: u32, quests: u32) {
         let prereq = !is_urgent || special || prerequisites(quest, g, stage);
         let in_list = offered.contains(id);
         let active = is_urgent && (special || in_list) && available(quest, id, special);
-        *badge = quest_badges_core::decide(
-            g,
-            flags & 1 != 0,
-            Evidence {
-                completed: done,
-                needed_key: quest_badges_core::needed_key(g, village, hub),
-                active_urgent: Some(active),
-                prerequisites_done: prereq,
-                alternative_done: alternative(&groups, profile, g),
-                urgent_listed: in_list,
-                unlocks: crate::quest_lists::unlocks_another(id),
-                reward: crate::quest_lists::leads_to_reward(id),
-            },
-        );
+        let evidence = Evidence {
+            completed: done,
+            needed_key: quest_badges_core::needed_key(g, village, hub),
+            active_urgent: Some(active),
+            prerequisites_done: prereq,
+            alternative_done: alternative(&groups, profile, g),
+            urgent_listed: in_list,
+            unlocks: crate::quest_lists::unlocks_another(id),
+            reward: crate::quest_lists::leads_to_reward(id),
+        };
+        *badge = quest_badges_core::decide(g, flags & 1 != 0, evidence);
+        if palette.keep_cleared {
+            *badge = quest_badges_core::kept_colour(g, evidence, *badge);
+        }
     }
     if !groups.unchanged(quest) {
         error(4);

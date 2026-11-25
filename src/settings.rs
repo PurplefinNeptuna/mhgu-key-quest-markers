@@ -17,8 +17,10 @@ pub static kqm_palette: [AtomicU32; 5] = [
     AtomicU32::new(Palette::DEFAULT.unlocks),
     AtomicU32::new(Palette::DEFAULT.reward),
 ];
-/// Hide grey badges; read by the row hook and by Mod Options `get`, written without locks.
+/// Hide grey badges and keep cleared colours; read by the row hook and by Mod Options `get`,
+/// written without locks.
 static HIDE_GREY: AtomicBool = AtomicBool::new(Palette::DEFAULT.hide_completed);
+static KEEP_CLEARED: AtomicBool = AtomicBool::new(Palette::DEFAULT.keep_cleared);
 pub fn palette() -> Palette {
     Palette {
         key: kqm_palette[0].load(Ordering::Acquire),
@@ -27,6 +29,7 @@ pub fn palette() -> Palette {
         unlocks: kqm_palette[3].load(Ordering::Acquire),
         reward: kqm_palette[4].load(Ordering::Acquire),
         hide_completed: hide_grey(),
+        keep_cleared: keep_cleared(),
     }
 }
 pub fn hide_grey() -> bool {
@@ -36,11 +39,19 @@ pub fn hide_grey() -> bool {
 pub fn set_hide_grey(hide: bool) {
     HIDE_GREY.store(hide, Ordering::Release);
 }
+pub fn keep_cleared() -> bool {
+    KEEP_CLEARED.load(Ordering::Acquire)
+}
+/// Mod Options `set`: applies at once; `update` then records it in the preferences.
+pub fn set_keep_cleared(keep: bool) {
+    KEEP_CLEARED.store(keep, Ordering::Release);
+}
 fn publish(p: Palette) {
     for (slot, value) in kqm_palette.iter().zip([p.key, p.urgent, p.completed, p.unlocks, p.reward]) {
         slot.store(value, Ordering::Release);
     }
     HIDE_GREY.store(p.hide_completed, Ordering::Release);
+    KEEP_CLEARED.store(p.keep_cleared, Ordering::Release);
 }
 struct State {
     preferences: Preferences,
@@ -85,7 +96,7 @@ fn with_state(f: impl FnOnce(&mut State)) {
 pub fn update(delta: f32) {
     with_state(|state| {
         if crate::purple_lib::EDITED.swap(false, Ordering::AcqRel) {
-            state.preferences.apply_hidden(hide_grey());
+            state.preferences.apply_badges(hide_grey(), keep_cleared());
         }
         if crate::purple_lib::SAVE.swap(false, Ordering::AcqRel) {
             state.save_pending = true;
@@ -219,6 +230,9 @@ pub fn panel() {
             }
         }
         if ui::checkbox(c"Hide grey badges##kqm-hide-grey", &mut draft.hide_completed) {
+            changed = true;
+        }
+        if ui::checkbox(c"Keep cleared colours##kqm-keep-cleared", &mut draft.keep_cleared) {
             changed = true;
         }
         if ui::button(c"Reset defaults##kqm-reset", ImVec2::new(0.0, 0.0)) {

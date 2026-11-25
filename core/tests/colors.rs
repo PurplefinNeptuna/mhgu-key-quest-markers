@@ -132,6 +132,7 @@ fn pending_reset_save_and_restart() {
         unlocks: 0x13579b,
         reward: 0x2468ac,
         hide_completed: true,
+        keep_cleared: true,
     };
     p.edit(custom);
     assert_eq!(p.applied, Palette::DEFAULT);
@@ -214,7 +215,7 @@ fn hiding_grey_badges() {
     let twice = [colours, "[Badges]\nhide_completed=0\nhide_completed=0\n"].concat();
     assert_eq!(Palette::parse(twice.as_bytes()), Err(Error::Invalid));
     let text = hidden.text().unwrap();
-    assert!(text.bytes[..text.len].ends_with(b"[Badges]\nhide_completed = 1\n"));
+    assert!(text.bytes[..text.len].ends_with(b"[Badges]\nhide_completed = 1\nkeep_cleared = 0\n"));
     assert_eq!(Palette::parse(&text.bytes[..text.len]), Ok(hidden));
     assert_eq!(hidden.visible(Badge::Completed), Badge::Hidden);
     assert_eq!(hidden.visible(Badge::Key), Badge::Key);
@@ -231,7 +232,7 @@ fn mod_options_saves_only_what_is_applied() {
     // A change before the INI loads: the load keeps it, and the save keeps the saved colours.
     let mut p = Preferences::new();
     disk.available = false;
-    p.apply_hidden(true);
+    p.apply_badges(true, false);
     assert_eq!(p.save_applied(&mut disk), Err(Error::Unavailable));
     disk.available = true;
     p.save_applied(&mut disk).unwrap();
@@ -248,11 +249,34 @@ fn mod_options_saves_only_what_is_applied() {
         key: 0x123456,
         ..p.draft
     });
-    p.apply_hidden(false);
+    p.apply_badges(false, false);
     p.save_applied(&mut disk).unwrap();
     let mut again = Preferences::new();
     again.load(&mut disk).unwrap();
     assert_eq!(again.applied, saved);
     assert_eq!(p.draft.key, 0x123456);
     assert_eq!(disk.mounts, 0);
+}
+#[test]
+fn keeping_cleared_colours() {
+    let colours = "[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\n";
+    let keep = Palette {
+        keep_cleared: true,
+        ..Palette::DEFAULT
+    };
+    let text = [colours, "[Badges]\nkeep_cleared = 1\n"].concat();
+    assert_eq!(Palette::parse(text.as_bytes()), Ok(keep));
+    let twice = [colours, "[Badges]\nkeep_cleared=1\nkeep_cleared=1\n"].concat();
+    assert_eq!(Palette::parse(twice.as_bytes()), Err(Error::Invalid));
+    let bad = [colours, "[Badges]\nkeep_cleared = on\n"].concat();
+    assert_eq!(Palette::parse(bad.as_bytes()), Err(Error::Invalid));
+    let saved = keep.text().unwrap();
+    assert_eq!(Palette::parse(&saved.bytes[..saved.len]), Ok(keep));
+    // A Mod Options change before the INI loads survives the load, for both switches.
+    let mut disk = Disk::new();
+    save(&mut disk, Palette::DEFAULT).unwrap();
+    let mut p = Preferences::new();
+    p.apply_badges(false, true);
+    p.load(&mut disk).unwrap();
+    assert!(p.applied.keep_cleared && p.draft.keep_cleared && !p.applied.hide_completed);
 }

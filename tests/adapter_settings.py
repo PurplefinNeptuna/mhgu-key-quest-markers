@@ -18,9 +18,11 @@ COLOURS = ['Key##kqm-key', 'Urgent##kqm-urgent', 'Completed##kqm-completed', 'Un
 FAILURES = ['mount', 'create', 'open', 'resize', 'write', 'flush', 'size', 'read', 'verify', 'commit']
 CUSTOM = (0x123456, 0xA86432, 0x607080, 0x13579B, 0x2468AC)
 COLOURS_SAVED = b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\nunlocks = 13579B\nreward = 2468AC\n'
-SAVED = COLOURS_SAVED+b'[Badges]\nhide_completed = 0\n'
-HIDDEN = COLOURS_SAVED+b'[Badges]\nhide_completed = 1\n'
-CHECKBOX = 'Hide grey badges##kqm-hide-grey'
+SAVED = COLOURS_SAVED+b'[Badges]\nhide_completed = 0\nkeep_cleared = 0\n'
+HIDDEN = COLOURS_SAVED+b'[Badges]\nhide_completed = 1\nkeep_cleared = 0\n'
+KEPT = COLOURS_SAVED+b'[Badges]\nhide_completed = 0\nkeep_cleared = 1\n'
+CHECKBOXES = ['Hide grey badges##kqm-hide-grey', 'Keep cleared colours##kqm-keep-cleared']
+ROW_NAMES = ['Hide grey badges', 'Keep cleared colours']
 TRY_LOCK = '_ZN2nn2os12TryLockMutexEPNS0_9MutexTypeE'
 UNLOCK = '_ZN2nn2os11UnlockMutexEPNS0_9MutexTypeE'
 # ImGuiColorEditFlags DisplayHex | Uint8.
@@ -37,8 +39,9 @@ class Settings:
         self.save_locked = False
         self.game_saving = False
         self.lock_takes = 0
-        # None leaves the Hide grey badges box alone; True or False ticks or unticks it.
+        # None leaves a box alone; True or False ticks or unticks it (Hide grey badges, Keep cleared colours).
         self.hide_ticked = None
+        self.keep_ticked = None
         # Mod Options pages that Purple-lib's add_options double received.
         self.purple_pages = []
         self.text = text
@@ -179,10 +182,11 @@ class Settings:
         return int(self.picker_values is not None)
 
     def checkbox(self, cpu, r, imported):
-        assert self.text(cpu, r[0]) == CHECKBOX
-        if self.hide_ticked is not None:
-            cpu.mem_write(r[1], bytes([int(self.hide_ticked)]))
-        return int(self.hide_ticked is not None)
+        box = CHECKBOXES.index(self.text(cpu, r[0]))
+        ticked = (self.hide_ticked, self.keep_ticked)[box]
+        if ticked is not None:
+            cpu.mem_write(r[1], bytes([int(ticked)]))
+        return int(ticked is not None)
 
     def button(self, cpu, r, imported):
         label = self.text(cpu, r[0])
@@ -238,6 +242,14 @@ class Settings:
         render()
         assert self.disk == SAVED
         self.hide_ticked = None
+        # Keep cleared colours saves the same way, as its own line.
+        self.keep_ticked = True
+        render()
+        assert self.disk == KEPT
+        self.keep_ticked = False
+        render()
+        assert self.disk == SAVED
+        self.keep_ticked = None
         self.save_clicked = False
         self.reset_clicked = True
         render()
@@ -254,15 +266,16 @@ class Settings:
         assert len(self.purple_pages) == 1, self.purple_pages
         page = struct.unpack('<10I', read_bytes(self.purple_pages[0], 40))
         size, _, title, row_count, row, get, set_value, closed, value_text, action = page
-        assert size == 40 and row_count == 1 and value_text == action == 0
+        assert size == 40 and row_count == 2 and value_text == action == 0
         call(title)
         assert text(result()) == 'Key Quest Markers'
-        write_bytes(out, bytes(40))
-        call(row, 0, 0, 0, out)
-        assert result() & 255 == 1
-        name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
-        assert text(name) == 'Hide grey badges' and label_count == 2 and text(read(labels+4)) == 'On'
-        call(row, 0, 0, 1, out)
+        for index, expected in enumerate(ROW_NAMES):
+            write_bytes(out, bytes(40))
+            call(row, 0, 0, index, out)
+            assert result() & 255 == 1
+            name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
+            assert text(name) == expected and label_count == 2 and text(read(labels+4)) == 'On'
+        call(row, 0, 0, 2, out)
         assert result() & 255 == 0
         register()
         assert len(self.purple_pages) == 1
@@ -280,6 +293,17 @@ class Settings:
         call(set_value, 0, 0, 2)
         call(get)
         assert result() == 0
+        # The second row is Keep cleared colours, saved as its own line.
+        call(set_value, 0, 1, 1)
+        call(get, 0, 1)
+        assert result() == 1
+        call(closed)
+        update()
+        assert self.disk == KEPT, self.disk
+        call(set_value, 0, 1, 0)
+        call(closed)
+        update()
+        assert self.disk == SAVED
         # The game is saving: the Mod Options save waits for the lock and saves on the next second.
         self.game_saving = True
         call(set_value, 0, 0, 1)

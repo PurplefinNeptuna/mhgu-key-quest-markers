@@ -72,17 +72,22 @@ const _: () = assert!(
 /// English text: the mod ships no translations.
 pub const TITLE: &CStr = c"Key Quest Markers";
 pub const ROW_HIDE_GREY: u32 = 0;
-pub const ROWS: u32 = 1;
-pub const HIDE_GREY_NAME: &CStr = c"Hide grey badges";
-pub const HIDE_GREY_HELP: &CStr = c"Hide the grey badge on cleared quests\r\nand on old key and urgent quests.";
-/// Value 0 shows grey badges, 1 hides them.
-pub const HIDE_GREY_LABELS: [&CStr; 2] = [c"Off", c"On"];
+pub const ROW_KEEP_CLEARED: u32 = 1;
+pub const ROWS: u32 = 2;
+/// Each row's name and help-bar line, indexed by row.
+pub const ROW_NAMES: [&CStr; ROWS as usize] = [c"Hide grey badges", c"Keep cleared colours"];
+pub const ROW_HELP: [&CStr; ROWS as usize] = [
+    c"Hide the grey badge on cleared quests\r\nand on old key and urgent quests.",
+    c"Cleared quests keep their own badge\r\ncolour instead of turning grey.",
+];
+/// Both rows are switches: value 0 is off, 1 is on.
+pub const LABELS: [&CStr; 2] = [c"Off", c"On"];
 
-/// The row's value for the current setting, and the setting for a value Purple-lib sets.
-pub const fn hide_value(hide: bool) -> u32 {
-    hide as u32
+/// A row's value for a switch, and the switch for a value Purple-lib sets.
+pub const fn switch_value(on: bool) -> u32 {
+    on as u32
 }
-pub fn hide_from(value: u32) -> Option<bool> {
+pub fn switch_from(value: u32) -> Option<bool> {
     match value {
         0 => Some(false),
         1 => Some(true),

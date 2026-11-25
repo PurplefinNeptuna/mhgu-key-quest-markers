@@ -11,6 +11,8 @@ pub struct Palette {
     pub reward: u32,
     /// Hide the grey badge instead of drawing it (INI `[Badges] hide_completed`).
     pub hide_completed: bool,
+    /// A cleared quest keeps its own badge instead of grey (INI `[Badges] keep_cleared`).
+    pub keep_cleared: bool,
 }
 impl Palette {
     // Exact game UI colours: counter_down Gathering object16, objective
@@ -23,6 +25,7 @@ impl Palette {
         unlocks: 0x0032c2,
         reward: 0xff7f00,
         hide_completed: false,
+        keep_cleared: false,
     };
     /// The badge a row shows: grey becomes hidden while `hide_completed` is on.
     pub fn visible(self, badge: Badge) -> Badge {
@@ -53,7 +56,8 @@ impl Palette {
         let text = core::str::from_utf8(bytes).map_err(|_| Error::Invalid)?;
         let mut section = "";
         let mut values = [None; 5];
-        let mut hide = None;
+        // [Badges] hide_completed and keep_cleared.
+        let mut switches = [None; 2];
         for line in text.lines().map(str::trim) {
             if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
                 continue;
@@ -66,13 +70,18 @@ impl Palette {
                 continue;
             }
             let (key, value) = line.split_once('=').ok_or(Error::Invalid)?;
-            if section == "[Badges]" && key.trim() == "hide_completed" {
+            let switch = match key.trim() {
+                "hide_completed" => Some(0),
+                "keep_cleared" => Some(1),
+                _ => None,
+            };
+            if let (Some(index), "[Badges]") = (switch, section) {
                 let on = match value.trim() {
                     "0" => false,
                     "1" => true,
                     _ => return Err(Error::Invalid),
                 };
-                if hide.replace(on).is_some() {
+                if switches[index].replace(on).is_some() {
                     return Err(Error::Invalid);
                 }
                 continue;
@@ -104,8 +113,9 @@ impl Palette {
             // Absent in configs saved before these colours existed; they keep their other colours.
             unlocks: values[3].unwrap_or(Self::DEFAULT.unlocks),
             reward: values[4].unwrap_or(Self::DEFAULT.reward),
-            // Absent in configs saved before the setting existed: grey badges stay shown.
-            hide_completed: hide.unwrap_or(false),
+            // Absent in configs saved before these settings existed: grey badges stay grey and shown.
+            hide_completed: switches[0].unwrap_or(false),
+            keep_cleared: switches[1].unwrap_or(false),
         })
     }
     pub fn text(self) -> Result<Text, Error> {
@@ -120,7 +130,8 @@ impl Palette {
         )
         .map_err(|_| Error::Invalid)?;
         let hide = u8::from(self.hide_completed);
-        write!(out, "[Badges]\nhide_completed = {hide}\n")
+        let keep = u8::from(self.keep_cleared);
+        write!(out, "[Badges]\nhide_completed = {hide}\nkeep_cleared = {keep}\n")
         .map_err(|_| Error::Invalid)?;
         Ok(out)
     }
@@ -217,8 +228,9 @@ pub struct Preferences {
     pub draft: Palette,
     pub applied: Palette,
     pub loaded: bool,
-    /// Set through Mod Options, possibly before the INI loaded; a later load keeps it.
-    pub hide_override: Option<bool>,
+    /// (hide_completed, keep_cleared) set through Mod Options, possibly before the INI loaded; a
+    /// later load keeps them.
+    pub badge_override: Option<(bool, bool)>,
 }
 impl Preferences {
     pub const fn new() -> Self {
@@ -226,7 +238,7 @@ impl Preferences {
             draft: Palette::DEFAULT,
             applied: Palette::DEFAULT,
             loaded: false,
-            hide_override: None,
+            badge_override: None,
         }
     }
     pub fn edit(&mut self, value: Palette) {
@@ -242,9 +254,8 @@ impl Preferences {
                 self.applied = value;
                 self.draft = value;
                 self.loaded = true;
-                if let Some(hide) = self.hide_override {
-                    self.applied.hide_completed = hide;
-                    self.draft.hide_completed = hide;
+                if let Some((hide, keep)) = self.badge_override {
+                    self.apply_badges(hide, keep);
                 }
                 Ok(())
             }
@@ -263,10 +274,12 @@ impl Preferences {
     }
     /// A change made elsewhere (Mod Options) that already applies: it joins both the applied and
     /// the draft palette, and a disk load that has not happened yet keeps it.
-    pub fn apply_hidden(&mut self, hide: bool) {
-        self.applied.hide_completed = hide;
-        self.draft.hide_completed = hide;
-        self.hide_override = Some(hide);
+    pub fn apply_badges(&mut self, hide: bool, keep: bool) {
+        for palette in [&mut self.applied, &mut self.draft] {
+            palette.hide_completed = hide;
+            palette.keep_cleared = keep;
+        }
+        self.badge_override = Some((hide, keep));
     }
     /// Save what is applied, leaving pending colour edits as drafts. The saved colours are loaded
     /// first, so a save never replaces them with defaults; storage that is not ready yet returns

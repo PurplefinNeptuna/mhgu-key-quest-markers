@@ -335,3 +335,27 @@ fn exact_opaque_colors() {
         [255, 127, 0, 255]
     );
 }
+#[test]
+fn kept_colours_replace_grey_only_for_the_quests_own_clear() {
+    let mut done = state();
+    done.completed = true;
+    // Urgent and key groups go back to red and green.
+    assert_eq!(kept_colour(group(25), done, decide(group(25), true, done)), Badge::Urgent);
+    assert_eq!(kept_colour(group(3), done, decide(group(3), false, done)), Badge::Key);
+    // Other quests show orange before blue, as they did before the clear.
+    let mut other = done;
+    other.unlocks = true;
+    assert_eq!(kept_colour(group(0), other, decide(group(0), false, other)), Badge::Unlocks);
+    other.reward = true;
+    assert_eq!(kept_colour(group(0), other, decide(group(0), false, other)), Badge::Reward);
+    // Grey that is not the quest's own clear stays grey: an old key, a satisfied alternative.
+    let mut old = state();
+    old.needed_key = Some(false);
+    assert_eq!(kept_colour(group(3), old, decide(group(3), false, old)), Badge::Completed);
+    let mut alternative = state();
+    alternative.alternative_done = true;
+    assert_eq!(kept_colour(group(3), alternative, Badge::Completed), Badge::Completed);
+    // Badges that are not grey pass through.
+    assert_eq!(kept_colour(group(3), state(), Badge::Key), Badge::Key);
+    assert_eq!(kept_colour(group(0), done, Badge::Hidden), Badge::Hidden);
+}

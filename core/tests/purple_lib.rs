@@ -2,13 +2,16 @@
 use quest_badges_core::purple_lib::*;
 #[test]
 fn values_round_trip_and_reject_unknown() {
-    for hide in [false, true] {
-        assert_eq!(hide_from(hide_value(hide)), Some(hide));
+    for on in [false, true] {
+        assert_eq!(switch_from(switch_value(on)), Some(on));
     }
-    assert_eq!(hide_from(2), None);
-    assert_eq!(HIDE_GREY_LABELS.len(), 2);
+    assert_eq!(switch_from(2), None);
+    assert_eq!(LABELS.len(), 2);
+    assert_eq!(ROW_NAMES.len(), ROWS as usize);
     // The help bar shows about 40 columns a line.
-    for line in HIDE_GREY_HELP.to_str().unwrap().split("\r\n") {
-        assert!(line.len() <= 40, "{line}");
+    for help in ROW_HELP {
+        for line in help.to_str().unwrap().split("\r\n") {
+            assert!(line.len() <= 40, "{line}");
+        }
     }
 }

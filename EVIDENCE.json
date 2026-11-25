@@ -4741,5 +4741,15 @@
     "native_adapter_cases": 46,
     "test_seconds": 7.0,
     "runtime_test": "NOT RUN"
+  },
+  "static_r26": {
+    "date": "2026-11-26",
+    "nro_sha256": "ab2668cecf553194bd51c60260d39cb9386cee78bd1c5f96b4d6ae99ffec55b4",
+    "manifest_sha256": "b1799c7016d7191a380ad62732ad42a6da91b3cdc27f38d419fc4218e6cff8e3",
+    "change": "Keep cleared colours: a quest whose own clear made it grey keeps its urgent, key, reward or unlocks badge (Plugin UI checkbox, second Purple-lib row, INI [Badges] keep_cleared)",
+    "core_tests": 24,
+    "native_adapter_cases": 46,
+    "test_seconds": 12.0,
+    "runtime_test": "NOT RUN"
   }
 }
