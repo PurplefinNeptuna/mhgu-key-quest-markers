@@ -4829,5 +4829,17 @@
     "user_request": "okay, this run well, publish and release the build in github, i will mirror this to gamebanana myself",
     "nro_sha256": "e4fec71b80322dd77dd4589ae50d426013548bc1f41c8d84a31e3cd44a004e40",
     "basis": "MHGU Recomp run on the installed r31 NRO"
+  },
+  "publication_r31_2026_11_26": {
+    "version": "r31",
+    "github_release": "https://github.com/PurplefinNeptuna/mhgu-key-quest-markers/releases/tag/r31",
+    "tag_commit": "733d1b7",
+    "assets_sha256": {
+      "key-quest-markers-r31.zip": "09180a73eda030c37f354d7bbe0da82d96a8453806b94a78454a787fa8ff0c59",
+      "NOTICES.txt": "9eef1ba93745fe24ba36abb712e34f80c7fcf6aac4c91e8345b40b706a45b194"
+    },
+    "uploaded_assets_match_local": true,
+    "gamebanana_mirror": "https://gamebanana.com/mods/727960",
+    "gamebanana_mirrored_by": "the user"
   }
 }

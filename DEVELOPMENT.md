@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r31 is READY_TO_DISTRIBUTE at `build/key-quest-markers/releases/r31/`, the last accepted build: it ran on MHGU Recomp, where the user reports it working. It adds the Finished quests setting (Colored, Gray or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, holds the game's save lock around every INI mount, and shows the quests The Scorching Blade needs as key quests. Eden, Ryujinx and native Switch gameplay of r31 remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r31 is PUBLISHED (2026-11-26) as the GitHub release `r31`, at `build/key-quest-markers/releases/r31/`, the last accepted build: it ran on MHGU Recomp, where the user reports it working. It adds the Finished quests setting (Colored, Gray or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, holds the game's save lock around every INI mount, and shows the quests The Scorching Blade needs as key quests. Eden, Ryujinx and native Switch gameplay of r31 remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native

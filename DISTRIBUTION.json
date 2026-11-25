@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "READY_TO_DISTRIBUTE",
+  "status": "PUBLISHED",
   "runtime_platform": "switch",
   "reason": "Colored keeps the key color for the quests The Scorching Blade needs at any Village rank",
   "publication": {
-    "published": false,
-    "url": null,
-    "date": null
+    "published": true,
+    "url": "https://github.com/PurplefinNeptuna/mhgu-key-quest-markers/releases/tag/r31",
+    "date": "2026-11-26"
   },
   "version": "r31",
   "package_name": "key-quest-markers",
