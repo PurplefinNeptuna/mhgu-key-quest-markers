@@ -4761,5 +4761,15 @@
     "native_adapter_cases": 46,
     "test_seconds": 10.0,
     "runtime_test": "NOT RUN"
+  },
+  "static_r28": {
+    "date": "2026-11-26",
+    "nro_sha256": "b83f3b2c2c0a27f5691e24a2a5da31cd901e921a569296d3b691bd8517695510",
+    "manifest_sha256": "7c8e39ff13217772b5f2f3be1dc44e93e0c0bf8ab76e76aa9cec7415c0657be4",
+    "change": "Grey badges Coloured also restores a quest its special encounter pair satisfied; 1.4.0 quest_group has 0 Village key alternative groups",
+    "core_tests": 23,
+    "native_adapter_cases": 46,
+    "test_seconds": 10.9,
+    "runtime_test": "NOT RUN"
   }
 }

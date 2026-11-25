@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r27 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r27/`, not run. It adds the Grey badges setting (Coloured, Grey or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, with the game's save lock held around every INI mount. r24 to r26 never ran; r24 shows the quests The Scorching Blade needs as key quests at Village tier 5. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r28 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r28/`, not run. It adds the Grey badges setting (Coloured, Grey or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, with the game's save lock held around every INI mount. r24 to r27 never ran; r24 shows the quests The Scorching Blade needs as key quests at Village tier 5. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -66,7 +66,7 @@ this one environment flag.
 | Badge | Ordinal | Default | Meaning |
 | --- | --- | --- | --- |
 | Key | 1 | `#006305` (RGB 0,99,5) | Needed key quest for the current progression tier, or a non-key quest the current Village urgent needs |
-| Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests; with Grey badges Coloured, only the latter two |
+| Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests; with Grey badges Coloured, only no-longer-relevant ones, which normal play never shows |
 | Urgent | 3 | `#A30000` (RGB 163,0,0) | Offered, available, unfinished urgent |
 | Unlocks | 4 | `#0032C2` (RGB 0,50,194) | Other quest whose clear unlocks a different quest; grey once cleared |
 | Reward | 5 | `#FF7F00` (RGB 255,127,0) | Other quest that grants Hunter Arts or ingredients, or one its unlock chain requires; outranks Unlocks; grey once cleared |
@@ -90,8 +90,10 @@ Configuration keys are exactly `key`, `urgent`, `completed` and optional
 `unlocks` and `reward` under `[Colors]`; values are six hexadecimal RGB digits. An INI without
 one of them keeps its colours and uses that colour's default. Optional `[Badges]`
 `grey_badges` is `coloured`, `grey` or `hidden` (default `grey`; the Mod Options row's values
-0, 1, 2 in that order, `GreyBadges` in core). Coloured: `kept_colour` gives a quest whose own clear
-made it grey the badge it had before (urgent, key, reward or unlocks). Hidden: `Palette::visible`
+0, 1, 2 in that order, `GreyBadges` in core). Coloured: `kept_colour` gives a quest that is cleared,
+or satisfied by its special encounter pair, the badge it had before (urgent, key, reward or unlocks).
+Ranking up needs every key and urgent of a tier cleared and 1.4.0 has no Village key alternatives,
+so no grey badge is left. Hidden: `Palette::visible`
 turns every grey badge into a hidden one before the row draws it. Saved custom values are never rewritten; Reset defaults
 then Save & apply uses the game palette. The settings panel uses Forge ImGui only.
 

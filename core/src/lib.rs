@@ -122,12 +122,13 @@ pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
         Badge::Unlocks
     }
 }
-/// With grey badges set to Coloured, a cleared quest shows the badge it had before it was
-/// cleared: red for an urgent, green for a key, orange for a reward quest, blue for one that unlocks
-/// another. Grey that does not come from the quest's own clear (an old unfinished key, an inactive
-/// urgent, an alternative another quest satisfied) stays grey.
+/// With grey badges set to Coloured, a done quest shows the badge it had before: red for an urgent,
+/// green for a key, orange for a reward quest, blue for one that unlocks another. Done is cleared, or
+/// satisfied by the other record of a special encounter pair (or a Village alternative group, none of
+/// which exist in 1.4.0). Only grey from an old unfinished key or an inactive urgent stays grey, and
+/// ranking up needs every key and urgent of a tier cleared, so normal play never shows one.
 pub fn kept_colour(group: Group, state: Evidence, badge: Badge) -> Badge {
-    if badge != Badge::Completed || !state.completed {
+    if badge != Badge::Completed || !(state.completed || state.alternative_done) {
         return badge;
     }
     // `decide` gives Completed to an urgent or key group only when its urgent flag agrees.

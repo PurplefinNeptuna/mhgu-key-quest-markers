@@ -336,7 +336,7 @@ fn exact_opaque_colors() {
     );
 }
 #[test]
-fn kept_colours_replace_grey_only_for_the_quests_own_clear() {
+fn kept_colours_replace_grey_for_done_quests() {
     let mut done = state();
     done.completed = true;
     // Urgent and key groups go back to red and green.
@@ -348,13 +348,19 @@ fn kept_colours_replace_grey_only_for_the_quests_own_clear() {
     assert_eq!(kept_colour(group(0), other, decide(group(0), false, other)), Badge::Unlocks);
     other.reward = true;
     assert_eq!(kept_colour(group(0), other, decide(group(0), false, other)), Badge::Reward);
-    // Grey that is not the quest's own clear stays grey: an old key, a satisfied alternative.
+    // A quest its pair or alternative satisfied counts as done: a special encounter shows red.
+    let mut paired = state();
+    paired.alternative_done = true;
+    let special = Group {
+        alternative: 1,
+        ..group(47)
+    };
+    assert_eq!(kept_colour(special, paired, decide(special, false, paired)), Badge::Urgent);
+    assert_eq!(kept_colour(group(3), paired, Badge::Completed), Badge::Key);
+    // Grey from an old unfinished key stays grey.
     let mut old = state();
     old.needed_key = Some(false);
     assert_eq!(kept_colour(group(3), old, decide(group(3), false, old)), Badge::Completed);
-    let mut alternative = state();
-    alternative.alternative_done = true;
-    assert_eq!(kept_colour(group(3), alternative, Badge::Completed), Badge::Completed);
     // Badges that are not grey pass through.
     assert_eq!(kept_colour(group(3), state(), Badge::Key), Badge::Key);
     assert_eq!(kept_colour(group(0), done, Badge::Hidden), Badge::Hidden);

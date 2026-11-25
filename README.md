@@ -13,7 +13,7 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r27.zip`.
+2. Extract `key-quest-markers-r28.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -39,7 +39,7 @@ reward or unlocks a quest, and orange wins over blue.
 The **Grey badges** setting decides how grey badges show. **Grey**, the default,
 leaves them grey. **Coloured** gives a quest you have cleared its own colour back:
 red for an urgent quest, green for a key quest, and orange or blue for the others.
-Key and urgent quests that are no longer current but were never cleared stay grey.
+A special encounter counts as cleared once you clear either of its two versions.
 **Hidden** removes every grey badge.
 
 Some quests aren't key quests in the game's own list, but the game still needs
