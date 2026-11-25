@@ -13,7 +13,7 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r29.zip`.
+2. Extract `key-quest-markers-r30.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -36,9 +36,9 @@ Each quest shows one badge. When a quest fits more than one row, the higher
 row wins. An urgent or key quest stays red or green even if it also gives a
 reward or unlocks a quest, and orange wins over blue.
 
-The **Gray badges** setting decides how gray badges show. **Gray**, the default,
-leaves them gray. **Colored** leaves the color of cleared quests unchanged.
-**Hidden** removes every gray badge.
+The **Finished quests** setting decides how finished quests show. **Gray**, the
+default, shows them gray. **Colored** leaves their color unchanged. **Hidden**
+removes their badge.
 
 Some quests aren't key quests in the game's own list, but the game still needs
 them before it offers the next urgent quest. These show green too. In the
@@ -77,19 +77,19 @@ Mods tab of its settings menu (F1, or Plus and Minus on a controller).
 | Completed | `808080` | Badge color for completed or inactive quests. |
 | Unlocks a quest | `0032C2` | Badge color for quests that unlock another quest. |
 | Gives a reward | `FF7F00` | Badge color for quests that give Hunter Arts or ingredients, and the quests that lead to them. |
-| Gray badges | Gray | Colored, Gray or Hidden: how gray badges show. |
+| Finished quests | Gray | Colored, Gray or Hidden: how finished quests show. |
 
-Changes in the panel, including Gray badges, stay pending until
+Changes in the panel, including Finished quests, stay pending until
 you press **Save & apply**. They then take effect without restarting or
 reopening the quest counter. **Reset defaults** fills in the default colors and
-sets Gray badges back to Gray. Press Save & apply afterward to use and save them.
+sets Finished quests back to Gray. Press Save & apply afterward to use and save them.
 
 Updates keep your saved colors. To use the current defaults, press Reset
 defaults followed by Save & apply. All colors stay opaque.
 
 ### In the game's Options menu
 
-With Purple-lib installed, **Gray badges** is also
+With Purple-lib installed, **Finished quests** is also
 under **Options > Mod Options** in the start menu: choose "Key Quest Markers" from the
 list of mods (with Purple-lib r19 or older, press L or R until its page shows). A change
 takes effect as soon as you make it, and closing the window saves it to the same INI.
@@ -108,10 +108,10 @@ unlocks = 0032C2
 reward = FF7F00
 
 [Badges]
-gray_badges = gray
+finished_quests = gray
 ```
 
-`gray_badges` is `colored`, `gray` or `hidden`.
+`finished_quests` is `colored`, `gray` or `hidden`.
 
 A file saved by an older version may lack the `unlocks` or `reward` line, or the
 `[Badges]` section. It keeps its colors, uses the default blue or orange, and

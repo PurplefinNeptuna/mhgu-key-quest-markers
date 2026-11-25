@@ -225,7 +225,7 @@ pub fn panel() {
                 }
             }
         }
-        ui::text("Gray badges");
+        ui::text("Finished quests");
         for (i, (mode, label)) in GreyBadges::ALL.into_iter().zip(GREY_LABELS).enumerate() {
             if i > 0 {
                 ui::same_line(0.0, -1.0);

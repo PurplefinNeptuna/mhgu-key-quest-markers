@@ -9,7 +9,7 @@ pub struct Palette {
     pub completed: u32,
     pub unlocks: u32,
     pub reward: u32,
-    /// How gray badges show (INI `[Badges] gray_badges`).
+    /// How finished quests' badges show (INI `[Badges] finished_quests`).
     pub grey: GreyBadges,
 }
 /// How a grey badge shows. The value is the Mod Options row's: Coloured, Grey, Hidden.
@@ -85,7 +85,7 @@ impl Palette {
                 continue;
             }
             let (key, value) = line.split_once('=').ok_or(Error::Invalid)?;
-            if section == "[Badges]" && key.trim() == "gray_badges" {
+            if section == "[Badges]" && key.trim() == "finished_quests" {
                 let mode = GreyBadges::ALL.into_iter().find(|m| m.name() == value.trim());
                 if grey.replace(mode.ok_or(Error::Invalid)?).is_some() {
                     return Err(Error::Invalid);
@@ -134,7 +134,7 @@ impl Palette {
             self.key, self.urgent, self.completed, self.unlocks, self.reward
         )
         .map_err(|_| Error::Invalid)?;
-        write!(out, "[Badges]\ngray_badges = {}\n", self.grey.name())
+        write!(out, "[Badges]\nfinished_quests = {}\n", self.grey.name())
         .map_err(|_| Error::Invalid)?;
         Ok(out)
     }

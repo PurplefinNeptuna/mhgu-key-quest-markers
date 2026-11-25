@@ -203,23 +203,23 @@ fn grey_badges_setting() {
     // A released r23 INI has no [Badges] section: grey badges stay grey.
     assert_eq!(Palette::parse(colours.as_bytes()), Ok(Palette::DEFAULT));
     for mode in GreyBadges::ALL {
-        let text = [colours, "[Badges]\ngray_badges = ", mode.name(), "\n"].concat();
+        let text = [colours, "[Badges]\nfinished_quests = ", mode.name(), "\n"].concat();
         let palette = Palette {
             grey: mode,
             ..Palette::DEFAULT
         };
         assert_eq!(Palette::parse(text.as_bytes()), Ok(palette));
         let saved = palette.text().unwrap();
-        let line = ["[Badges]\ngray_badges = ", mode.name(), "\n"].concat();
+        let line = ["[Badges]\nfinished_quests = ", mode.name(), "\n"].concat();
         assert!(saved.bytes[..saved.len].ends_with(line.as_bytes()));
         assert_eq!(Palette::parse(&saved.bytes[..saved.len]), Ok(palette));
     }
     // British spellings are not accepted values. spelling: allow
     for bad in ["", "1", "coloured", "grey", "Gray"] {
-        let text = [colours, "[Badges]\ngray_badges = ", bad, "\n"].concat();
+        let text = [colours, "[Badges]\nfinished_quests = ", bad, "\n"].concat();
         assert_eq!(Palette::parse(text.as_bytes()), Err(Error::Invalid), "{bad}");
     }
-    let twice = [colours, "[Badges]\ngray_badges=gray\ngray_badges=gray\n"].concat();
+    let twice = [colours, "[Badges]\nfinished_quests=gray\nfinished_quests=gray\n"].concat();
     assert_eq!(Palette::parse(twice.as_bytes()), Err(Error::Invalid));
     let hidden = Palette {
         grey: GreyBadges::Hidden,

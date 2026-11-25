@@ -20,7 +20,7 @@ CUSTOM = (0x123456, 0xA86432, 0x607080, 0x13579B, 0x2468AC)
 COLOURS_SAVED = b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\nunlocks = 13579B\nreward = 2468AC\n'
 # Grey badges values, as the Mod Options row and the panel's radio buttons order them.
 COLOURED, GREY, HIDDEN_VALUE = 0, 1, 2
-INI = [COLOURS_SAVED+b'[Badges]\ngray_badges = '+name+b'\n' for name in (b'colored', b'gray', b'hidden')]
+INI = [COLOURS_SAVED+b'[Badges]\nfinished_quests = '+name+b'\n' for name in (b'colored', b'gray', b'hidden')]
 SAVED = INI[GREY]
 HIDDEN = INI[HIDDEN_VALUE]
 RADIOS = ['Colored##kqm-gray-colored', 'Gray##kqm-gray-gray', 'Hidden##kqm-gray-hidden']
@@ -266,7 +266,7 @@ class Settings:
         call(row, 0, 0, 0, out)
         assert result() & 255 == 1
         name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
-        assert text(name) == 'Gray badges' and label_count == 3
+        assert text(name) == 'Finished quests' and label_count == 3
         assert [text(read(labels+4*i)) for i in range(3)] == LABELS
         call(row, 0, 0, 1, out)
         assert result() & 255 == 0

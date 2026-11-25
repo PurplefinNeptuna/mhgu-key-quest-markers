@@ -4781,5 +4781,15 @@
     "native_adapter_cases": 46,
     "test_seconds": 11.8,
     "runtime_test": "NOT RUN"
+  },
+  "static_r30": {
+    "date": "2026-11-26",
+    "nro_sha256": "c9db8bf24bec5fd4ed0411d34a60eb7ac0e69922e8aaf9896650110a813bb17e",
+    "manifest_sha256": "4683206373a58b0f144f03c4d0685f84d7d43bff48030ed514df5aa68f94a628",
+    "change": "The badge setting is named Finished quests (INI [Badges] finished_quests = colored | gray | hidden)",
+    "core_tests": 23,
+    "native_adapter_cases": 46,
+    "test_seconds": 16.8,
+    "runtime_test": "NOT RUN"
   }
 }

@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r29 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r29/`, not run. It adds the Gray badges setting (Colored, Gray or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, with the game's save lock held around every INI mount. r24 to r28 never ran; r24 shows the quests The Scorching Blade needs as key quests at Village tier 5. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r30 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r30/`, not run. It adds the Finished quests setting (Colored, Gray or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, with the game's save lock held around every INI mount. r24 to r29 never ran; r24 shows the quests The Scorching Blade needs as key quests at Village tier 5. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -66,7 +66,7 @@ this one environment flag.
 | Badge | Ordinal | Default | Meaning |
 | --- | --- | --- | --- |
 | Key | 1 | `#006305` (RGB 0,99,5) | Needed key quest for the current progression tier, or a non-key quest the current Village urgent needs |
-| Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests; with Gray badges Colored, only no-longer-relevant ones, which normal play never shows |
+| Completed | 2 | `#808080` | Completed, satisfied or no-longer-relevant quests; with Finished quests Colored, only no-longer-relevant ones, which normal play never shows |
 | Urgent | 3 | `#A30000` (RGB 163,0,0) | Offered, available, unfinished urgent |
 | Unlocks | 4 | `#0032C2` (RGB 0,50,194) | Other quest whose clear unlocks a different quest; grey once cleared |
 | Reward | 5 | `#FF7F00` (RGB 255,127,0) | Other quest that grants Hunter Arts or ingredients, or one its unlock chain requires; outranks Unlocks; grey once cleared |
@@ -89,7 +89,7 @@ record in a family makes both grey. Native details are under [Native reference](
 Configuration keys are exactly `key`, `urgent`, `completed` and optional
 `unlocks` and `reward` under `[Colors]`; values are six hexadecimal RGB digits. An INI without
 one of them keeps its colours and uses that colour's default. Optional `[Badges]`
-`gray_badges` is `colored`, `gray` or `hidden` (default `gray`; the Mod Options row's values
+`finished_quests` is `colored`, `gray` or `hidden` (default `gray`; the Mod Options row's values
 0, 1, 2 in that order, `GreyBadges` in core). Colored: `kept_colour` gives a quest that is cleared,
 or satisfied by its special encounter pair, the badge it had before (urgent, key, reward or unlocks).
 Ranking up needs every key and urgent of a tier cleared and 1.4.0 has no Village key alternatives,
@@ -205,7 +205,7 @@ Its cases cover states, the blue badge on real quest 220 and orange on 233 from 
 context, bad objects, object/cache allocation failure and repeated insertion.
 It checks colors, pose/size, unchanged index arrays and saved records, actual native
 draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
-Its settings case also drives the Gray badges radio buttons, checks that a cleared key's row turns
+Its settings case also drives the Finished quests radio buttons, checks that a cleared key's row turns
 from grey to the key colour, and drives the compiled
 `purplelib_on_register`, `row`, `get`, `set` and `closed` through a version 3 table. Every
 mount, write-mode open and commit must hold the faked save mutex, unlocked only after the
@@ -223,7 +223,7 @@ Gameplay with and without HD was accepted on r17 (`build/key-quest-markers/candi
 
 ## Checks still open
 
-Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, each Gray badges value from the panel and from Purple-lib Mod Options, a save during a game save, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions.
+Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, each Finished quests value from the panel and from Purple-lib Mod Options, a save during a game save, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions.
 
 ## Do not
 

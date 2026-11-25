@@ -1,6 +1,6 @@
-# Key Quest Markers r29: testing
+# Key Quest Markers r30: testing
 
-r29 adds the Gray badges setting: Colored, Gray or Hidden. It also carries r25 (the game's save
+r30 adds the Finished quests setting: Colored, Gray or Hidden. It also carries r25 (the game's save
 lock held while it saves its settings) and r24 (the quests The Scorching Blade needs are green at
 Village 5★). Purple-lib r17 or later is optional and only needed for step 5.
 
@@ -8,19 +8,19 @@ Village 5★). Purple-lib r17 or later is optional and only needed for step 5.
 
 1. Open the quest counter. Badges show as in r23, plus more blue and orange ones: r24 reads the
    game's talk conditions in full, so more quests count as unlocking or leading to a reward.
-2. Open **Plugin UI > Key Quest Markers** in Forge's overlay, choose **Hidden** under Gray
-   badges and press **Save & apply**. At the quest counter, the gray badges are gone and the
+2. Open **Plugin UI > Key Quest Markers** in Forge's overlay, choose **Hidden** under Finished
+   quests and press **Save & apply**. At the quest counter, finished quests have no badge and the
    other colors stay. Note whether rows already on screen change at once, or only after you
    scroll or turn the page.
-3. Restart the game. Gray badges stay hidden, and `key_quest_markers.ini` ends with `[Badges]`
-   and `gray_badges = hidden`.
+3. Restart the game. Finished quests stay without a badge, and `key_quest_markers.ini` ends with `[Badges]`
+   and `finished_quests = hidden`.
 4. Choose **Colored** and press Save & apply. Cleared quests show their own color again: red
    for urgent quests, green for key quests, orange or blue for the rest. No gray badge should be
    left, and a special encounter shows red once either of its versions is cleared. Choose
    **Gray** to go back.
 5. With Purple-lib, open **Options > Mod Options** and choose "Key Quest Markers". Its one row,
-   "Gray badges", steps through Colored, Gray and Hidden, and the help bar says what Colored
-   and Hidden do. A change applies at once; close the window, restart, and the choice is kept.
+   "Finished quests", steps through Colored, Gray and Hidden, and the help bar says what each
+   does. A change applies at once; close the window, restart, and the choice is kept.
 6. With a save at Village 5★ that has not been offered The Scorching Blade yet: The Thunderclaw
    Wyvern, The Unwavering Colossus and The Entrancing Water Dancer are green until cleared, and
    so are the earlier chief requests that lead to them, on their own star pages. At other Village
@@ -33,7 +33,7 @@ only the `can't find` and `hidden` lines and a failed start appear.
 
 | Line | Meaning |
 | --- | --- |
-| `Key Quest Markers r26 loaded` | Started |
+| `Key Quest Markers r30 loaded` | Started |
 | `Key Quest Markers: setting added to Purple-lib Mod Options` | Purple-lib called the mod and took its page |
 | `Key Quest Markers: Purple-lib API version N is older than 3; Mod Options not added` | An older Purple-lib called the mod: install r17 or later |
 | `Key Quest Markers: Purple-lib refused the Mod Options page` | Send the log |
