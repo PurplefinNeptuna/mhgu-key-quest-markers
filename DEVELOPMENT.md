@@ -118,7 +118,7 @@ loaded by a case of the unlock script, or is a talk condition of a row that sets
 flag such a case loads, directly or through further talk rows. The 1.4.0 inputs
 give 557 IDs; 468 are neither key nor urgent, and the 429 of those outside the reward list show blue. Event/DLC IDs
 (1,000,000 and up) appear in no unlock rule. An ID another mod adds is absent,
-so it gets no badge; MHGU Definitive Edition adds 48 such IDs and patches no
+so it gets no badge; MHGU Definitive Edition 3.1.0 adds 51 such IDs (3.0.0, 48) and patches no
 checked window.
 
 The reward list holds the cleared-quest conditions of talk rows whose mAction2
