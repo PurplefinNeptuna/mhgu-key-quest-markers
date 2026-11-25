@@ -15,6 +15,7 @@
     "EVIDENCE.json",
     "LICENSE",
     "README.md",
+    "TESTING.md",
     "THIRD_PARTY.md",
     "armv7a-none-eabi.json",
     "build.local.example.json",
