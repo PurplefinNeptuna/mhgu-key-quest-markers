@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "mod": "key-quest-markers",
-  "status": "DEVELOPMENT",
+  "status": "READY_TO_DISTRIBUTE",
   "runtime_platform": "switch",
   "reason": "Colored keeps the key color for the quests The Scorching Blade needs at any Village rank",
   "publication": {
@@ -11,8 +11,8 @@
   },
   "version": "r31",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r31-candidate.zip",
-  "runtime_test": "r31 has not run. See EVIDENCE.json.",
+  "archive": "key-quest-markers-r31.zip",
+  "runtime_test": "r31 loaded on MHGU Recomp with the installed release NRO; the user reports it working, unitemized. See EVIDENCE.json.",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -65,7 +65,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r31 has not run; r30 ran on MHGU Recomp (Colored showed a chain key quest blue); r23 ran on Eden and MHGURecomp on the user's report, unitemized; Ryujinx and Switch hardware have no run",
+    "r31 ran on MHGU Recomp on the user's report, unitemized; Eden, Ryujinx and Switch hardware have no r31 run",
     "The orange, blue and urgent-chain green badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
@@ -89,8 +89,8 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r31 built, tested (23 core tests, 46 native adapter cases) and packaged as a DEVELOPMENT candidate; NRO e4fec71b...; not run.",
-    "manual_summary": "r23 on Eden and MHGURecomp, beside WishFinder r143: \"its working well\", after many runs, unitemized. r21 on MHGU Recomp 0.18.3: \"it run perfectly in recomp now and it marks chained quests\". r20 reported working on Eden; see EVIDENCE.json."
+    "static_summary": "r31 built, tested (23 core tests, 46 native adapter cases) and packaged; NRO e4fec71b...",
+    "manual_summary": "r31 on MHGU Recomp: \"okay, this run well\", unitemized. r23 on Eden and MHGURecomp, beside WishFinder r143: \"its working well\", after many runs, unitemized; see EVIDENCE.json."
   },
   "dependencies": [
     {
@@ -106,14 +106,16 @@
   "payloads": {
     "manifest.json": {
       "source": "build/key-quest-markers/candidates/r31/package/manifest.json",
-      "sha256": ""
+      "sha256": "fe05fcebd6b6f4d42d232dcb1992bf3d4845d0a5d53f80a6139da861279ce985"
     },
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
       "source": "build/key-quest-markers/candidates/r31/package/romfs/nativeNX/plugins/key_quest_markers.nro",
-      "sha256": ""
+      "sha256": "e4fec71b80322dd77dd4589ae50d426013548bc1f41c8d84a31e3cd44a004e40"
     }
   },
-  "candidate": "build/key-quest-markers/candidates/r31/delivery",
-  "candidate_builder": "scripts/build.py",
-  "archives": {}
+  "archives": {},
+  "approval": {
+    "date": "2026-11-26",
+    "basis": "User: \"okay, this run well, publish and release the build in github\". Installed r31 NRO e4fec71b80322dd77dd4589ae50d426013548bc1f41c8d84a31e3cd44a004e40 in Eden load and MHGU Recomp; recomplog: \"Key Quest Markers r31 loaded\"."
+  }
 }
