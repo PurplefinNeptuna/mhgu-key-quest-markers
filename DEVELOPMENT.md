@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r30 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r30/`, not run. It adds the Finished quests setting (Colored, Gray or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, with the game's save lock held around every INI mount. r24 to r29 never ran; r24 shows the quests The Scorching Blade needs as key quests at Village tier 5. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r31 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r31/`, not run. It adds the Finished quests setting (Colored, Gray or Hidden), in the Plugin UI and as one labels row on the optional Purple-lib Mod Options page, holds the game's save lock around every INI mount, and shows the quests The Scorching Blade needs as key quests. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build, working on Eden and MHGURecomp after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -92,6 +92,7 @@ one of them keeps its colours and uses that colour's default. Optional `[Badges]
 `finished_quests` is `colored`, `gray` or `hidden` (default `gray`; the Mod Options row's values
 0, 1, 2 in that order, `GreyBadges` in core). Colored: `kept_colour` gives a quest that is cleared,
 or satisfied by its special encounter pair, the badge it had before (urgent, key, reward or unlocks).
+A quest on the urgent key list keeps the key badge at every rank.
 Ranking up needs every key and urgent of a tier cleared and 1.4.0 has no Village key alternatives,
 so no grey badge is left. Hidden: `Palette::visible`
 turns every grey badge into a hidden one before the row draws it. Saved custom values are never rewritten; Reset defaults

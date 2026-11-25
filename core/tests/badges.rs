@@ -340,14 +340,14 @@ fn kept_colours_replace_grey_for_done_quests() {
     let mut done = state();
     done.completed = true;
     // Urgent and key groups go back to red and green.
-    assert_eq!(kept_colour(group(25), done, decide(group(25), true, done)), Badge::Urgent);
-    assert_eq!(kept_colour(group(3), done, decide(group(3), false, done)), Badge::Key);
+    assert_eq!(kept_colour(group(25), None, done, decide(group(25), true, done)), Badge::Urgent);
+    assert_eq!(kept_colour(group(3), None, done, decide(group(3), false, done)), Badge::Key);
     // Other quests show orange before blue, as they did before the clear.
     let mut other = done;
     other.unlocks = true;
-    assert_eq!(kept_colour(group(0), other, decide(group(0), false, other)), Badge::Unlocks);
+    assert_eq!(kept_colour(group(0), None, other, decide(group(0), false, other)), Badge::Unlocks);
     other.reward = true;
-    assert_eq!(kept_colour(group(0), other, decide(group(0), false, other)), Badge::Reward);
+    assert_eq!(kept_colour(group(0), None, other, decide(group(0), false, other)), Badge::Reward);
     // A quest its pair or alternative satisfied counts as done: a special encounter shows red.
     let mut paired = state();
     paired.alternative_done = true;
@@ -355,13 +355,17 @@ fn kept_colours_replace_grey_for_done_quests() {
         alternative: 1,
         ..group(47)
     };
-    assert_eq!(kept_colour(special, paired, decide(special, false, paired)), Badge::Urgent);
-    assert_eq!(kept_colour(group(3), paired, Badge::Completed), Badge::Key);
+    assert_eq!(kept_colour(special, None, paired, decide(special, false, paired)), Badge::Urgent);
+    assert_eq!(kept_colour(group(3), None, paired, Badge::Completed), Badge::Key);
     // Grey from an old unfinished key stays grey.
     let mut old = state();
     old.needed_key = Some(false);
-    assert_eq!(kept_colour(group(3), old, decide(group(3), false, old)), Badge::Completed);
+    assert_eq!(kept_colour(group(3), None, old, decide(group(3), false, old)), Badge::Completed);
+    // A quest The Scorching Blade needs stays a key quest past its rank: blue or orange become green.
+    let mut chained = done;
+    chained.unlocks = true;
+    assert_eq!(kept_colour(group(0), Some(5), chained, decide(group(0), false, chained)), Badge::Key);
     // Badges that are not grey pass through.
-    assert_eq!(kept_colour(group(3), state(), Badge::Key), Badge::Key);
-    assert_eq!(kept_colour(group(0), done, Badge::Hidden), Badge::Hidden);
+    assert_eq!(kept_colour(group(3), None, state(), Badge::Key), Badge::Key);
+    assert_eq!(kept_colour(group(0), None, done, Badge::Hidden), Badge::Hidden);
 }

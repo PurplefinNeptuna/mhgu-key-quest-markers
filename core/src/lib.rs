@@ -127,14 +127,15 @@ pub fn decide(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
 /// satisfied by the other record of a special encounter pair (or a Village alternative group, none of
 /// which exist in 1.4.0). Only grey from an old unfinished key or an inactive urgent stays grey, and
 /// ranking up needs every key and urgent of a tier cleared, so normal play never shows one.
-pub fn kept_colour(group: Group, state: Evidence, badge: Badge) -> Badge {
+/// `chain` is the quest's urgent-key tier (`urgent_chain`): such a quest is a key quest at every rank.
+pub fn kept_colour(group: Group, chain: Option<u8>, state: Evidence, badge: Badge) -> Badge {
     if badge != Badge::Completed || !(state.completed || state.alternative_done) {
         return badge;
     }
     // `decide` gives Completed to an urgent or key group only when its urgent flag agrees.
     if urgent(group.category) {
         Badge::Urgent
-    } else if key(group.category) {
+    } else if key(group.category) || chain.is_some() {
         Badge::Key
     } else if state.reward {
         Badge::Reward

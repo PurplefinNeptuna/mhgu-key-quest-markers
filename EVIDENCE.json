@@ -4791,5 +4791,26 @@
     "native_adapter_cases": 46,
     "test_seconds": 16.8,
     "runtime_test": "NOT RUN"
+  },
+  "runtime_r30_recomp_2026_11_26": {
+    "version": "r30",
+    "host": "MHGU Recomp",
+    "installed_nro_sha256": "c9db8bf24bec5fd4ed0411d34a60eb7ac0e69922e8aaf9896650110a813bb17e",
+    "log_lines": [
+      "[forge] [INFO] Key Quest Markers r30 loaded",
+      "[forge] [INFO] Key Quest Markers: setting added to Purple-lib Mod Options"
+    ],
+    "ini": "[Badges] finished_quests = colored",
+    "user_report": "Screenshot: Village 5-star list, The Unwavering Colossus cleared with a blue badge; the user expected the key badge (bug). The Thunderclaw Wyvern also blue."
+  },
+  "static_r31": {
+    "date": "2026-11-26",
+    "nro_sha256": "e4fec71b80322dd77dd4589ae50d426013548bc1f41c8d84a31e3cd44a004e40",
+    "manifest_sha256": "fe05fcebd6b6f4d42d232dcb1992bf3d4845d0a5d53f80a6139da861279ce985",
+    "change": "Colored keeps the key badge for urgent-key-list quests (The Scorching Blade's chain) at every Village rank",
+    "core_tests": 23,
+    "native_adapter_cases": 46,
+    "test_seconds": 8.1,
+    "runtime_test": "NOT RUN"
   }
 }

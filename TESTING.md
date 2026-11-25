@@ -1,6 +1,6 @@
-# Key Quest Markers r30: testing
+# Key Quest Markers r31: testing
 
-r30 adds the Finished quests setting: Colored, Gray or Hidden. It also carries r25 (the game's save
+r31 adds the Finished quests setting: Colored, Gray or Hidden. It also carries r25 (the game's save
 lock held while it saves its settings) and r24 (the quests The Scorching Blade needs are green at
 Village 5★). Purple-lib r17 or later is optional and only needed for step 5.
 
@@ -33,7 +33,7 @@ only the `can't find` and `hidden` lines and a failed start appear.
 
 | Line | Meaning |
 | --- | --- |
-| `Key Quest Markers r30 loaded` | Started |
+| `Key Quest Markers r31 loaded` | Started |
 | `Key Quest Markers: setting added to Purple-lib Mod Options` | Purple-lib called the mod and took its page |
 | `Key Quest Markers: Purple-lib API version N is older than 3; Mod Options not added` | An older Purple-lib called the mod: install r17 or later |
 | `Key Quest Markers: Purple-lib refused the Mod Options page` | Send the log |

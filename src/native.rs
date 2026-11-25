@@ -240,7 +240,7 @@ pub fn update(ui: u32, quests: u32) {
         };
         *badge = quest_badges_core::decide(g, flags & 1 != 0, evidence);
         if palette.grey == quest_badges_core::colors::GreyBadges::Coloured {
-            *badge = quest_badges_core::kept_colour(g, evidence, *badge);
+            *badge = quest_badges_core::kept_colour(g, chain, evidence, *badge);
         }
     }
     if !groups.unchanged(quest) {
