@@ -12,7 +12,7 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r23.zip`.
+2. Extract `key-quest-markers-r24.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -34,6 +34,13 @@ Badges appear automatically when you open the quest counter.
 Each quest shows one badge. When a quest fits more than one row, the higher
 row wins. An urgent or key quest stays red or green even if it also gives a
 reward or unlocks a quest, and orange wins over blue.
+
+Some quests aren't key quests in the game's own list, but the game still needs
+them before it offers the next urgent quest. These show green too. In the
+Village, that's the 5★ Astalos, Gammoth and Mizutsune hunts for the Kokoto,
+Pokke and Yukumo chiefs, plus the earlier requests in each village that lead to
+them. They turn green once 5★ is your highest Village rank, and stay green until
+you clear them.
 
 A quest is orange when clearing it gets you new Hunter Arts or Felyne kitchen
 ingredients. Someone hands you the reward when you talk to them after the

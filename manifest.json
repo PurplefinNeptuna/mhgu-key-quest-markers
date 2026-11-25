@@ -1,7 +1,7 @@
 {
   "manifest_version": 1,
   "id": "PurplefinNeptuna/key-quest-markers",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "name": "Key Quest Markers",
   "authors": ["PurplefinNeptuna"],
   "description": "Marks key quests, urgent quests, quests that give Hunter Arts or ingredients and quests that unlock other quests with coloured badges at the quest counter.",

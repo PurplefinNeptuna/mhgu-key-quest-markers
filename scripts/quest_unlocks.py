@@ -10,15 +10,23 @@ Two native sources decide when a quest appears on the counter:
   0x03 (return 1). Opcodes 0x75..0x78 load "quest P cleared" (0x523da4) and 0x40..0x43
   load bit P of the story flags at [GOT 0x18390e0] + 0x500. Every loaded value is
   only compared == 1 or summed into a count >= N, so a clear never locks a quest.
+  The first case whose label matches decides: its body always ends in a return
+  (0x03 at 0x3d5cdc, a failed check at 0x3d5cac), so a later label never runs.
 - NPC talk tables (rNpcTalkData 0x1a3e9cba, `loc/arc/npc/talk.arc`), 37-byte packed
   records. Tag evaluator 0x2451c8: kind 1 flag set, kind 11 quest cleared (quest =
-  param, plus table[fixed - 10002] when fixed is 10002..10004). Action switch at
-  main+0x2479d8: mAction1 kinds 1 and 4 set flag mAction1Param in the same array.
+  param, plus table[fixed - 10002] when fixed is 10002..10004); kinds 16 and 18 are
+  the OR forms of 1 and 11. Action switch at main+0x2479d8: mAction1 kinds 1 and 4
+  set flag mAction1Param in the same array.
+- Conversations: selector 0x243d00 splits a table into consecutive blocks, each ending
+  at a row whose page attribute is 2, 7, 8, 10, 14 or 15 (mask 0x3161 at 0x243e48).
+  A block plays when the tags of its first row and of every following row, up to a
+  row whose first tag is 0, all hold (0x2443ec); an OR-kind tag joins the tag before
+  it and kind 15 only continues. Runner 0x246b1c then applies every row's actions.
 
-A quest unlocks another when its clear is loaded by a case body, or is a talk
-condition of a row that sets a flag such a body loads, directly or through further
-talk rows. A reward quest is the cleared-quest condition of a talk row that grants
-Hunter Arts or Felyne ingredients; its chain is every quest its unlock requires.
+A quest unlocks another when its clear is loaded by a case body, or is a condition
+of a conversation that sets a flag such a body loads, directly or through further
+conversations. A reward quest is a cleared-quest condition of a conversation that
+grants Hunter Arts or Felyne ingredients; its chain is every quest its unlock requires.
 """
 import struct
 from collections import defaultdict
@@ -29,6 +37,13 @@ TALK_RECORD = '<IBBBBBHHhHHhHHhHHHHH'
 QUEST_CLEARED = range(0x75, 0x79)
 GRANTS = {*range(9, 17), 24, 25, *range(17, 22)}
 FLAG_SET = range(0x40, 0x44)
+# Talk tag kinds (evaluator 0x2451c8 jump table at 0x2451fc): 16..18 share the
+# handlers of 1, 2 and 11; the selector ORs 16..21, 119 and 147 with the tag before.
+TALK_FLAG = (1, 16)
+TALK_QUEST = (11, 18)
+TALK_OR = {*range(16, 22), 119, 147}
+TALK_CONTINUE = 15
+TALK_STOP = {2, 7, 8, 10, 14, 15}
 
 
 def require(condition, message):
@@ -62,41 +77,80 @@ def number(text, what):
     return int(text)
 
 
-def script_requirements(records):
-    """Map each case's quest IDs to the quests and flags its body loads."""
-    quests, flags = defaultdict(set), defaultdict(set)
+def script_cases(records):
+    """quest -> body records of the first case labelled with it."""
+    cases = {}
     i = 0
     while i < len(records):
         if records[i][1] != 0x0e:
             i += 1
             continue
-        targets = set()
+        targets = []
         while i < len(records) and records[i][1] == 0x0e:
             # One base-game label has an empty ID; it can match no quest.
             if records[i][2] == '[WORK0]' and records[i][3].isdigit():
-                targets.add(int(records[i][3]))
+                targets.append(int(records[i][3]))
             i += 1
+        body = []
         while i < len(records) and records[i][1] not in (0x23, 0x24):
-            _, command, first, _ = records[i]
-            if command in QUEST_CLEARED:
-                for t in targets:
-                    quests[t].add(number(first, 'Cleared-quest operand'))
-            elif command in FLAG_SET:
-                for t in targets:
-                    flags[t].add(number(first, 'Flag operand'))
+            body.append(records[i])
             i += 1
+        for t in targets:
+            cases.setdefault(t, body)
+    return cases
+
+
+def script_requirements(records):
+    """Map each quest to the quests and flags its first case body loads."""
+    quests, flags = defaultdict(set), defaultdict(set)
+    for target, body in script_cases(records).items():
+        for _, command, first, _ in body:
+            if command in QUEST_CLEARED:
+                quests[target].add(number(first, 'Cleared-quest operand'))
+            elif command in FLAG_SET:
+                flags[target].add(number(first, 'Flag operand'))
     return quests, flags
 
 
-def talk_rows(tables):
-    rows = []
+def talk_tables(tables):
+    """Rows of each talk table, in archive name order."""
     size = struct.calcsize(TALK_RECORD)
+    out = []
     for name, data in sorted(tables.items()):
         require(len(data) >= 8, 'Talk table truncated: ' + name)
         version, count = struct.unpack_from('<fI', data)
         require(version == 1.0 and len(data) == 8 + size * count, 'Talk table layout differs: ' + name)
-        rows += [struct.unpack_from(TALK_RECORD, data, 8 + size * i) for i in range(count)]
-    return rows
+        out.append([struct.unpack_from(TALK_RECORD, data, 8 + size * i) for i in range(count)])
+    return out
+
+
+def condition_groups(block):
+    """AND list of OR groups of (kind, fixed, param) tags that decide whether a block plays."""
+    groups = []
+    for n, row in enumerate(block):
+        if n and row[6] == 0:
+            break
+        for tag in (row[6:9], row[9:12], row[12:15]):
+            if tag[0] in (0, TALK_CONTINUE):
+                continue
+            if tag[0] in TALK_OR and groups:
+                groups[-1].append(tag)
+            else:
+                groups.append([tag])
+    return groups
+
+
+def conversations(tables):
+    """(rows, condition groups) for every conversation block of every talk table."""
+    out = []
+    for rows in talk_tables(tables):
+        start = 0
+        for i, row in enumerate(rows):
+            if row[1] in TALK_STOP or i == len(rows) - 1:
+                block = rows[start:i + 1]
+                out.append((block, condition_groups(block)))
+                start = i + 1
+    return out
 
 
 def quest_table(image):
@@ -108,19 +162,22 @@ def quest_table(image):
     return values
 
 
-def talk_requirements(rows, bases):
-    """flag -> (quests cleared, flags set) required by any talk row that sets the flag."""
+def flags_set(block):
+    """Flags any row of a conversation sets when it plays."""
+    return {r[16] for r in block if r[15] in (1, 4) and r[16]}
+
+
+def talk_requirements(talks, bases):
+    """flag -> (quests cleared, flags set) any conversation setting the flag checks."""
     setters = defaultdict(lambda: (set(), set()))
-    for r in rows:
-        action, flag = r[15], r[16]
-        if action not in (1, 4) or flag == 0:
-            continue
-        quests, flags = setters[flag]
-        for kind, fixed, param in (r[6:9], r[9:12], r[12:15]):
-            if kind == 1:
-                flags.add(fixed)
-            elif kind == 11:
-                quests.add(talk_quest(fixed, param, bases))
+    for block, groups in talks:
+        for flag in flags_set(block):
+            quests, flags = setters[flag]
+            for kind, fixed, param in (tag for group in groups for tag in group):
+                if kind in TALK_FLAG:
+                    flags.add(fixed)
+                elif kind in TALK_QUEST:
+                    quests.add(talk_quest(fixed, param, bases))
     return setters
 
 
@@ -146,24 +203,25 @@ def flag_quests(flags, setters):
 def requirements(script, tables, bases):
     """quest -> other quests whose clear its unlock loads, through script cases and talk flags."""
     quests, flags = script_requirements(script_records(script))
-    rows = talk_rows(tables)
-    setters = talk_requirements(rows, bases)
+    talks = conversations(tables)
+    setters = talk_requirements(talks, bases)
     needs = {t: (set(quests[t]) | flag_quests(flags[t], setters)) - {t} for t in set(quests) | set(flags)}
-    return needs, rows
+    return needs, talks
 
 
-def reward_quests(rows, bases):
-    """Quests named as cleared on a talk row whose mAction2 grants Hunter Arts or ingredients.
+def reward_quests(talks, bases):
+    """Quests a conversation checks as cleared when one of its rows' mAction2 grants Hunter Arts
+    or ingredients.
 
     Action2 switch at main+0x247c58: kinds 9..16, 24, 25 call the Hunter Arts grant
     0x3f0c3c in mode 0 (DialogMsg 100 "You learned new Hunter Arts!"); kinds 17..21
     call 0x3f1380 (DialogMsg 73 "New Ingredients were added!"). No other code grants them.
     """
     found = set()
-    for r in rows:
-        if r[17] in GRANTS:
-            for kind, fixed, param in (r[6:9], r[9:12], r[12:15]):
-                if kind == 11:
+    for block, groups in talks:
+        if any(r[17] in GRANTS for r in block):
+            for kind, fixed, param in (tag for group in groups for tag in group):
+                if kind in TALK_QUEST:
                     found.add(talk_quest(fixed, param, bases))
     return found
 
@@ -178,9 +236,9 @@ def quest_lists(script, tables, image):
     """(unlocks, rewards): quests whose clear unlocks a different quest, and reward
     quests together with every quest their unlock chains require."""
     bases = quest_table(image)
-    needs, rows = requirements(script, tables, bases)
+    needs, talks = requirements(script, tables, bases)
     unlocks = set().union(*needs.values())
-    rewards, pending = set(), list(reward_quests(rows, bases))
+    rewards, pending = set(), list(reward_quests(talks, bases))
     while pending:
         q = pending.pop()
         if q not in rewards:
@@ -199,9 +257,16 @@ def from_inputs(input_path):
     tables = {name: e['data'] for (name, kind), e in talk.items() if kind == TALK_KIND}
     require(tables, 'No talk tables in talk archive')
     image, _ = main_image(input_path('main').read_bytes())
-    return quest_lists(common[SCRIPT]['data'], tables, image)
+    from urgent_chain import GROUPS, quest_groups, urgent_keys
+    require(GROUPS in common, 'Quest groups missing from village common archive')
+    unlocks, rewards = quest_lists(common[SCRIPT]['data'], tables, image)
+    groups = quest_groups(common[GROUPS]['data'])
+    chained = urgent_keys(common[SCRIPT]['data'], tables, quest_table(image), groups)
+    return unlocks, rewards, chained
 
 
-def rust_lists(unlocks, rewards):
-    return ''.join(f'pub static {name}: &[u32] = &[{", ".join(map(str, ids))}];\n'
-                   for name, ids in (('UNLOCKS', unlocks), ('REWARDS', rewards)))
+def rust_lists(unlocks, rewards, chained):
+    lists = ''.join(f'pub static {name}: &[u32] = &[{", ".join(map(str, ids))}];\n'
+                    for name, ids in (('UNLOCKS', unlocks), ('REWARDS', rewards)))
+    pairs = ', '.join(f'({quest}, {tier})' for quest, tier in chained)
+    return lists + f'pub static URGENT_KEYS: &[(u32, u8)] = &[{pairs}];\n'

@@ -36,6 +36,9 @@ category: Village 1..10 and Hub/G tier +10. Category18 is a key-free transition;
 category23 is final-stage/no-key. An unfinished old key becomes grey; completion
 or a satisfied Village alternative group also makes it grey. Only the quest's
 own progression domain must be known; an unknown tier hides an unfinished key.
+A quest on the build-time urgent key list (non-key quests a Village urgent needs,
+see DEVELOPMENT.md "Quest lists") takes its tier as category while the Village tier
+equals it (`urgent_chain` in core), so it follows the same key rules there.
 
 An active urgent badge (ordinal 3) requires the rank-up urgent flag, membership in the actual counter's
 offered set, current availability and the native prerequisite counter. Completed

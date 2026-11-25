@@ -8,7 +8,8 @@ from paths import MOD, ROOT, CONFIG, BUILD_ROOT, WORK_ROOT, CARGO_TARGET, PYTHON
 def digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def source_hashes():
     """Tie receipts to the exact owned executable/resource recipe inputs."""
-    files=['Cargo.toml','Cargo.lock','.cargo/config.toml','armv7a-none-eabi.json','build.rs','scripts/gui_layout.py','scripts/quest_unlocks.py']
+    files=['Cargo.toml','Cargo.lock','.cargo/config.toml','armv7a-none-eabi.json','build.rs']
+    files += ['scripts/gui_layout.py','scripts/quest_unlocks.py','scripts/urgent_chain.py']
     files += [str(p.relative_to(MOD)) for folder in ['src','core/src','link']
               for p in sorted((MOD/folder).rglob('*')) if p.is_file()]
     return {n:digest(MOD/n) for n in files}
@@ -58,10 +59,12 @@ def prepare():
     record('resource.json',info)
     # Game-derived IDs stay out of Git: build.rs embeds these generated lists.
     from quest_unlocks import from_inputs, rust_lists
-    unlocks,rewards=from_inputs(input_path)
-    QUEST_LISTS.parent.mkdir(parents=True,exist_ok=True);QUEST_LISTS.write_text(rust_lists(unlocks,rewards))
-    record('quest-lists.json',{'unlocks':len(unlocks),'rewards':len(rewards),'sha256':digest(QUEST_LISTS),
-        'inputs':{n:digest(input_path(n)) for n in ['village_common.arc','talk.arc','main']}})
+    unlocks,rewards,chained=from_inputs(input_path)
+    QUEST_LISTS.parent.mkdir(parents=True,exist_ok=True)
+    QUEST_LISTS.write_text(rust_lists(unlocks,rewards,chained))
+    counts={'unlocks':len(unlocks),'rewards':len(rewards),'urgent_keys':len(chained)}
+    inputs={n:digest(input_path(n)) for n in ['village_common.arc','talk.arc','main']}
+    record('quest-lists.json',{**counts,'sha256':digest(QUEST_LISTS),'inputs':inputs})
 
 def build():
     prepare();env,_=environment();lock=digest(MOD/'Cargo.lock')

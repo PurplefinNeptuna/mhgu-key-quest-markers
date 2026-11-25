@@ -54,6 +54,7 @@
     "scripts/native_support.py",
     "scripts/paths.py",
     "scripts/quest_unlocks.py",
+    "scripts/urgent_chain.py",
     "scripts/verify.py",
     "src/config.rs",
     "src/gui.rs",

@@ -4703,5 +4703,33 @@
       "romfs/nativeNX/plugins/key_quest_markers.nro": "ff1a1d5d7de0205e2b6418c8f9221c18ae74edff0779d8a17e23282508b531cd"
     },
     "basis": "runtime_r23_2026_11_23"
+  },
+  "static_r24": {
+    "date": "2026-11-25",
+    "nro_sha256": "f4ce16fdacc77f82349463ff6c144e1992de4a07eca7bd682dc4a3e1e381a11e",
+    "manifest_sha256": "38f89079cb63915feda11d5764e001207daf3e8a312fa8983178bdf58543d2d0",
+    "change": "Non-key quests The Scorching Blade (601) needs are key quests at Village tier 5; talk conditions span a conversation's following rows; first matching script case decides",
+    "urgent_keys": [
+      219,
+      220,
+      224,
+      225,
+      229,
+      230,
+      318,
+      323,
+      328,
+      504,
+      508,
+      510
+    ],
+    "list_counts": {
+      "unlocks": 587,
+      "rewards": 88,
+      "urgent_keys": 12
+    },
+    "core_tests": 19,
+    "native_adapter_cases": 46,
+    "runtime_test": "NOT RUN"
   }
 }

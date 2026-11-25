@@ -13,3 +13,10 @@ pub fn unlocks_another(id: u32) -> bool {
 pub fn leads_to_reward(id: u32) -> bool {
     REWARDS.binary_search(&id).is_ok()
 }
+
+/// Village tier (1..10) at which a rank-up urgent quest needs this quest although its
+/// group is neither key nor urgent. The list is sorted by quest ID.
+pub fn urgent_key_tier(id: u32) -> Option<u8> {
+    let found = URGENT_KEYS.binary_search_by_key(&id, |&(quest, _)| quest).ok()?;
+    Some(URGENT_KEYS[found].1)
+}

@@ -80,6 +80,26 @@ pub fn needed_key(group: Group, village: u16, hub: u16) -> Option<bool> {
     }
     Some(category == tier)
 }
+/// A quest outside the key and urgent categories that the rank-up urgent quest of
+/// Village tier `chain` needs (build-time list). At that tier it reads as one of the
+/// tier's key quests; at any other tier, or with no chain tier, it is unchanged.
+pub fn urgent_chain(group: Group, chain: Option<u8>, village: u16) -> Group {
+    match chain {
+        Some(tier)
+            if (1..=10).contains(&tier)
+                && village == tier as u16
+                && !key(group.category)
+                && !urgent(group.category) =>
+        {
+            Group {
+                category: tier,
+                alternative: 0,
+                ..group
+            }
+        }
+        _ => group,
+    }
+}
 /// Rank-up identity requires the native group and urgency flag; the separate
 /// Village encounter groups use their native availability and pair completion.
 /// Completion and satisfied alternatives cannot turn key/urgent. An unresolved
@@ -208,6 +228,29 @@ mod tests {
         let mut later = hooked;
         later[8] ^= 1;
         assert!(!window_matches(&later, &original));
+    }
+    #[test]
+    fn urgent_chain_quests_are_keys_only_at_their_tier() {
+        let mut s = state();
+        s.unlocks = true;
+        let chained = |g: Group, village: u16| {
+            let g = urgent_chain(g, Some(5), village);
+            let mut e = s;
+            e.needed_key = needed_key(g, village, 0);
+            decide(g, false, e)
+        };
+        assert_eq!(chained(group(0), 5), Badge::Key);
+        assert_eq!(chained(group(0), 4), Badge::Unlocks);
+        assert_eq!(chained(group(0), 6), Badge::Unlocks);
+        let mut done = s;
+        done.completed = true;
+        let g = urgent_chain(group(0), Some(5), 5);
+        assert_eq!(decide(g, false, done), Badge::Completed);
+        // Real key and urgent groups keep their own category.
+        assert_eq!(urgent_chain(group(3), Some(5), 5), group(3));
+        assert_eq!(urgent_chain(group(29), Some(5), 5), group(29));
+        assert_eq!(urgent_chain(group(0), None, 5), group(0));
+        assert_eq!(urgent_chain(group(0), Some(0), 0), group(0));
     }
     #[test]
     fn current_completed_and_obsolete_keys() {

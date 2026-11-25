@@ -211,6 +211,9 @@ pub fn update(ui: u32, quests: u32) {
         let Some(g) = groups.find(id) else {
             continue;
         };
+        // A non-key quest the current Village urgent quest still needs reads as a key quest.
+        let chain = crate::quest_lists::urgent_key_tier(id);
+        let g = quest_badges_core::urgent_chain(g, chain, village);
         let Some(flags) = memory::half(data + 0x10c) else {
             continue;
         };
