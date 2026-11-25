@@ -4771,5 +4771,15 @@
     "native_adapter_cases": 46,
     "test_seconds": 10.9,
     "runtime_test": "NOT RUN"
+  },
+  "static_r29": {
+    "date": "2026-11-26",
+    "nro_sha256": "f057c5a565ebae633f16271bad1fbcd2250ddf9bdbb11196fddff41ca3fc6cf2",
+    "manifest_sha256": "26376e05329c26a70dffbb3215069987b4d7174b03eeee02c78ca13d38d8fc10",
+    "change": "American spelling in every user-facing string: Gray badges (Colored, Gray, Hidden), INI gray_badges = colored | gray | hidden, Colors loaded",
+    "core_tests": 23,
+    "native_adapter_cases": 46,
+    "test_seconds": 11.8,
+    "runtime_test": "NOT RUN"
   }
 }

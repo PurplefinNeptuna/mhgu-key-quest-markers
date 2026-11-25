@@ -73,7 +73,7 @@ const _: () = assert!(
 pub const TITLE: &CStr = c"Key Quest Markers";
 pub const ROW_GREY_BADGES: u32 = 0;
 pub const ROWS: u32 = 1;
-pub const GREY_NAME: &CStr = c"Grey badges";
-pub const GREY_HELP: &CStr = c"Coloured: cleared quests keep their\r\ncolour. Hidden: no grey badges.";
-/// Indexed by the row's value, which is `GreyBadges as u32`: Coloured, Grey, Hidden.
-pub const GREY_LABELS: [&CStr; 3] = [c"Coloured", c"Grey", c"Hidden"];
+pub const GREY_NAME: &CStr = c"Gray badges";
+pub const GREY_HELP: &CStr = c"Colored keeps cleared quests' color.\r\nHidden removes gray badges.";
+/// Indexed by the row's value, which is `GreyBadges as u32`: Colored, Gray, Hidden.
+pub const GREY_LABELS: [&CStr; 3] = [c"Colored", c"Gray", c"Hidden"];

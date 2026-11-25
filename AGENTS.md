@@ -41,17 +41,17 @@ record. Do not restore retired custom loader shims or patches.
 
 r17 works with the base game and optional MHGU HD Project (user-confirmed
 2026-10-15). The copied English HD common archive is a build fixture, not a
-runtime requirement. See EVIDENCE.json. User guides call badge colours Green,
-Red and Grey. Keep Gathering/objective source labels in research records.
+runtime requirement. See EVIDENCE.json. User guides call badge colors Green,
+Red and Gray. Keep Gathering/objective source labels in research records.
 Write key quest and urgent quest in full. Settings descriptions explain what
-the setting changes, such as badge colour. Avoid shorthand like needed keys.
+the setting changes, such as badge color. Avoid shorthand like needed keys.
 Omit advice about disabling the old prefix plugin from the release README.
 
 Release READMEs address mod users. Use Requirements, Installation, Usage,
 Update and removal, then Compatibility and known issues when relevant.
 Put Settings/INI subsections under Usage. Settings tables use Setting/Default/Effect,
 controls use Action/Input, and installation includes exact platform paths.
-Apply the full Humanizer process, use plain colour names, and omit maintainer
+Apply the full Humanizer process, use plain color names, and omit maintainer
 history/testing/approval material and unrelated-mod advice.
 README credits use only linked Component by Author, ending after the name.
 List forks/original projects separately. Keep explanations in provenance

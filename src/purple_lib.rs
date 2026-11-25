@@ -1,4 +1,4 @@
-//! Optional: the "Grey badges" setting (Coloured, Grey, Hidden) in Purple-lib's Mod Options.
+//! Optional: the "Gray badges" setting (Colored, Gray, Hidden) in Purple-lib's Mod Options.
 //! Purple-lib calls the plugin's `purplelib_on_register` with its table of functions at start-up; without Purple-lib
 //! nothing calls it, this module does nothing and the Plugin UI panel stays the only way to
 //! change the setting.

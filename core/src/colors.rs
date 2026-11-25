@@ -9,7 +9,7 @@ pub struct Palette {
     pub completed: u32,
     pub unlocks: u32,
     pub reward: u32,
-    /// How grey badges show (INI `[Badges] grey_badges`).
+    /// How gray badges show (INI `[Badges] gray_badges`).
     pub grey: GreyBadges,
 }
 /// How a grey badge shows. The value is the Mod Options row's: Coloured, Grey, Hidden.
@@ -25,7 +25,7 @@ impl GreyBadges {
     pub const ALL: [Self; 3] = [Self::Coloured, Self::Grey, Self::Hidden];
     /// The INI value.
     pub fn name(self) -> &'static str {
-        ["coloured", "grey", "hidden"][self as usize]
+        ["colored", "gray", "hidden"][self as usize]
     }
     pub fn from_value(value: u32) -> Option<Self> {
         Self::ALL.get(value as usize).copied()
@@ -85,7 +85,7 @@ impl Palette {
                 continue;
             }
             let (key, value) = line.split_once('=').ok_or(Error::Invalid)?;
-            if section == "[Badges]" && key.trim() == "grey_badges" {
+            if section == "[Badges]" && key.trim() == "gray_badges" {
                 let mode = GreyBadges::ALL.into_iter().find(|m| m.name() == value.trim());
                 if grey.replace(mode.ok_or(Error::Invalid)?).is_some() {
                     return Err(Error::Invalid);
@@ -134,7 +134,7 @@ impl Palette {
             self.key, self.urgent, self.completed, self.unlocks, self.reward
         )
         .map_err(|_| Error::Invalid)?;
-        write!(out, "[Badges]\ngrey_badges = {}\n", self.grey.name())
+        write!(out, "[Badges]\ngray_badges = {}\n", self.grey.name())
         .map_err(|_| Error::Invalid)?;
         Ok(out)
     }

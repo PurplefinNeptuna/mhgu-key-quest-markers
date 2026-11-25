@@ -9,7 +9,7 @@ fn labels_follow_the_setting_values() {
         assert_eq!(GreyBadges::from_value(value as u32), Some(mode));
     }
     assert_eq!(GreyBadges::from_value(3), None);
-    assert_eq!(GREY_LABELS[GreyBadges::Grey as usize].to_str().unwrap(), "Grey");
+    assert_eq!(GREY_LABELS[GreyBadges::Grey as usize].to_str().unwrap(), "Gray");
     // The help bar shows about 40 columns a line, and a value about 11.
     for line in GREY_HELP.to_str().unwrap().split("\r\n") {
         assert!(line.len() <= 40, "{line}");

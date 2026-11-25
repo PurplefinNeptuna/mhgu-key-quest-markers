@@ -37,11 +37,11 @@ pub fn grey_badges() -> GreyBadges {
 pub fn set_grey_badges(grey: GreyBadges) {
     GREY.store(grey as u8, Ordering::Release);
 }
-/// Panel radio buttons, in the Mod Options row's order: Coloured, Grey, Hidden.
+/// Panel radio buttons, in the Mod Options row's order: Colored, Gray, Hidden.
 const GREY_LABELS: [&core::ffi::CStr; 3] = [
-    c"Coloured##kqm-grey-coloured",
-    c"Grey##kqm-grey-grey",
-    c"Hidden##kqm-grey-hidden",
+    c"Colored##kqm-gray-colored",
+    c"Gray##kqm-gray-gray",
+    c"Hidden##kqm-gray-hidden",
 ];
 fn publish(p: Palette) {
     for (slot, value) in kqm_palette.iter().zip([p.key, p.urgent, p.completed, p.unlocks, p.reward]) {
@@ -121,7 +121,7 @@ pub fn update(delta: f32) {
         match state.preferences.load(&mut Storage::new()) {
             Ok(()) => {
                 publish(state.preferences.applied);
-                state.feedback = "Colours loaded";
+                state.feedback = "Colors loaded";
             }
             Err(Error::Unavailable) => {}
             Err(reason) => {
@@ -225,7 +225,7 @@ pub fn panel() {
                 }
             }
         }
-        ui::text("Grey badges");
+        ui::text("Gray badges");
         for (i, (mode, label)) in GreyBadges::ALL.into_iter().zip(GREY_LABELS).enumerate() {
             if i > 0 {
                 ui::same_line(0.0, -1.0);

@@ -1,6 +1,6 @@
 # Key Quest Markers
 
-Adds Rise-style badges to key and urgent quests, with colours that show
+Adds Rise-style badges to key and urgent quests, with colors that show
 whether you still need them for progression. Quests that give Hunter Arts or
 Felyne ingredients, and quests that unlock other quests, get a badge too.
 
@@ -13,7 +13,7 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r28.zip`.
+2. Extract `key-quest-markers-r29.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -29,18 +29,16 @@ Badges appear automatically when you open the quest counter.
 | Key quest you still need to clear | Green |
 | Quest that gives Hunter Arts or ingredients, or leads to one that does | Orange |
 | Quest that unlocks another quest when you clear it | Blue |
-| A cleared quest from the rows above, or an urgent or key quest that is no longer current | Grey |
+| A cleared quest from the rows above, or an urgent or key quest that is no longer current | Gray |
 | Any other quest | No badge |
 
 Each quest shows one badge. When a quest fits more than one row, the higher
 row wins. An urgent or key quest stays red or green even if it also gives a
 reward or unlocks a quest, and orange wins over blue.
 
-The **Grey badges** setting decides how grey badges show. **Grey**, the default,
-leaves them grey. **Coloured** gives a quest you have cleared its own colour back:
-red for an urgent quest, green for a key quest, and orange or blue for the others.
-A special encounter counts as cleared once you clear either of its two versions.
-**Hidden** removes every grey badge.
+The **Gray badges** setting decides how gray badges show. **Gray**, the default,
+leaves them gray. **Colored** leaves the color of cleared quests unchanged.
+**Hidden** removes every gray badge.
 
 Some quests aren't key quests in the game's own list, but the game still needs
 them before it offers the next urgent quest. These show green too. In the
@@ -64,7 +62,7 @@ shrink to fit before the badge.
 
 ### Settings
 
-Open **Plugin UI > Key Quest Markers** in Forge's overlay. Click a colour
+Open **Plugin UI > Key Quest Markers** in Forge's overlay. Click a color
 swatch to open its picker, or enter a hexadecimal RGB value.
 
 Forge opens its overlay with the Insert key on a keyboard; `[menu] key` in Forge's
@@ -74,24 +72,24 @@ Mods tab of its settings menu (F1, or Plus and Minus on a controller).
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| Key | `006305` | Key quest badge colour. |
-| Urgent | `A30000` | Urgent quest badge colour. |
-| Completed | `808080` | Badge colour for completed or inactive quests. |
-| Unlocks a quest | `0032C2` | Badge colour for quests that unlock another quest. |
-| Gives a reward | `FF7F00` | Badge colour for quests that give Hunter Arts or ingredients, and the quests that lead to them. |
-| Grey badges | Grey | Coloured, Grey or Hidden: how grey badges show. |
+| Key | `006305` | Key quest badge color. |
+| Urgent | `A30000` | Urgent quest badge color. |
+| Completed | `808080` | Badge color for completed or inactive quests. |
+| Unlocks a quest | `0032C2` | Badge color for quests that unlock another quest. |
+| Gives a reward | `FF7F00` | Badge color for quests that give Hunter Arts or ingredients, and the quests that lead to them. |
+| Gray badges | Gray | Colored, Gray or Hidden: how gray badges show. |
 
-Changes in the panel, including Grey badges, stay pending until
+Changes in the panel, including Gray badges, stay pending until
 you press **Save & apply**. They then take effect without restarting or
-reopening the quest counter. **Reset defaults** fills in the default colours and
-sets Grey badges back to Grey. Press Save & apply afterward to use and save them.
+reopening the quest counter. **Reset defaults** fills in the default colors and
+sets Gray badges back to Gray. Press Save & apply afterward to use and save them.
 
-Updates keep your saved colours. To use the current defaults, press Reset
-defaults followed by Save & apply. All colours stay opaque.
+Updates keep your saved colors. To use the current defaults, press Reset
+defaults followed by Save & apply. All colors stay opaque.
 
 ### In the game's Options menu
 
-With Purple-lib installed, **Grey badges** is also
+With Purple-lib installed, **Gray badges** is also
 under **Options > Mod Options** in the start menu: choose "Key Quest Markers" from the
 list of mods (with Purple-lib r19 or older, press L or R until its page shows). A change
 takes effect as soon as you make it, and closing the window saves it to the same INI.
@@ -110,16 +108,16 @@ unlocks = 0032C2
 reward = FF7F00
 
 [Badges]
-grey_badges = grey
+gray_badges = gray
 ```
 
-`grey_badges` is `coloured`, `grey` or `hidden`.
+`gray_badges` is `colored`, `gray` or `hidden`.
 
 A file saved by an older version may lack the `unlocks` or `reward` line, or the
-`[Badges]` section. It keeps its colours, uses the default blue or orange, and
-shows grey badges. Missing or invalid configuration uses defaults. While the game is saving, or
+`[Badges]` section. It keeps its colors, uses the default blue or orange, and
+shows gray badges. Missing or invalid configuration uses defaults. While the game is saving, or
 before a player save is loaded, the mod waits and saves by itself as soon as it
-can. If saving fails, the previous colours stay in use and your pending choices
+can. If saving fails, the previous colors stay in use and your pending choices
 remain in the panel.
 
 ## Update and removal
