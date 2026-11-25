@@ -2,6 +2,7 @@
 //! Stock ScopedMount panics on mount failure; Reader asserts on short reads,
 //! Writer ignores partial writes, and neither exposes checked flush/commit.
 //! Only these missing error paths use the existing verified ARM32 SDK ABI.
+use crate::save_lock::SaveLock;
 use core::ffi::c_char;
 use quest_badges_core::colors::{Error, Files, Text};
 const PATH: &[u8] = b"savedata:/key_quest_markers.ini\0";
@@ -41,6 +42,8 @@ impl Drop for Handle {
 }
 pub struct Storage {
     previous: u32,
+    /// The game's save lock, held from `Files::mount` to `Files::unmount`.
+    lock: Option<SaveLock>,
 }
 impl Storage {
     pub fn new() -> Self {
@@ -50,7 +53,10 @@ impl Storage {
         unsafe {
             disable_abort(&mut previous);
         }
-        Self { previous }
+        Self {
+            previous,
+            lock: None,
+        }
     }
 }
 impl Drop for Storage {
@@ -61,11 +67,20 @@ impl Drop for Storage {
     }
 }
 impl Files for Storage {
+    /// A game save in progress reads as storage not available yet, which the settings retry.
     fn mount(&mut self) -> bool {
-        forge::fs::savedata::mount()
+        let Some(lock) = SaveLock::take() else {
+            return false;
+        };
+        if !forge::fs::savedata::mount() {
+            return false;
+        }
+        self.lock = Some(lock);
+        true
     }
     fn unmount(&mut self) {
         forge::fs::savedata::unmount();
+        self.lock = None;
     }
     fn read(&mut self, out: &mut Text) -> Result<(), Error> {
         // SAFETY: buffers are bounded, the path is NUL terminated, and every

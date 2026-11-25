@@ -25,7 +25,10 @@ def verify():
     if receipt.get('version')!=VERSION or receipt['nro_sha256']!=digest(nro_path) or receipt.get('source_sha256')!=source_hashes():
         raise ValueError('Build receipt differs from staged NRO/current sources')
     exports={n.decode() for n,e,*_ in nro.symbols if n and e[5] and e[3]>>4==1}
-    if exports!={'forge_onLoad','forge_onInit','forge_onUpdate','forge_onImGuiInit','forge_onImGuiRender','init','fini'}:raise ValueError('Unexpected plugin exports: '+str(exports))
+    callbacks={'forge_onLoad','forge_onInit','forge_onUpdate','forge_onImGuiInit','forge_onImGuiRender'}
+    # purplelib_on_register: Purple-lib finds it in the dynamic symbols and calls it (optional).
+    if exports!=callbacks|{'purplelib_on_register','init','fini'}:
+        raise ValueError('Unexpected plugin exports: '+str(exports))
     imports={n.decode() for n,e,*_ in nro.symbols if n and not e[5] and e[3]>>4==1}
     available=set().union(*(nso_exports(input_path(n)) for n in ['main','sdk','forge']))
     if imports-available:raise ValueError('Unresolved native imports: '+str(imports-available))

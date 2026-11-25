@@ -4731,5 +4731,15 @@
     "core_tests": 19,
     "native_adapter_cases": 46,
     "runtime_test": "NOT RUN"
+  },
+  "static_r25": {
+    "date": "2026-11-26",
+    "nro_sha256": "3d2701637d8abbb62fde0bf1b9ca811efbd85385d957335ee3ac6a3a754ad3bf",
+    "manifest_sha256": "ef2bb7800eb013acfb16cb5208a1cba2ed91f29fff7970505d166451fef20d8c",
+    "change": "Hide grey badges (Plugin UI checkbox, optional Purple-lib Mod Options row, INI [Badges] hide_completed); game save lock held from mount to unmount; core tests moved to core/tests; native adapter split into topic modules, hooked only where it acts",
+    "core_tests": 22,
+    "native_adapter_cases": 46,
+    "test_seconds": 7.0,
+    "runtime_test": "NOT RUN"
   }
 }

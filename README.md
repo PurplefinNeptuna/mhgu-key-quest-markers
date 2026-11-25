@@ -8,11 +8,12 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 
 - MHGU 1.4.0 for Nintendo Switch.
 - [Fexty's Forge 1.5.1](https://github.com/Fexty12573/forge/releases/tag/v1.5.1).
+- Optional: Purple-lib r17 or later, to hide grey badges from the game's own Options menu.
 
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r24.zip`.
+2. Extract `key-quest-markers-r25.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -72,17 +73,27 @@ Mods tab of its settings menu (F1, or Plus and Minus on a controller).
 | Completed | `808080` | Badge colour for completed or inactive quests. |
 | Unlocks a quest | `0032C2` | Badge colour for quests that unlock another quest. |
 | Gives a reward | `FF7F00` | Badge colour for quests that give Hunter Arts or ingredients, and the quests that lead to them. |
+| Hide grey badges | Off | Hides grey badges instead of showing them. |
 
-Edits stay pending until you press **Save & apply**. The colours then take
-effect without restarting or reopening the quest counter. **Reset defaults**
-fills in the default colours. Press Save & apply afterward to use and save them.
+Changes in the panel, including the Hide grey badges box, stay pending until
+you press **Save & apply**. They then take effect without restarting or
+reopening the quest counter. **Reset defaults** fills in the default colours and
+turns Hide grey badges off. Press Save & apply afterward to use and save them.
 
 Updates keep your saved colours. To use the current defaults, press Reset
 defaults followed by Save & apply. All colours stay opaque.
 
+### In the game's Options menu
+
+With Purple-lib installed, **Hide grey badges** is also under **Options > Mod Options**
+in the start menu: choose "Key Quest Markers" from the list of mods (with Purple-lib r19
+or older, press L or R until its page shows). A change takes effect as soon as you make
+it, and closing the window saves it to the same INI. The page is in English in every
+language.
+
 ### INI settings
 
-Colours are saved in `key_quest_markers.ini` in MHGU's save folder:
+Settings are saved in `key_quest_markers.ini` in MHGU's save folder:
 
 ```ini
 [Colors]
@@ -91,12 +102,19 @@ urgent = A30000
 completed = 808080
 unlocks = 0032C2
 reward = FF7F00
+
+[Badges]
+hide_completed = 0
 ```
 
-A file saved by an older version may lack the `unlocks` or `reward` line; it
-keeps its colours and uses the default blue or orange. Missing or invalid configuration uses defaults. If saving fails, the previous
-colours stay in use and your pending choices remain in the panel. Load a player
-save and try saving again.
+`hide_completed = 1` hides grey badges.
+
+A file saved by an older version may lack the `unlocks` or `reward` line, or the
+`[Badges]` section. It keeps its colours, uses the default blue or orange, and
+shows grey badges. Missing or invalid configuration uses defaults. While the game is saving, or
+before a player save is loaded, the mod waits and saves by itself as soon as it
+can. If saving fails, the previous colours stay in use and your pending choices
+remain in the panel.
 
 ## Update and removal
 

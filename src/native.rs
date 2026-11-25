@@ -133,6 +133,8 @@ fn alternative(groups: &Groups, profile: u32, g: Group) -> bool {
     })
 }
 fn set(object: Option<gui::Decoration>, badge: Badge, palette: quest_badges_core::colors::Palette) {
+    // With "Hide grey badges" on, a grey badge is hidden like a row without one.
+    let badge = palette.visible(badge);
     if let Some(object) = object {
         object.set(badge, palette.color(badge));
     }

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "mod": "key-quest-markers",
   "kind": "plugin",
-  "version": "r24",
+  "version": "r25",
   "runtime_platform": "forge-switch",
   "package_name": "key-quest-markers"
 }

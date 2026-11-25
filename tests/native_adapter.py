@@ -29,6 +29,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     u=unicorn.Uc(unicorn.UC_ARCH_ARM,unicorn.UC_MODE_ARM);u.ctl_set_cpu_model(arm.UC_CPU_ARM_MAX)
     u.mem_map(MODULE,((len(data)+4095)//4096+64)*4096);u.mem_write(MODULE,data)
     u.mem_map(ENGINE,4096);u.mem_map(0x41000000,0x20000);u.mem_map(GAME,0x2000000)
+    # sSavedata's cell lies past the game image's 32 MB mapping.
+    u.mem_map(SAVEDATA_CELL&~0xfff,4096)
     # Real game code rebuilds/traverses the draw cache and destroys the owned tree.
     for first,last in [(0xa494a0,0xa4964c),(0xa48668,0xa486fc),(0xa475e0,0xa47648),
                        (0xa38828,0xa38944),(0xa38bc0,0xa38e50),(0xa49b28,0xa49bac),(0xa4844c,0xa48470),(0x540c08,0x540c64),
@@ -186,7 +188,9 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             if c==b'\0':return out.decode()
             out+=c
         raise AssertionError('unterminated string')
-    settings=Settings(ret,text,word,read)
+    settings=Settings(ret,text,word,read,SAVEDATA+0xe80)
+    word(SAVEDATA_CELL,SAVEDATA)
+    word(SAVEDATA,SAVEDATA_VTABLE)
     def trace(cpu,address,size,_):
         nonlocal tls_value,parent_return,parent_sp,object_attempts,factory_index,hook_count,draw_object,vertex_offset
         r=[cpu.reg_read(x)for x in REGS[:4]]
@@ -235,6 +239,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             cpu.mem_write(out,struct.pack('<6I',target,detour,continuation,0,0,0));ret(cpu,out);return
         if address==MODULE+names['mwc_svc_query']:
             region,size=(ENGINE,4096) if ENGINE<=r[2]<ENGINE+4096 else (GAME,0x2000000)
+            if SAVEDATA_CELL&~0xfff<=r[2]<(SAVEDATA_CELL&~0xfff)+4096:
+                region,size=SAVEDATA_CELL&~0xfff,4096
             cpu.mem_write(r[0],struct.pack('<QQ6I',region,size,0,0,7,0,0,0));word(r[1],0);ret(cpu);return
         if address==imports.get('nnosGetTlsValue'):assert r[0]==1;ret(cpu,tls_value);return
         if address==imports.get('nnosSetTlsValue'):assert r[0]==1;tls_value=r[1];ret(cpu);return
@@ -329,10 +335,22 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
         if address==GAME+0x3b1a18:assert not special and r[:2]==[QUEST,2];ret(cpu,int(prerequisites));return
         if address==GAME+0x54af8c:assert special and r[:3]==[r[0],0xff,0] and r[0] in ids
         if address==GAME+0x3b2174:assert r[0]==QUEST;ret(cpu,int(available));return
+        if address==PURPLE_LIB:
+            settings.purple_pages.append(r[0])
+            ret(cpu,1)
+            return
         if ENGINE+0x300<=address<ENGINE+4096:raise AssertionError(('unexpected import',hex(address)))
-    u.hook_add(unicorn.UC_HOOK_CODE,trace)
-    def call(address,a=0,b=0,c=0):
-        u.reg_write(arm.UC_ARM_REG_SP,STACK);u.reg_write(arm.UC_ARM_REG_LR,RETURN);u.reg_write(arm.UC_ARM_REG_R0,a);u.reg_write(arm.UC_ARM_REG_R1,b);u.reg_write(arm.UC_ARM_REG_R2,c)
+    # Python runs once per hooked instruction, so the hook covers only what trace acts on: the ENGINE
+    # page (imports, return, hook and Purple-lib doubles), the plugin's svc stubs, and every game address
+    # trace names, read from its own source so a new branch is hooked without a second list.
+    for target in hook_targets(Path(__file__).read_text()):
+        u.hook_add(unicorn.UC_HOOK_CODE,trace,None,target,target)
+    u.hook_add(unicorn.UC_HOOK_CODE,trace,None,ENGINE,ENGINE+4095)
+    def call(address,a=0,b=0,c=0,d=0):
+        u.reg_write(arm.UC_ARM_REG_SP,STACK)
+        u.reg_write(arm.UC_ARM_REG_LR,RETURN)
+        for register,value in zip(REGS[:4],(a,b,c,d)):
+            u.reg_write(register,value)
         try:u.emu_start(address,RETURN+4,count=1000000)
         except unicorn.UcError as error:
             raise AssertionError((str(error),hex(u.reg_read(arm.UC_ARM_REG_PC)),hex(u.reg_read(arm.UC_ARM_REG_LR)),[hex(u.reg_read(r))for r in REGS[:8]])) from error
@@ -353,13 +371,7 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     assert read(MODULE+names['kqm_parent_original'])==ENGINE+0x810
     assert startup_logs==(['Key Quest Markers '+__import__('paths').VERSION+' loaded'] if log_level<=1 else [])
     if custom_palette:
-        def init():
-            call(MODULE+names['forge_onImGuiInit'],DATA+0x180000,ENGINE+0x100,ENGINE+0x104)
-        def render():
-            call(MODULE+names['forge_onImGuiRender'])
-        def palette():
-            return bytes(u.mem_read(MODULE+names['kqm_palette'],20))
-        settings.panel_cases(init,render,palette)
+        settings.run_cases(call,u,lambda p:text(u,p),read,word)
         # Native tests below expect the chosen custom palette throughout draw/cleanup.
     # Run both real ARM constructor functions. a38828 supplies the GUI owner;
     # a38bc0 writes each object's owner/resource and links the original ARC tree.

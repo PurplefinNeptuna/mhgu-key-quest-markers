@@ -1,18 +1,28 @@
 """Settings doubles for tests/native_adapter.py: Forge's save-data mount, the narrow nn::fs calls the
-plugin's INI code makes, and the ImGui widgets of its Plugin UI panel. One `Settings` per case holds
-their state; the adapter's code hook offers each imported call to `handle` first.
+plugin's INI code makes, the game's save lock, and the ImGui widgets of its Plugin UI panel. One
+`Settings` per case holds their state; the adapter's code hook offers each imported call to `handle`
+first.
+
+The save lock (forge-modding references/save-lock.md): every mount, write-mode open and commit must
+hold sSavedata's mutex, unlocked only after the unmount. `game_saving` makes TryLock fail.
 
 AAPCS i64 offsets occupy r2/r3; buffer and count use the stack.
 """
 import struct
 from unicorn import arm_const as arm
+from adapter_fixture import DATA, ENGINE, MODULE, PURPLE_LIB, PURPLE_TABLE, names
 
 PANEL = 'Key Quest Markers###key-quest-markers'
 COLOURS = ['Key##kqm-key', 'Urgent##kqm-urgent', 'Completed##kqm-completed', 'Unlocks a quest##kqm-unlocks',
            'Gives a reward##kqm-reward']
 FAILURES = ['mount', 'create', 'open', 'resize', 'write', 'flush', 'size', 'read', 'verify', 'commit']
 CUSTOM = (0x123456, 0xA86432, 0x607080, 0x13579B, 0x2468AC)
-SAVED = b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\nunlocks = 13579B\nreward = 2468AC\n'
+COLOURS_SAVED = b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\nunlocks = 13579B\nreward = 2468AC\n'
+SAVED = COLOURS_SAVED+b'[Badges]\nhide_completed = 0\n'
+HIDDEN = COLOURS_SAVED+b'[Badges]\nhide_completed = 1\n'
+CHECKBOX = 'Hide grey badges##kqm-hide-grey'
+TRY_LOCK = '_ZN2nn2os12TryLockMutexEPNS0_9MutexTypeE'
+UNLOCK = '_ZN2nn2os11UnlockMutexEPNS0_9MutexTypeE'
 # ImGuiColorEditFlags DisplayHex | Uint8.
 COLOUR_FLAGS = 4194304 | 8388608
 OPEN = '_ZN2nn2fs8OpenFileEPNS0_10FileHandleEPKci'
@@ -21,8 +31,16 @@ WRITE = '_ZN2nn2fs9WriteFileENS0_10FileHandleExPKvjRKNS0_11WriteOptionE'
 
 
 class Settings:
-    def __init__(self, ret, text, word, read):
+    def __init__(self, ret, text, word, read, mutex):
         self.ret = ret
+        self.mutex = mutex
+        self.save_locked = False
+        self.game_saving = False
+        self.lock_takes = 0
+        # None leaves the Hide grey badges box alone; True or False ticks or unticks it.
+        self.hide_ticked = None
+        # Mod Options pages that Purple-lib's add_options double received.
+        self.purple_pages = []
         self.text = text
         self.word = word
         self.read = read
@@ -53,7 +71,19 @@ class Settings:
         self.ret(cpu, result or 0)
         return True
 
+    def try_lock(self, cpu, r, imported):
+        assert r[0] == self.mutex and not self.save_locked and self.mounted == 0
+        self.save_locked = not self.game_saving
+        self.lock_takes += int(self.save_locked)
+        return int(self.save_locked)
+
+    def unlock(self, cpu, r, imported):
+        # After the unmount, so Forge's commit at unmount is covered.
+        assert r[0] == self.mutex and self.save_locked and self.mounted == 0
+        self.save_locked = False
+
     def mount(self, cpu, r, imported):
+        assert self.save_locked, 'mount without the save lock'
         ready = self.fs_ready and self.fs_fail != 'mount'
         if ready:
             self.mounted += 1
@@ -73,6 +103,7 @@ class Settings:
 
     def open(self, cpu, r, imported):
         assert self.text(cpu, r[1]) == 'savedata:/key_quest_markers.ini' and self.mounted > 0
+        assert self.save_locked or not r[2] & 2, 'write open without the save lock'
         if self.disk is None or self.fs_fail == 'open':
             return 0x202
         handle = self.next_handle
@@ -122,7 +153,7 @@ class Settings:
         return int(self.fs_fail == 'flush')
 
     def commit(self, cpu, r, imported):
-        assert not self.handles
+        assert not self.handles and self.save_locked
         self.commits += 1
         return int(self.fs_fail == 'commit')
 
@@ -147,11 +178,17 @@ class Settings:
             cpu.mem_write(r[1], struct.pack('<3f', *components))
         return int(self.picker_values is not None)
 
+    def checkbox(self, cpu, r, imported):
+        assert self.text(cpu, r[0]) == CHECKBOX
+        if self.hide_ticked is not None:
+            cpu.mem_write(r[1], bytes([int(self.hide_ticked)]))
+        return int(self.hide_ticked is not None)
+
     def button(self, cpu, r, imported):
         label = self.text(cpu, r[0])
         return int(self.save_clicked if label.startswith('Save & apply') else self.reset_clicked)
 
-    def panel_cases(self, init, render, palette):
+    def panel_cases(self, init, render, palette, update):
         """Pending edits, every storage failure, a saved INI, and a reset that stays pending."""
         self.fs_ready = True
         init()
@@ -174,6 +211,33 @@ class Settings:
         assert struct.unpack('<5I', palette()) == CUSTOM
         assert self.disk == SAVED
         assert self.balanced() and self.commits == previous_commits+1
+        # Hide grey badges: ticking the box is pending until Save & apply, like a colour.
+        self.hide_ticked = True
+        self.save_clicked = False
+        render()
+        assert self.disk == SAVED
+        self.hide_ticked = None
+        self.save_clicked = True
+        render()
+        assert self.disk == HIDDEN
+        self.hide_ticked = False
+        render()
+        assert self.disk == SAVED
+        # The game is saving: Save & apply writes nothing, then saves on the next second.
+        self.hide_ticked = True
+        self.game_saving = True
+        render()
+        assert self.disk == SAVED and not self.save_locked
+        self.hide_ticked = None
+        self.save_clicked = False
+        self.game_saving = False
+        update()
+        assert self.disk == HIDDEN and not self.save_locked
+        self.hide_ticked = False
+        self.save_clicked = True
+        render()
+        assert self.disk == SAVED
+        self.hide_ticked = None
         self.save_clicked = False
         self.reset_clicked = True
         render()
@@ -181,6 +245,86 @@ class Settings:
         self.reset_clicked = False
         self.panel_open = False
         render()
+
+    def mod_options_cases(self, call, result, text, read, memory, register, update):
+        """Mod Options through the compiled export and callbacks, with an API version 3 table.
+        `memory` is (read_bytes, write_bytes, scratch address)."""
+        read_bytes, write_bytes, out = memory
+        register()
+        assert len(self.purple_pages) == 1, self.purple_pages
+        page = struct.unpack('<10I', read_bytes(self.purple_pages[0], 40))
+        size, _, title, row_count, row, get, set_value, closed, value_text, action = page
+        assert size == 40 and row_count == 1 and value_text == action == 0
+        call(title)
+        assert text(result()) == 'Key Quest Markers'
+        write_bytes(out, bytes(40))
+        call(row, 0, 0, 0, out)
+        assert result() & 255 == 1
+        name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
+        assert text(name) == 'Hide grey badges' and label_count == 2 and text(read(labels+4)) == 'On'
+        call(row, 0, 0, 1, out)
+        assert result() & 255 == 0
+        register()
+        assert len(self.purple_pages) == 1
+        for value in (1, 0):
+            call(set_value, 0, 0, value)
+            call(get)
+            assert result() == value
+            # Applied at once; the save waits for the window to close.
+            before_close = self.disk
+            update()
+            assert self.disk == before_close
+            call(closed)
+            update()
+            assert self.disk == (HIDDEN if value else SAVED), self.disk
+        call(set_value, 0, 0, 2)
+        call(get)
+        assert result() == 0
+        # The game is saving: the Mod Options save waits for the lock and saves on the next second.
+        self.game_saving = True
+        call(set_value, 0, 0, 1)
+        call(closed)
+        update()
+        assert self.disk == SAVED and not self.save_locked
+        self.game_saving = False
+        update()
+        assert self.disk == HIDDEN and not self.save_locked
+        call(set_value, 0, 0, 0)
+        call(closed)
+        update()
+        assert self.disk == SAVED and self.lock_takes > 0
+
+    def run_cases(self, call, u, text, read, word):
+        """The settings cases of a custom-palette run: the panel, then Mod Options."""
+        def init():
+            call(MODULE+names['forge_onImGuiInit'], DATA+0x180000, ENGINE+0x100, ENGINE+0x104)
+
+        def render():
+            call(MODULE+names['forge_onImGuiRender'])
+
+        def palette():
+            return bytes(u.mem_read(MODULE+names['kqm_palette'], 20))
+
+        def update():
+            # One second (1.0f in r0 and s0, either float ABI), so the once-a-second retry runs.
+            u.reg_write(arm.UC_ARM_REG_S0, 0x3f800000)
+            call(MODULE+names['forge_onUpdate'], 0x3f800000)
+
+        def register():
+            call(MODULE+names['purplelib_on_register'], PURPLE_TABLE)
+
+        def result():
+            return u.reg_read(arm.UC_ARM_REG_R0)
+
+        def read_bytes(p, n):
+            return bytes(u.mem_read(p, n))
+
+        self.panel_cases(init, render, palette, update)
+        word(PURPLE_TABLE, 3)
+        for entry in range(6):
+            word(PURPLE_TABLE+4+entry*4, PURPLE_LIB+entry*4)
+        memory = (read_bytes, u.mem_write, PURPLE_TABLE+0x100)
+        self.mod_options_cases(call, result, text, read, memory, register, update)
 
 
 DOUBLES = {
@@ -203,5 +347,8 @@ DOUBLES = {
     'igTreePop': Settings.tree_pop,
     'igColorEdit3': Settings.colour,
     'igButton': Settings.button,
+    'igCheckbox': Settings.checkbox,
+    TRY_LOCK: Settings.try_lock,
+    UNLOCK: Settings.unlock,
     'igTextUnformatted': Settings.nothing,
 }

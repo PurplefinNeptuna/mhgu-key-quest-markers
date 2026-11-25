@@ -1,5 +1,6 @@
 """Fixed inputs of tests/native_adapter.py: the compiled NRO and its symbols, the copied game image and
 counter GUI resource, and the emulator's memory layout. Read once at import; every case shares them."""
+import re
 import struct
 import subprocess
 from pathlib import Path
@@ -38,6 +39,14 @@ MESSAGE_DTI = DATA+0x25700
 MAP_DTI, MAP_ALLOCATOR, ANIM_DTI, NULL_DTI = (DATA+x for x in [0x25300, 0x25400, 0x25500, 0x25600])
 FOREIGN = DATA+0x82000
 INSTANCE_ARRAY = DATA+0x27000
+# The game's save lock (forge-modding references/save-lock.md): sSavedata's cell at main+0x2120320
+# holds an object whose first word is its vtable main+0x17897f8; its save mutex is at +0xe80.
+SAVEDATA = DATA+0x1e0000
+SAVEDATA_CELL = GAME+0x2120320
+SAVEDATA_VTABLE = GAME+0x17897f8
+# Purple-lib's table functions are doubles at PURPLE_LIB + 4 * entry; add_options is the first.
+PURPLE_LIB = ENGINE+0xf00
+PURPLE_TABLE = DATA+0x1f0000
 REGS = [getattr(arm, 'UC_ARM_REG_R'+str(i)) for i in range(13)]
 BADGE_ID = 0x4b514d33
 STYLE = [0xa4dc24, 0xa4a9f4, 0xa47a94, 0xa4dca0, 0xa47a04, 0xa4aa24, 0xa4aa5c, 0xa4aa94, 0xa4aac8, 0xa4aafc,
@@ -54,3 +63,13 @@ UNUSED_TEXT_DTI = DATA+0x25800
 UV = (342., 0., 372., 30.) if SMALL_MARK == '1' else (136., 344., 198., 406.)
 KEY_COLOR, URGENT_COLOR, COMPLETED_COLOR, UNLOCKS_COLOR, REWARD_COLOR = (
     0xff056300, 0xff0000a3, 0xff808080, 0xffc23200, 0xff007fff)
+
+
+def hook_targets(source):
+    """The game and plugin addresses the adapter's code hook acts on, read from its trace function."""
+    body = source[source.index('    def trace(cpu,address,size,_):'):source.index('    def call(address,')]
+    targets = {GAME+int(x, 16) for x in re.findall(r'GAME\+0x([0-9a-f]+)', body)}
+    targets |= {GAME+x for x in STYLE}
+    targets |= {MODULE+names[n] for n in re.findall(r"MODULE\+names\['(\w+)'\]", body)}
+    targets |= {SAVEDATA_CELL}
+    return sorted(targets)

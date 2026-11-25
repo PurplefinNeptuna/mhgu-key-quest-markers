@@ -9,6 +9,8 @@ pub struct Palette {
     pub completed: u32,
     pub unlocks: u32,
     pub reward: u32,
+    /// Hide the grey badge instead of drawing it (INI `[Badges] hide_completed`).
+    pub hide_completed: bool,
 }
 impl Palette {
     // Exact game UI colours: counter_down Gathering object16, objective
@@ -20,7 +22,16 @@ impl Palette {
         completed: 0x808080,
         unlocks: 0x0032c2,
         reward: 0xff7f00,
+        hide_completed: false,
     };
+    /// The badge a row shows: grey becomes hidden while `hide_completed` is on.
+    pub fn visible(self, badge: Badge) -> Badge {
+        if self.hide_completed && badge == Badge::Completed {
+            Badge::Hidden
+        } else {
+            badge
+        }
+    }
     pub fn color(self, badge: Badge) -> u32 {
         let rgb = match badge {
             Badge::Hidden => return 0,
@@ -40,8 +51,9 @@ impl Palette {
     }
     pub fn parse(bytes: &[u8]) -> Result<Self, Error> {
         let text = core::str::from_utf8(bytes).map_err(|_| Error::Invalid)?;
-        let mut section = false;
+        let mut section = "";
         let mut values = [None; 5];
+        let mut hide = None;
         for line in text.lines().map(str::trim) {
             if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
                 continue;
@@ -50,11 +62,22 @@ impl Palette {
                 if !line.ends_with(']') {
                     return Err(Error::Invalid);
                 }
-                section = line == "[Colors]";
+                section = line;
                 continue;
             }
             let (key, value) = line.split_once('=').ok_or(Error::Invalid)?;
-            if !section {
+            if section == "[Badges]" && key.trim() == "hide_completed" {
+                let on = match value.trim() {
+                    "0" => false,
+                    "1" => true,
+                    _ => return Err(Error::Invalid),
+                };
+                if hide.replace(on).is_some() {
+                    return Err(Error::Invalid);
+                }
+                continue;
+            }
+            if section != "[Colors]" {
                 continue;
             }
             let index = match key.trim() {
@@ -81,6 +104,8 @@ impl Palette {
             // Absent in configs saved before these colours existed; they keep their other colours.
             unlocks: values[3].unwrap_or(Self::DEFAULT.unlocks),
             reward: values[4].unwrap_or(Self::DEFAULT.reward),
+            // Absent in configs saved before the setting existed: grey badges stay shown.
+            hide_completed: hide.unwrap_or(false),
         })
     }
     pub fn text(self) -> Result<Text, Error> {
@@ -93,6 +118,9 @@ impl Palette {
             "[Colors]\nkey = {:06X}\nurgent = {:06X}\ncompleted = {:06X}\nunlocks = {:06X}\nreward = {:06X}\n",
             self.key, self.urgent, self.completed, self.unlocks, self.reward
         )
+        .map_err(|_| Error::Invalid)?;
+        let hide = u8::from(self.hide_completed);
+        write!(out, "[Badges]\nhide_completed = {hide}\n")
         .map_err(|_| Error::Invalid)?;
         Ok(out)
     }
@@ -189,6 +217,8 @@ pub struct Preferences {
     pub draft: Palette,
     pub applied: Palette,
     pub loaded: bool,
+    /// Set through Mod Options, possibly before the INI loaded; a later load keeps it.
+    pub hide_override: Option<bool>,
 }
 impl Preferences {
     pub const fn new() -> Self {
@@ -196,6 +226,7 @@ impl Preferences {
             draft: Palette::DEFAULT,
             applied: Palette::DEFAULT,
             loaded: false,
+            hide_override: None,
         }
     }
     pub fn edit(&mut self, value: Palette) {
@@ -211,6 +242,10 @@ impl Preferences {
                 self.applied = value;
                 self.draft = value;
                 self.loaded = true;
+                if let Some(hide) = self.hide_override {
+                    self.applied.hide_completed = hide;
+                    self.draft.hide_completed = hide;
+                }
                 Ok(())
             }
             Err(Error::Unavailable) => Err(Error::Unavailable),
@@ -226,204 +261,21 @@ impl Preferences {
         self.applied = self.draft;
         Ok(())
     }
-}
-#[cfg(test)]
-mod tests {
-    use super::*;
-    struct Disk {
-        bytes: Text,
-        mounts: i32,
-        available: bool,
-        fail: u8,
-        writes: u32,
-        commits: u32,
+    /// A change made elsewhere (Mod Options) that already applies: it joins both the applied and
+    /// the draft palette, and a disk load that has not happened yet keeps it.
+    pub fn apply_hidden(&mut self, hide: bool) {
+        self.applied.hide_completed = hide;
+        self.draft.hide_completed = hide;
+        self.hide_override = Some(hide);
     }
-    impl Disk {
-        fn new() -> Self {
-            Self {
-                bytes: Text::new(),
-                mounts: 0,
-                available: true,
-                fail: 0,
-                writes: 0,
-                commits: 0,
-            }
+    /// Save what is applied, leaving pending colour edits as drafts. The saved colours are loaded
+    /// first, so a save never replaces them with defaults; storage that is not ready yet returns
+    /// `Unavailable` for a later retry.
+    pub fn save_applied(&mut self, files: &mut impl Files) -> Result<(), Error> {
+        match self.load(files) {
+            Ok(()) | Err(Error::Missing) | Err(Error::Invalid) => {}
+            Err(reason) => return Err(reason),
         }
-    }
-    impl Files for Disk {
-        fn mount(&mut self) -> bool {
-            if !self.available {
-                return false;
-            }
-            self.mounts += 1;
-            true
-        }
-        fn unmount(&mut self) {
-            self.mounts -= 1;
-        }
-        fn read(&mut self, out: &mut Text) -> Result<(), Error> {
-            if self.fail == 2 {
-                return Err(Error::Read);
-            }
-            if self.bytes.len == 0 {
-                return Err(Error::Missing);
-            }
-            out.len = self.bytes.len;
-            out.bytes[..out.len].copy_from_slice(&self.bytes.bytes[..out.len]);
-            if self.fail == 3 {
-                out.bytes[0] = b'!';
-            }
-            Ok(())
-        }
-        fn write(&mut self, text: &Text) -> Result<(), Error> {
-            self.writes += 1;
-            if self.fail == 1 {
-                return Err(Error::Write);
-            }
-            self.bytes.len = text.len;
-            self.bytes.bytes[..text.len].copy_from_slice(&text.bytes[..text.len]);
-            Ok(())
-        }
-        fn commit(&mut self) -> bool {
-            self.commits += 1;
-            self.fail != 4
-        }
-    }
-    #[test]
-    fn defaults_and_packing() {
-        let p = Palette::DEFAULT;
-        assert_eq!(p.color(Badge::Key), 0xff056300);
-        assert_eq!(p.color(Badge::Urgent), 0xff0000a3);
-        assert_eq!(p.color(Badge::Completed), 0xff808080);
-        assert_eq!(p.color(Badge::Unlocks), 0xffc23200);
-        assert_eq!(p.color(Badge::Reward), 0xff007fff);
-        assert_eq!(p.color(Badge::Hidden), 0);
-        assert_eq!(
-            Palette::parse(&p.text().unwrap().bytes[..p.text().unwrap().len]),
-            Ok(p)
-        );
-    }
-    #[test]
-    fn malformed_configuration() {
-        for text in [
-            "",
-            "[Colors]\nkey=FF0000",
-            "[Colors]\nkey=GG0000\nurgent=FFFFFF\ncompleted=808080",
-            "[Colors]\nkey=000000\nkey=ffffff\nurgent=ffffff\ncompleted=808080",
-            "key=123456",
-            "[Colors\nkey=123456",
-        ] {
-            assert_eq!(Palette::parse(text.as_bytes()), Err(Error::Invalid));
-        }
-        assert_eq!(Palette::parse(b"\xff"), Err(Error::Invalid));
-        assert_eq!(
-            Palette::parse(b"; comment\n[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\n"),
-            Ok(Palette::DEFAULT)
-        );
-        // A config saved before the unlocks colour keeps its colours and gains the default blue.
-        assert_eq!(
-            Palette::parse(b"[Colors]\nkey=123456\nurgent=a30000\ncompleted=808080\n"),
-            Ok(Palette {
-                key: 0x123456,
-                ..Palette::DEFAULT
-            })
-        );
-        assert_eq!(
-            Palette::parse(b"[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nunlocks=0000ff\n"),
-            Ok(Palette {
-                unlocks: 0x0000ff,
-                ..Palette::DEFAULT
-            })
-        );
-        assert_eq!(
-            Palette::parse(b"[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nreward=ffd700\n"),
-            Ok(Palette {
-                reward: 0xffd700,
-                ..Palette::DEFAULT
-            })
-        );
-        for text in [
-            "[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nunlocks=00ff\n",
-            "[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\nunlocks=0000ff\nunlocks=0000ff\n",
-        ] {
-            assert_eq!(Palette::parse(text.as_bytes()), Err(Error::Invalid));
-        }
-    }
-    #[test]
-    fn pending_reset_save_and_restart() {
-        let mut disk = Disk::new();
-        let mut p = Preferences::new();
-        assert_eq!(p.load(&mut disk), Err(Error::Missing));
-        assert_eq!(disk.writes, 0);
-        let custom = Palette {
-            key: 0x123456,
-            urgent: 0x987654,
-            completed: 0xabcdef,
-            unlocks: 0x13579b,
-            reward: 0x2468ac,
-        };
-        p.edit(custom);
-        assert_eq!(p.applied, Palette::DEFAULT);
-        p.save(&mut disk).unwrap();
-        assert_eq!(p.applied, custom);
-        p.edit(Palette::DEFAULT);
-        assert_eq!(p.applied, custom); // Reset is pending too.
-        let mut restarted = Preferences::new();
-        restarted.load(&mut disk).unwrap();
-        assert_eq!(restarted.applied, custom);
-        assert_eq!(disk.mounts, 0);
-        assert_eq!(disk.commits, 1);
-    }
-    #[test]
-    fn unavailable_and_delayed_load() {
-        let mut d = Disk::new();
-        d.available = false;
-        let mut p = Preferences::new();
-        assert_eq!(p.load(&mut d), Err(Error::Unavailable));
-        assert!(!p.loaded);
-        assert_eq!(d.mounts, 0);
-        let custom = Palette {
-            key: 1,
-            ..Palette::DEFAULT
-        };
-        p.edit(custom);
-        d.available = true;
-        p.load(&mut d).unwrap();
-        assert_eq!(p.draft, custom);
-        assert_eq!(d.writes, 0);
-    }
-    #[test]
-    fn failures_preserve_draft_applied_and_balance_mounts() {
-        for (fail, error) in [
-            (1, Error::Write),
-            (2, Error::Verify),
-            (3, Error::Verify),
-            (4, Error::Commit),
-        ] {
-            let mut d = Disk::new();
-            d.fail = fail;
-            let mut p = Preferences::new();
-            let custom = Palette {
-                key: 1,
-                ..Palette::DEFAULT
-            };
-            p.edit(custom);
-            assert_eq!(p.save(&mut d), Err(error));
-            assert_eq!(p.draft, custom);
-            assert_eq!(p.applied, Palette::DEFAULT);
-            assert_eq!(d.mounts, 0);
-        }
-        let mut d = Disk::new();
-        assert_eq!(
-            save(
-                &mut d,
-                Palette {
-                    key: 0x1000000,
-                    ..Palette::DEFAULT
-                }
-            ),
-            Err(Error::Invalid)
-        );
-        assert_eq!(d.writes, 0);
+        save(files, self.applied)
     }
 }

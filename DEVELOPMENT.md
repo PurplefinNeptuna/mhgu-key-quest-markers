@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r24 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r24/`, not run. It marks the non-key quests The Scorching Blade needs (504, 508, 510 and their chief request lines) as key quests at Village tier 5, and reads talk conditions across a conversation's following rows, which grows the blue and orange lists. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r25 is a DEVELOPMENT candidate at `build/key-quest-markers/candidates/r25/`, not run. It adds Hide grey badges (Plugin UI checkbox and an optional Purple-lib Mod Options row) and holds the game's save lock around every INI mount. r24 at `build/key-quest-markers/candidates/r24/` (non-key quests The Scorching Blade needs shown as key quests at Village tier 5) never ran. r23, at `backups/accepted/key-quest-markers/r23-before-r24/` and `build/key-quest-markers/candidates/r23/`, is the last accepted build: it ran on Eden and MHGURecomp beside WishFinder r143, working after many runs, unitemized. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -87,8 +87,10 @@ record in a family makes both grey. Native details are under [Native reference](
 ## Settings
 
 Configuration keys are exactly `key`, `urgent`, `completed` and optional
-`unlocks` and `reward`; values are six hexadecimal RGB digits. An INI without
-one of them keeps its colours and uses that colour's default. Saved custom values are never rewritten; Reset defaults
+`unlocks` and `reward` under `[Colors]`; values are six hexadecimal RGB digits. An INI without
+one of them keeps its colours and uses that colour's default. Optional `[Badges]`
+`hide_completed` is `0` or `1` (default 0); while it is 1, `Palette::visible` turns a grey
+badge into a hidden one before the row draws it. Saved custom values are never rewritten; Reset defaults
 then Save & apply uses the game palette. The settings panel uses Forge ImGui only.
 
 `core/src/colors.rs` owns bounded RGB INI parsing, formatting and the tested
@@ -96,7 +98,8 @@ mount/write/readback/commit policy. `src/settings.rs` protects UI drafts and loa
 state with a Forge mutex. Five independent atomic RGB settings are copied once
 per native row update, avoiding settings locks or file I/O in game hooks.
 Editing/resetting marks loading complete so delayed storage availability cannot
-overwrite choices. Save publishes only after write, flush, readback and checked
+overwrite choices. A Save & apply that meets `Unavailable` keeps the draft pending
+and `update` retries it once a second. Save publishes only after write, flush, readback and checked
 commit all succeed. Failures preserve the pending and previously applied
 palettes; prior disk bytes are not guaranteed.
 
@@ -107,6 +110,18 @@ Reader asserts on short reads, Writer ignores short writes, and checked flush
 and commit are absent. Handles and filesystem abort context use scoped guards.
 Forge's unmount performs its normal additional commit; the plugin checks an
 explicit commit before reporting success. Only the plugin's primary INI is used.
+
+`Storage::mount` takes the game's save lock first and keeps it until `unmount`
+(`src/save_lock.rs`, ported from WishFinder; rule and test pattern in forge-modding
+`references/save-lock.md`). A busy lock or a missing sSavedata reads as `Unavailable`,
+which the settings retry once a second.
+
+Purple-lib, when installed, calls `purplelib_on_register` (`src/purple_lib.rs`; records
+in `core/src/purple_lib.rs`, API version 3, Purple-lib r17 and later). Its one labels row
+sets the `HIDE_GREY` atomic directly from `set`. `forge_onUpdate` then records it in the
+preferences as an override that a later INI load keeps. Closing the window saves the
+applied palette, loading the INI first so saved colours are never replaced by defaults;
+pending colour drafts stay drafts.
 
 ## Quest lists
 
@@ -155,7 +170,9 @@ refuses a Hub/G urgent with such quests, because its tier pairing is unverified.
 Startup is one INFO line. Actual hook/resource failures are reported once per
 reason from onUpdate; creation/validation failures carry their numeric stage on
 the same line (stage meanings are in `src/gui.rs`). Successful rows,
-pages, saves and frames produce no warnings or errors. `research/log-cleanup.json`
+pages, saves and frames produce no warnings or errors. The save lock logs once each:
+an INFO line when it waited for the game's save, an ERROR when sSavedata is missing.
+Purple-lib registration logs one INFO line, or a WARN when refused or too old. `research/log-cleanup.json`
 records why the older diagnostic lines were removed.
 
 ## How it works
@@ -164,9 +181,10 @@ Design, hooks and native detail are in `docs/worked/`: [Key Quest Markers: class
 
 ## Fixtures and validation
 
-Core policy fixtures cover all badge states, alternatives, obsolete unfinished
-keys, simultaneous urgents, unlocking quests, viewing versus completing,
-conflicting records and INIs without `unlocks`.
+Core policy fixtures (`core/tests/`, outside the source files) cover all badge states,
+alternatives, obsolete unfinished keys, simultaneous urgents, unlocking quests, viewing
+versus completing, conflicting records, INIs without `unlocks` or `[Badges]`, hiding grey
+badges and the Mod Options save that keeps saved colours.
 The hook harness executes production ownership-aware rollback with Forge doubles.
 
 `resource.py` only reads the copied native GUI/atlas layout and rejects corrupt
@@ -183,6 +201,13 @@ Its cases cover states, the blue badge on real quest 220 and orange on 233 from 
 context, bad objects, object/cache allocation failure and repeated insertion.
 It checks colors, pose/size, unchanged index arrays and saved records, actual native
 draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
+Its settings case also drives the Hide grey badges checkbox and the compiled
+`purplelib_on_register`, `row`, `get`, `set` and `closed` through a version 3 table. Every
+mount, write-mode open and commit must hold the faked save mutex, unlocked only after the
+unmount, and a case with the game mid-save writes nothing until the next second. The
+code hook covers only the addresses `trace` names, read from its own source (about 5 s).
+Its fixed inputs are in `tests/adapter_fixture.py`, its case list in `tests/adapter_cases.py`,
+and its settings doubles and cases in `tests/adapter_settings.py`.
 
 The GPU commands are doubles. No fixture launches Forge or establishes actual
 in-game pixels, clipping or gameplay acceptance.
@@ -193,7 +218,7 @@ Gameplay with and without HD was accepted on r17 (`build/key-quest-markers/candi
 
 ## Checks still open
 
-Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions.
+Individual settings, persistence, ranks, quest states and transitions were never separately enumerated in any acceptance. Worth a dedicated run on Eden and Ryujinx separately: picker and hex edits, pending and reset, Save & apply without scrolling or reopening the counter, restart persistence, Hide grey badges from the panel and from Purple-lib Mod Options, a save during a game save, all three badge states, request overlap, selection, confirmation, scrolling and menu transitions.
 
 ## Do not
 

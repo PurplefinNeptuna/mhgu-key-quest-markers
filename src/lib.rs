@@ -7,6 +7,8 @@ mod hooks;
 mod memory;
 mod native;
 mod offers;
+mod purple_lib;
+mod save_lock;
 mod settings;
 mod signatures;
 mod quest_lists;
@@ -61,6 +63,24 @@ fn start() {
             ));
         }
         Err(reason) => log::error!("Key Quest Markers: {reason}"),
+    }
+}
+/// Optional: Purple-lib calls this once, from its first update, with its table of functions.
+/// Without Purple-lib nothing calls it and the Plugin UI panel is the only settings page.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn purplelib_on_register(api: *const quest_badges_core::purple_lib::Api) {
+    // SAFETY: Purple-lib passes its table, valid for the whole run, or null.
+    let Some(api) = (unsafe { api.as_ref() }) else {
+        return;
+    };
+    match purple_lib::register(api) {
+        purple_lib::Registered::Done => log::info!("Key Quest Markers: setting added to Purple-lib Mod Options"),
+        purple_lib::Registered::Repeated => {}
+        purple_lib::Registered::OlderVersion(version) => log::warn!(
+            "Key Quest Markers: Purple-lib API version {version} is older than {}; Mod Options not added",
+            quest_badges_core::purple_lib::API_VERSION
+        ),
+        purple_lib::Registered::Refused => log::warn!("Key Quest Markers: Purple-lib refused the Mod Options page"),
     }
 }
 /// Native hooks publish failure bits only. Report each genuine failure once
