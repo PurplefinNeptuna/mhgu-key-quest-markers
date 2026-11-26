@@ -65,7 +65,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r36 ran on MHGU Recomp on the user's report, unitemized; Eden, Ryujinx and Switch hardware have no r32 or later run",
+    "r36 ran on MHGU Recomp and Eden on the user's report, unitemized; Ryujinx and Switch hardware have no r32 or later run",
     "The orange, blue and urgent-chain green badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
     "The pool check (orange until N of a group are cleared) is covered by a core unit test; the ARM adapter fixture has no pool quest",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
@@ -91,7 +91,7 @@
       "mods/key-quest-markers/EVIDENCE.json"
     ],
     "static_summary": "r36 built, tested (core badge, INI and Mod Options text tests; 46 native adapter cases) and packaged; NRO 5329c408...",
-    "manual_summary": "r36 on MHGU Recomp: \"okay, it ran and work good\", unitemized. r33 on MHGU Recomp: every G4 badge matched the lists. r31 on MHGU Recomp: \"okay, this run well\", unitemized; see EVIDENCE.json."
+    "manual_summary": "r36 on MHGU Recomp: \"okay, it ran and work good\", and on Eden (\"ran on eden\"), unitemized. r33 on MHGU Recomp: every G4 badge matched the lists. r31 on MHGU Recomp: \"okay, this run well\", unitemized; see EVIDENCE.json."
   },
   "dependencies": [
     {
