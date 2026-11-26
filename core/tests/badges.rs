@@ -379,3 +379,29 @@ fn pool_quests_lead_to_a_reward_until_enough_members_are_cleared() {
     assert!(!pool_reward(30, POOLS, |q| q == 10 || q == 20));
     assert!(!pool_reward(40, POOLS, |_| false));
 }
+
+#[test]
+fn a_hidden_badge_kind_gives_way_to_the_next_one() {
+    use quest_badges_core::{Group, shown_badge};
+    let plain = Group { id: 1, category: 0, alternative: 0 };
+    let key_group = Group { id: 1, category: 3, alternative: 0 };
+    let mut s = state();
+    s.reward = true;
+    s.unlocks = true;
+    let all = |_: Badge| true;
+    let no_reward = |b: Badge| b != Badge::Reward;
+    let neither = |b: Badge| b != Badge::Reward && b != Badge::Unlocks;
+    assert_eq!(shown_badge(plain, None, s, Badge::Reward, all), Badge::Reward);
+    assert_eq!(shown_badge(plain, None, s, Badge::Reward, no_reward), Badge::Unlocks);
+    assert_eq!(shown_badge(plain, None, s, Badge::Reward, neither), Badge::Hidden);
+    assert_eq!(shown_badge(key_group, None, s, Badge::Key, |b| b != Badge::Key), Badge::Reward);
+    // An urgent-chain quest is a key quest of its tier.
+    assert_eq!(shown_badge(plain, Some(5), s, Badge::Key, |b| b != Badge::Key), Badge::Reward);
+    // Grey stays while any of the quest's kinds shows, and goes when none does.
+    assert_eq!(shown_badge(plain, None, s, Badge::Completed, no_reward), Badge::Completed);
+    assert_eq!(shown_badge(plain, None, s, Badge::Completed, neither), Badge::Hidden);
+    s.reward = false;
+    s.unlocks = false;
+    assert_eq!(shown_badge(plain, None, s, Badge::Completed, neither), Badge::Completed);
+    assert_eq!(shown_badge(plain, None, s, Badge::Hidden, all), Badge::Hidden);
+}

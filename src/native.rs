@@ -243,6 +243,7 @@ pub fn update(ui: u32, quests: u32) {
         if palette.grey == quest_badges_core::colors::GreyBadges::Coloured {
             *badge = quest_badges_core::kept_colour(g, chain, evidence, *badge);
         }
+        *badge = quest_badges_core::shown_badge(g, chain, evidence, *badge, |kind| palette.shows(kind));
     }
     if !groups.unchanged(quest) {
         error(4);

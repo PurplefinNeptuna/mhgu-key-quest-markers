@@ -20,9 +20,17 @@ CUSTOM = (0x123456, 0xA86432, 0x607080, 0x13579B, 0x2468AC)
 COLOURS_SAVED = b'[Colors]\nkey = 123456\nurgent = A86432\ncompleted = 607080\nunlocks = 13579B\nreward = 2468AC\n'
 # Grey badges values, as the Mod Options row and the panel's radio buttons order them.
 COLOURED, GREY, HIDDEN_VALUE = 0, 1, 2
-INI = [COLOURS_SAVED+b'[Badges]\nfinished_quests = '+name+b'\n' for name in (b'colored', b'gray', b'hidden')]
+SHOWN_SAVED = b'[Badges]\nkey = shown\nurgent = shown\nreward = shown\nunlocks = shown\n'
+INI = [COLOURS_SAVED+SHOWN_SAVED+b'finished_quests = '+name+b'\n' for name in (b'colored', b'gray', b'hidden')]
 SAVED = INI[GREY]
 HIDDEN = INI[HIDDEN_VALUE]
+# The saved INI with the orange badge hidden.
+NO_REWARD = SAVED.replace(b'reward = shown', b'reward = hidden')
+# Panel check boxes and Mod Options rows 1..4, in priority order.
+BOXES = ['Key##kqm-show-key', 'Urgent##kqm-show-urgent', 'Gives a reward##kqm-show-reward',
+         'Unlocks a quest##kqm-show-unlocks']
+KIND_ROWS = ['Key quests', 'Urgent quests', 'Reward quests', 'Unlocking quests']
+REWARD_ROW = 3
 RADIOS = ['Colored##kqm-gray-colored', 'Gray##kqm-gray-gray', 'Hidden##kqm-gray-hidden']
 LABELS = ['Colored', 'Gray', 'Hidden']
 TRY_LOCK = '_ZN2nn2os12TryLockMutexEPNS0_9MutexTypeE'
@@ -43,6 +51,8 @@ class Settings:
         self.lock_takes = 0
         # The radio button the panel clicks next (a Grey badges value), or None.
         self.grey_choice = None
+        # The check box the panel clicks next (a BOXES index), or None.
+        self.box_choice = None
         # Mod Options pages that Purple-lib's add_options double received.
         self.purple_pages = []
         self.text = text
@@ -186,6 +196,12 @@ class Settings:
         value = RADIOS.index(self.text(cpu, r[0]))
         return int(self.grey_choice == value)
 
+    def checkbox(self, cpu, r, imported):
+        if BOXES.index(self.text(cpu, r[0])) != self.box_choice:
+            return 0
+        cpu.mem_write(r[1], bytes([cpu.mem_read(r[1], 1)[0] ^ 1]))
+        return 1
+
     def button(self, cpu, r, imported):
         label = self.text(cpu, r[0])
         return int(self.save_clicked if label.startswith('Save & apply') else self.reset_clicked)
@@ -243,6 +259,19 @@ class Settings:
         render()
         assert self.disk == SAVED
         self.grey_choice = None
+        # Hiding a badge kind is pending until Save & apply too.
+        self.box_choice = BOXES.index('Gives a reward##kqm-show-reward')
+        self.save_clicked = False
+        render()
+        assert self.disk == SAVED
+        self.box_choice = None
+        self.save_clicked = True
+        render()
+        assert self.disk == NO_REWARD
+        self.box_choice = BOXES.index('Gives a reward##kqm-show-reward')
+        render()
+        assert self.disk == SAVED
+        self.box_choice = None
         self.save_clicked = False
         self.reset_clicked = True
         render()
@@ -259,7 +288,7 @@ class Settings:
         assert len(self.purple_pages) == 1, self.purple_pages
         page = struct.unpack('<10I', read_bytes(self.purple_pages[0], 40))
         size, _, title, row_count, row, get, set_value, closed, value_text, action = page
-        assert size == 40 and row_count == 1 and value_text == action == 0
+        assert size == 40 and row_count == 5 and value_text == action == 0
         call(title)
         assert text(result()) == 'Key Quest Markers'
         write_bytes(out, bytes(40))
@@ -268,13 +297,20 @@ class Settings:
         name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
         assert text(name) == 'Finished quests' and label_count == 3
         assert [text(read(labels+4*i)) for i in range(3)] == LABELS
-        call(row, 0, 0, 1, out)
+        for index, kind_name in enumerate(KIND_ROWS, 1):
+            write_bytes(out, bytes(40))
+            call(row, 0, 0, index, out)
+            assert result() & 255 == 1
+            name, _, labels, label_count = struct.unpack('<4I', read_bytes(out, 16))
+            assert text(name) == kind_name and label_count == 2
+            assert [text(read(labels+4*i)) for i in range(2)] == ['Shown', 'Hidden']
+        call(row, 0, 0, 5, out)
         assert result() & 255 == 0
         register()
         assert len(self.purple_pages) == 1
         for value in (HIDDEN_VALUE, COLOURED, GREY):
             call(set_value, 0, 0, value)
-            call(get)
+            call(get, 0, 0)
             assert result() == value
             # Applied at once; the save waits for the window to close.
             before_close = self.disk
@@ -284,7 +320,7 @@ class Settings:
             update()
             assert self.disk == INI[value], self.disk
         call(set_value, 0, 0, 3)
-        call(get)
+        call(get, 0, 0)
         assert result() == GREY
         # The game is saving: the Mod Options save waits for the lock and saves on the next second.
         self.game_saving = True
@@ -299,6 +335,20 @@ class Settings:
         call(closed)
         update()
         assert self.disk == SAVED and self.lock_takes > 0
+        # A badge kind row: 1 hides it at once, and closing the window saves it.
+        call(set_value, 0, REWARD_ROW, 1)
+        call(get, 0, REWARD_ROW)
+        assert result() == 1
+        call(closed)
+        update()
+        assert self.disk == NO_REWARD
+        call(set_value, 0, REWARD_ROW, 2)
+        call(get, 0, REWARD_ROW)
+        assert result() == 1
+        call(set_value, 0, REWARD_ROW, 0)
+        call(closed)
+        update()
+        assert self.disk == SAVED
 
     def run_cases(self, call, u, text, read, word):
         """The settings cases of a custom-palette run: the panel, then Mod Options."""
@@ -354,6 +404,7 @@ DOUBLES = {
     'igColorEdit3': Settings.colour,
     'igButton': Settings.button,
     'igRadioButton_Bool': Settings.radio,
+    'igCheckbox': Settings.checkbox,
     'igSameLine': Settings.nothing,
     TRY_LOCK: Settings.try_lock,
     UNLOCK: Settings.unlock,

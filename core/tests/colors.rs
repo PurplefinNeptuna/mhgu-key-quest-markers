@@ -132,6 +132,7 @@ fn pending_reset_save_and_restart() {
         unlocks: 0x13579b,
         reward: 0x2468ac,
         grey: GreyBadges::Hidden,
+        shown: [true, false, true, false],
     };
     p.edit(custom);
     assert_eq!(p.applied, Palette::DEFAULT);
@@ -210,7 +211,7 @@ fn grey_badges_setting() {
         };
         assert_eq!(Palette::parse(text.as_bytes()), Ok(palette));
         let saved = palette.text().unwrap();
-        let line = ["[Badges]\nfinished_quests = ", mode.name(), "\n"].concat();
+        let line = ["\nfinished_quests = ", mode.name(), "\n"].concat();
         assert!(saved.bytes[..saved.len].ends_with(line.as_bytes()));
         assert_eq!(Palette::parse(&saved.bytes[..saved.len]), Ok(palette));
     }
@@ -277,4 +278,31 @@ fn mod_options_saves_only_what_is_applied() {
     assert_eq!(again.applied, saved);
     assert_eq!(p.draft.key, 0x123456);
     assert_eq!(disk.mounts, 0);
+}
+#[test]
+fn shown_badge_kinds_setting() {
+    let colours = "[Colors]\nkey=006305\nurgent=a30000\ncompleted=808080\n";
+    // A released r31 INI has no badge kind lines: every kind shows.
+    let r31 = [colours, "[Badges]\nfinished_quests = gray\n"].concat();
+    assert_eq!(Palette::parse(r31.as_bytes()), Ok(Palette::DEFAULT));
+    let text = [colours, "[Badges]\nkey = shown\nurgent = hidden\nreward = hidden\nunlocks = shown\n"].concat();
+    let palette = Palette::parse(text.as_bytes()).unwrap();
+    assert_eq!(palette.shown, [true, false, false, true]);
+    assert!(palette.shows(Badge::Key) && !palette.shows(Badge::Urgent) && !palette.shows(Badge::Reward));
+    assert!(palette.shows(Badge::Unlocks) && palette.shows(Badge::Completed) && palette.shows(Badge::Hidden));
+    let saved = palette.text().unwrap();
+    let expected = "[Badges]\nkey = shown\nurgent = hidden\nreward = hidden\nunlocks = shown\nfinished_quests = gray\n";
+    assert!(saved.bytes[..saved.len].ends_with(expected.as_bytes()));
+    assert_eq!(Palette::parse(&saved.bytes[..saved.len]), Ok(palette));
+    for bad in ["key = yes", "reward = Hidden", "unlocks =", "key = shown\nkey = shown"] {
+        let text = [colours, "[Badges]\n", bad, "\n"].concat();
+        assert_eq!(Palette::parse(text.as_bytes()), Err(Error::Invalid), "{bad}");
+    }
+    // A Mod Options change before the INI loads survives the load.
+    let mut disk = Disk::new();
+    let mut p = Preferences::new();
+    p.apply_shown([false, true, true, true]);
+    disk.available = true;
+    let _ = p.load(&mut disk);
+    assert_eq!(p.applied.shown, [false, true, true, true]);
 }

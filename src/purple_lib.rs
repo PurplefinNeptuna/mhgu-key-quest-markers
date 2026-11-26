@@ -1,4 +1,5 @@
-//! Optional: the "Finished quests" setting (Colored, Gray, Hidden) in Purple-lib's Mod Options.
+//! Optional: the "Finished quests" setting (Colored, Gray, Hidden) and a Shown/Hidden row for each
+//! badge kind in Purple-lib's Mod Options.
 //! Purple-lib calls the plugin's `purplelib_on_register` with its table of functions at start-up; without Purple-lib
 //! nothing calls it, this module does nothing and the Plugin UI panel stays the only way to
 //! change the setting.
@@ -31,26 +32,52 @@ static LABELS: Shared<[*const c_char; 3]> = Shared([
     api::GREY_LABELS[2].as_ptr(),
 ]);
 
+static KIND_LABELS: Shared<[*const c_char; 2]> =
+    Shared([api::KIND_LABELS[0].as_ptr(), api::KIND_LABELS[1].as_ptr()]);
+
+/// The badge kind (`colors::KINDS` index) a row shows or hides.
+fn kind(index: u32) -> Option<usize> {
+    let kind = index.checked_sub(api::ROW_FIRST_KIND)? as usize;
+    (kind < api::KIND_NAMES.len()).then_some(kind)
+}
+
 extern "C" fn row(_: *mut c_void, _: u32, index: u32, out: *mut OptionRow) -> bool {
-    if index != api::ROW_GREY_BADGES || out.is_null() {
+    if out.is_null() {
         return false;
     }
+    let (name, help, labels): (_, _, &[*const c_char]) = if index == api::ROW_GREY_BADGES {
+        (api::GREY_NAME, api::GREY_HELP, &LABELS.0)
+    } else if let Some(kind) = kind(index) {
+        (api::KIND_NAMES[kind], api::KIND_HELP[kind], &KIND_LABELS.0)
+    } else {
+        return false;
+    };
     // SAFETY: Purple-lib passes a writable `OptionRow`, zeroed before the call.
     unsafe {
-        (*out).name = api::GREY_NAME.as_ptr();
-        (*out).help = api::GREY_HELP.as_ptr();
-        (*out).labels = LABELS.0.as_ptr();
-        (*out).label_count = LABELS.0.len() as u32;
+        (*out).name = name.as_ptr();
+        (*out).help = help.as_ptr();
+        (*out).labels = labels.as_ptr();
+        (*out).label_count = labels.len() as u32;
     }
     true
 }
 
-extern "C" fn get(_: *mut c_void, _: u32) -> u32 {
-    settings::grey_badges() as u32
+extern "C" fn get(_: *mut c_void, index: u32) -> u32 {
+    match kind(index) {
+        Some(kind) => !settings::shown_kinds()[kind] as u32,
+        None => settings::grey_badges() as u32,
+    }
 }
 
 /// Applied at once: the next row update reads the new value.
 extern "C" fn set(_: *mut c_void, index: u32, value: u32) {
+    if let Some(kind) = kind(index) {
+        if value < 2 {
+            settings::set_shown(kind, value == 0);
+            EDITED.store(true, Ordering::Release);
+        }
+        return;
+    }
     if index != api::ROW_GREY_BADGES {
         return;
     }

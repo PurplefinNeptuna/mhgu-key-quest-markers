@@ -18,3 +18,16 @@ fn labels_follow_the_setting_values() {
         assert!(label.to_bytes().len() <= 11);
     }
 }
+#[test]
+fn badge_kind_rows_fit_the_help_bar() {
+    assert_eq!(ROWS, ROW_FIRST_KIND + KIND_NAMES.len() as u32);
+    assert_eq!(KIND_NAMES.len(), quest_badges_core::colors::KINDS.len());
+    assert_eq!(KIND_HELP.len(), KIND_NAMES.len());
+    for help in KIND_HELP {
+        let lines: Vec<&str> = help.to_str().unwrap().split("\r\n").collect();
+        assert!(lines.len() <= 3 && lines.iter().all(|line| line.len() <= 40), "{lines:?}");
+    }
+    for label in KIND_LABELS {
+        assert!(label.to_bytes().len() <= 11);
+    }
+}

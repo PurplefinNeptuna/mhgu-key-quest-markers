@@ -11,7 +11,15 @@ pub struct Palette {
     pub reward: u32,
     /// How finished quests' badges show (INI `[Badges] finished_quests`).
     pub grey: GreyBadges,
+    /// Whether each badge kind shows, in `KINDS` order (INI `[Badges]` key, urgent, reward, unlocks).
+    pub shown: [bool; 4],
 }
+/// The badge kinds a player can hide, highest priority first. A hidden kind gives way to the
+/// quest's next kind (`crate::shown_badge`).
+pub const KINDS: [Badge; 4] = [Badge::Key, Badge::Urgent, Badge::Reward, Badge::Unlocks];
+/// INI keys and values of `Palette::shown`.
+const KIND_NAMES: [&str; 4] = ["key", "urgent", "reward", "unlocks"];
+const SHOWN_VALUES: [&str; 2] = ["hidden", "shown"];
 /// How a grey badge shows. The value is the Mod Options row's: Coloured, Grey, Hidden.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum GreyBadges {
@@ -42,7 +50,12 @@ impl Palette {
         unlocks: 0x0032c2,
         reward: 0xff7f00,
         grey: GreyBadges::Grey,
+        shown: [true; 4],
     };
+    /// False only for a kind in `KINDS` the player hid; grey and no badge always count as shown.
+    pub fn shows(self, badge: Badge) -> bool {
+        KINDS.iter().position(|&kind| kind == badge).is_none_or(|i| self.shown[i])
+    }
     /// The badge a row shows: grey becomes hidden while grey badges are Hidden.
     pub fn visible(self, badge: Badge) -> Badge {
         if self.grey == GreyBadges::Hidden && badge == Badge::Completed {
@@ -73,6 +86,7 @@ impl Palette {
         let mut section = "";
         let mut values = [None; 5];
         let mut grey = None;
+        let mut shown = [None; 4];
         for line in text.lines().map(str::trim) {
             if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
                 continue;
@@ -91,6 +105,15 @@ impl Palette {
                     return Err(Error::Invalid);
                 }
                 continue;
+            }
+            if section == "[Badges]" {
+                if let Some(i) = KIND_NAMES.iter().position(|name| *name == key.trim()) {
+                    let value = SHOWN_VALUES.iter().position(|v| *v == value.trim()).ok_or(Error::Invalid)?;
+                    if shown[i].replace(value == 1).is_some() {
+                        return Err(Error::Invalid);
+                    }
+                    continue;
+                }
             }
             if section != "[Colors]" {
                 continue;
@@ -121,6 +144,8 @@ impl Palette {
             reward: values[4].unwrap_or(Self::DEFAULT.reward),
             // Absent in configs saved before the setting existed: grey badges stay grey.
             grey: grey.unwrap_or(GreyBadges::Grey),
+            // Absent in configs saved before these settings existed: every badge shows.
+            shown: shown.map(|value| value.unwrap_or(true)),
         })
     }
     pub fn text(self) -> Result<Text, Error> {
@@ -134,8 +159,11 @@ impl Palette {
             self.key, self.urgent, self.completed, self.unlocks, self.reward
         )
         .map_err(|_| Error::Invalid)?;
-        write!(out, "[Badges]\nfinished_quests = {}\n", self.grey.name())
-        .map_err(|_| Error::Invalid)?;
+        out.write_str("[Badges]\n").map_err(|_| Error::Invalid)?;
+        for (name, shown) in KIND_NAMES.iter().zip(self.shown) {
+            write!(out, "{} = {}\n", name, SHOWN_VALUES[shown as usize]).map_err(|_| Error::Invalid)?;
+        }
+        write!(out, "finished_quests = {}\n", self.grey.name()).map_err(|_| Error::Invalid)?;
         Ok(out)
     }
 }
@@ -233,6 +261,8 @@ pub struct Preferences {
     pub loaded: bool,
     /// Grey badges set through Mod Options, possibly before the INI loaded; a later load keeps it.
     pub grey_override: Option<GreyBadges>,
+    /// Shown badge kinds set through Mod Options, kept the same way.
+    pub shown_override: Option<[bool; 4]>,
 }
 impl Preferences {
     pub const fn new() -> Self {
@@ -241,6 +271,7 @@ impl Preferences {
             applied: Palette::DEFAULT,
             loaded: false,
             grey_override: None,
+            shown_override: None,
         }
     }
     pub fn edit(&mut self, value: Palette) {
@@ -258,6 +289,9 @@ impl Preferences {
                 self.loaded = true;
                 if let Some(grey) = self.grey_override {
                     self.apply_grey(grey);
+                }
+                if let Some(shown) = self.shown_override {
+                    self.apply_shown(shown);
                 }
                 Ok(())
             }
@@ -280,6 +314,12 @@ impl Preferences {
         self.applied.grey = grey;
         self.draft.grey = grey;
         self.grey_override = Some(grey);
+    }
+    /// The shown badge kinds, changed elsewhere (Mod Options) in the same way as `apply_grey`.
+    pub fn apply_shown(&mut self, shown: [bool; 4]) {
+        self.applied.shown = shown;
+        self.draft.shown = shown;
+        self.shown_override = Some(shown);
     }
     /// Save what is applied, leaving pending colour edits as drafts. The saved colours are loaded
     /// first, so a save never replaces them with defaults; storage that is not ready yet returns

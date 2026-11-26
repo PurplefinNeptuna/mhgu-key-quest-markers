@@ -189,3 +189,35 @@ pub fn pool_reward(id: u32, pools: &[Pool], cleared: impl Fn(u32) -> bool) -> bo
         attached.binary_search(&id).is_ok() && members.iter().filter(|&&m| cleared(m)).count() < need as usize
     })
 }
+/// The badge a row shows once the player's hidden kinds (`colors::KINDS`) are applied. A hidden
+/// kind gives way to the quest's next kind, highest priority first: its key or urgent kind, then
+/// Reward, then Unlocks; with none left the row shows no badge. A grey badge stays grey while any
+/// of the quest's kinds shows. `chain` is the quest's urgent-key tier, as for `kept_colour`.
+pub fn shown_badge(
+    group: Group,
+    chain: Option<u8>,
+    state: Evidence,
+    badge: Badge,
+    shows: impl Fn(Badge) -> bool,
+) -> Badge {
+    let rank = if urgent(group.category) {
+        Some(Badge::Urgent)
+    } else if key(group.category) || chain.is_some() {
+        Some(Badge::Key)
+    } else {
+        None
+    };
+    let kinds = [rank, state.reward.then_some(Badge::Reward), state.unlocks.then_some(Badge::Unlocks)];
+    match badge {
+        Badge::Hidden => Badge::Hidden,
+        Badge::Completed if kinds.iter().flatten().all(|&k| !shows(k)) && kinds.iter().any(Option::is_some) => {
+            Badge::Hidden
+        }
+        Badge::Completed => Badge::Completed,
+        kind if shows(kind) => kind,
+        kind => {
+            let next = kinds.iter().position(|&k| k == Some(kind)).map_or(kinds.len(), |i| i + 1);
+            kinds[next..].iter().flatten().copied().find(|&k| shows(k)).unwrap_or(Badge::Hidden)
+        }
+    }
+}

@@ -4888,5 +4888,17 @@
     "observed": "Hub G4 pages 4-7, every quest cleared, Finished quests Colored: orange on 11433, 11438-11442, 11418, 11419, 11487-11490; blue on the other pool members, 11479 and 11480; no badge on 11450 and 11481. All match the r33 lists.",
     "user_report": "looks like random quest got between orange and blue?",
     "itemized": false
+  },
+  "static_r34": {
+    "date": "2026-11-26",
+    "nro_sha256": "0bfc39588fffc21f74f647b13b2f67d0a2ac9babe3c15108c3b11aed9ce0b825",
+    "manifest_sha256": "8e364295344f637d9f0a123096835459eba8672fa53f956c05effa2f589ca841",
+    "change": "Shown/Hidden setting per badge kind (key, urgent, reward, unlocks) in the panel, INI and Mod Options; a hidden kind gives way to the quest's next kind",
+    "user_choice": [
+      "All four colors",
+      "Next color down (Recommended)"
+    ],
+    "native_adapter_cases": 46,
+    "runtime_test": "NOT RUN"
   }
 }

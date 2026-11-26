@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r33 is DEVELOPMENT and has not been built into a run. It marks orange every quest whose clear a granted Hunter Art's own check needs (Hub 3★ Wyvern Sand Runners among them) and every quest each way to such a quest needs. A quest that is one of an "any N of" pool on the way is orange only until N of the pool are cleared. r32 was packaged, never run. The last accepted build is r31, PUBLISHED (2026-11-26) as the GitHub release `r31`, archived at `backups/accepted/key-quest-markers/r31-before-r32/` with its candidate in `build/key-quest-markers/candidates/r31/`; it ran on MHGU Recomp, where the user reports it working. Eden, Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r34 is DEVELOPMENT and has not run. It adds a Shown/Hidden setting for each badge kind (key, urgent, reward, unlocks), in the Plugin UI, the INI and four Mod Options rows; a hidden kind gives way to the quest's next one. It carries r33's reward rules, which ran on MHGU Recomp where every G4 badge matched the lists. The last accepted build is r31, PUBLISHED (2026-11-26) as the GitHub release `r31`, archived at `backups/accepted/key-quest-markers/r31-before-r32/` with its candidate in `build/key-quest-markers/candidates/r31/`. Eden, Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -94,8 +94,13 @@ one of them keeps its colours and uses that colour's default. Optional `[Badges]
 or satisfied by its special encounter pair, the badge it had before (urgent, key, reward or unlocks).
 A quest on the urgent key list keeps the key badge at every rank.
 Ranking up needs every key and urgent of a tier cleared and 1.4.0 has no Village key alternatives,
-so no grey badge is left. Hidden: `Palette::visible`
-turns every grey badge into a hidden one before the row draws it. Saved custom values are never rewritten; Reset defaults
+so no gray badge is left. Hidden: `Palette::visible`
+turns every gray badge into a hidden one before the row draws it.
+`[Badges]` `key`, `urgent`, `reward` and `unlocks` are `shown` or `hidden` (default `shown`;
+`Palette::shown` in `colors::KINDS` order; Mod Options rows 1..4, value 0 Shown, 1 Hidden).
+After `decide` and `kept_colour`, `shown_badge` replaces a hidden kind with the quest's next kind:
+its key or urgent kind (urgent-key-list quests count as key), then Reward, then Unlocks, else no
+badge. A gray badge stays while any of the quest's kinds shows. Saved custom values are never rewritten; Reset defaults
 then Save & apply uses the game palette. The settings panel uses Forge ImGui only.
 
 `core/src/colors.rs` owns bounded RGB INI parsing, formatting and the tested
@@ -198,7 +203,7 @@ Design, hooks and native detail are in `docs/worked/`: [Key Quest Markers: class
 Core policy fixtures (`core/tests/`, outside the source files) cover all badge states,
 alternatives, obsolete unfinished keys, simultaneous urgents, unlocking quests, viewing
 versus completing, conflicting records, INIs without `unlocks` or `[Badges]`, hiding grey
-badges and the Mod Options save that keeps saved colours.
+badges, hidden badge kinds and their fallback, and the Mod Options save that keeps saved colors.
 The hook harness executes production ownership-aware rollback with Forge doubles.
 
 `resource.py` only reads the copied native GUI/atlas layout and rejects corrupt
@@ -211,13 +216,13 @@ patterns, checks callee-saved state, named 70-byte metadata with canaries, the
 
 `native_adapter.py` runs the compiled parent/row/GUI adapter with native-shaped
 memory, MT constructor/query doubles and real game ARM draw-list/destructor code.
-Its cases cover states, the blue badge on real quest 220 and orange on 233 from the generated lists, progression evidence, both holder tables, missing
+Its cases cover states, the blue badge on real quest 208 and orange on 233 from the generated lists, progression evidence, both holder tables, missing
 context, bad objects, object/cache allocation failure and repeated insertion.
 It checks colors, pose/size, unchanged index arrays and saved records, actual native
 draw traversal, cache canaries, root/child cleanup and balanced stack/TLS.
-Its settings case also drives the Finished quests radio buttons, checks that a cleared key's row turns
+Its settings case also drives the Finished quests radio buttons and the Gives a reward check box, checks that a cleared key's row turns
 from grey to the key colour, and drives the compiled
-`purplelib_on_register`, `row`, `get`, `set` and `closed` through a version 3 table. Every
+`purplelib_on_register`, `row` (all five rows), `get`, `set` and `closed` through a version 3 table. Every
 mount, write-mode open and commit must hold the faked save mutex, unlocked only after the
 unmount, and a case with the game mid-save writes nothing until the next second. The
 code hook covers only the addresses `trace` names, read from its own source (about 5 s).

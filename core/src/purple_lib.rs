@@ -7,7 +7,7 @@ use core::ffi::{CStr, c_char, c_void};
 pub const API_VERSION: u32 = 3;
 
 #[repr(C)]
-/// Purple-lib zeroes it before each call; the one row here is a labels row, which uses the first
+/// Purple-lib zeroes it before each call; every row here is a labels row, which uses the first
 /// four fields.
 pub struct OptionRow {
     pub name: *const c_char,
@@ -72,8 +72,20 @@ const _: () = assert!(
 /// English text: the mod ships no translations.
 pub const TITLE: &CStr = c"Key Quest Markers";
 pub const ROW_GREY_BADGES: u32 = 0;
-pub const ROWS: u32 = 1;
+/// Rows 1..=4 show or hide one badge kind each, in `colors::KINDS` order.
+pub const ROW_FIRST_KIND: u32 = 1;
+pub const ROWS: u32 = 5;
 pub const GREY_NAME: &CStr = c"Finished quests";
 pub const GREY_HELP: &CStr = c"Colored keeps their color, Gray shows\r\nthem gray, Hidden removes the badge.";
 /// Indexed by the row's value, which is `GreyBadges as u32`: Colored, Gray, Hidden.
 pub const GREY_LABELS: [&CStr; 3] = [c"Colored", c"Gray", c"Hidden"];
+/// Badge kind rows, in `colors::KINDS` order. Value 0 shows the badge, 1 hides it.
+pub const KIND_NAMES: [&CStr; 4] = [c"Key quests", c"Urgent quests", c"Reward quests", c"Unlocking quests"];
+pub const KIND_HELP: [&CStr; 4] = [
+    c"Shows the green badge on key quests.\r\nIf hidden, they show orange or blue\r\nwhen that applies.",
+    c"Shows the red badge on urgent quests.\r\nIf hidden, they show orange or blue\r\nwhen that applies.",
+    c"Shows the orange badge on quests that\r\nlead to Hunter Arts or ingredients. If\r\n\
+      hidden, they show blue if that applies.",
+    c"Shows the blue badge on quests that\r\nunlock another quest.",
+];
+pub const KIND_LABELS: [&CStr; 2] = [c"Shown", c"Hidden"];

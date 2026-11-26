@@ -20,6 +20,8 @@ pub static kqm_palette: [AtomicU32; 5] = [
 /// How grey badges show (`GreyBadges as u8`); read by the row hook and by Mod Options `get`,
 /// written without locks.
 static GREY: AtomicU8 = AtomicU8::new(Palette::DEFAULT.grey as u8);
+/// Shown badge kinds, bit i for `colors::KINDS[i]`; read and written like `GREY`.
+static SHOWN: AtomicU8 = AtomicU8::new(0b1111);
 pub fn palette() -> Palette {
     Palette {
         key: kqm_palette[0].load(Ordering::Acquire),
@@ -28,6 +30,22 @@ pub fn palette() -> Palette {
         unlocks: kqm_palette[3].load(Ordering::Acquire),
         reward: kqm_palette[4].load(Ordering::Acquire),
         grey: grey_badges(),
+        shown: shown_kinds(),
+    }
+}
+pub fn shown_kinds() -> [bool; 4] {
+    let bits = SHOWN.load(Ordering::Acquire);
+    core::array::from_fn(|i| bits & (1 << i) != 0)
+}
+fn shown_bits(shown: [bool; 4]) -> u8 {
+    shown.iter().enumerate().map(|(i, &on)| (on as u8) << i).sum()
+}
+/// Mod Options `set` for one badge kind: applies at once, like `set_grey_badges`.
+pub fn set_shown(kind: usize, on: bool) {
+    let mut shown = shown_kinds();
+    if let Some(slot) = shown.get_mut(kind) {
+        *slot = on;
+        SHOWN.store(shown_bits(shown), Ordering::Release);
     }
 }
 pub fn grey_badges() -> GreyBadges {
@@ -43,11 +61,19 @@ const GREY_LABELS: [&core::ffi::CStr; 3] = [
     c"Gray##kqm-gray-gray",
     c"Hidden##kqm-gray-hidden",
 ];
+/// Panel check boxes, in `colors::KINDS` order.
+const SHOWN_LABELS: [&core::ffi::CStr; 4] = [
+    c"Key##kqm-show-key",
+    c"Urgent##kqm-show-urgent",
+    c"Gives a reward##kqm-show-reward",
+    c"Unlocks a quest##kqm-show-unlocks",
+];
 fn publish(p: Palette) {
     for (slot, value) in kqm_palette.iter().zip([p.key, p.urgent, p.completed, p.unlocks, p.reward]) {
         slot.store(value, Ordering::Release);
     }
     GREY.store(p.grey as u8, Ordering::Release);
+    SHOWN.store(shown_bits(p.shown), Ordering::Release);
 }
 struct State {
     preferences: Preferences,
@@ -93,6 +119,7 @@ pub fn update(delta: f32) {
     with_state(|state| {
         if crate::purple_lib::EDITED.swap(false, Ordering::AcqRel) {
             state.preferences.apply_grey(grey_badges());
+            state.preferences.apply_shown(shown_kinds());
         }
         if crate::purple_lib::SAVE.swap(false, Ordering::AcqRel) {
             state.save_pending = true;
@@ -223,6 +250,15 @@ pub fn panel() {
                     *value = rgb;
                     changed = true;
                 }
+            }
+        }
+        ui::text("Show badges");
+        for (i, label) in SHOWN_LABELS.into_iter().enumerate() {
+            if i > 0 {
+                ui::same_line(0.0, -1.0);
+            }
+            if ui::checkbox(label, &mut draft.shown[i]) {
+                changed = true;
             }
         }
         ui::text("Finished quests");
