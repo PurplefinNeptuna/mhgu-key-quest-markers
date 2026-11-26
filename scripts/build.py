@@ -9,7 +9,7 @@ def digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def source_hashes():
     """Tie receipts to the exact owned executable/resource recipe inputs."""
     files=['Cargo.toml','Cargo.lock','.cargo/config.toml','armv7a-none-eabi.json','build.rs']
-    files += ['scripts/gui_layout.py','scripts/quest_unlocks.py','scripts/urgent_chain.py']
+    files += ['scripts/gui_layout.py','scripts/quest_unlocks.py','scripts/hunter_arts.py','scripts/urgent_chain.py']
     files += [str(p.relative_to(MOD)) for folder in ['src','core/src','link']
               for p in sorted((MOD/folder).rglob('*')) if p.is_file()]
     return {n:digest(MOD/n) for n in files}

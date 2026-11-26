@@ -147,12 +147,13 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
     word(PROFILE+0x35d4,sum(1<<i for i in special_enabled))
     word(QUEST+0xb4,RESOURCE);word(RESOURCE+0x64,8);word(RESOURCE+0x6c,RECORDS)
     groups=[(207,2,int(alternative_done)),(105,1,0),(303,26,0),(206,26 if simultaneous else 25,0),
-            (213,2,int(alternative_done)),(202,0,0),(233,0,0),(220,0,0)]
+            (213,2,int(alternative_done)),(202,0,0),(233,0,0),(208,0,0)]
     if special:
         groups=[(id,47+i,i//2+1) for i,id in enumerate([308,309,319,320,324,325,329,330])]
     for i,(id,category,alt)in enumerate(groups):u.mem_write(RECORDS+i*12,struct.pack('<IIBBBB',0,id,category,alt,0,0))
     word(GAME+0x18979f0,PROGRESS);u.mem_write(PROGRESS+0x3e0,struct.pack('<HH',2,1))
-    ids=[202]*8 if ordinary else [207,105,303,206,213,220,0,233] # Generated lists: 220 unlocks quests, 233 gives ingredients (and unlocks); 202 neither.
+    # Generated lists: 208 only unlocks quests, 233 gives ingredients (and unlocks); 202 neither.
+    ids=[202]*8 if ordinary else [207,105,303,206,213,208,0,233]
     if special:ids=[g[0] for g in groups]
     for i,id in enumerate(ids):
         q=DATA+0x30000+i*0x200;word(ROWS+i*4,q if id else 0);word(q+8,id);half(q+0x10c,(0x300 if id==308 else 0x308) if special else int(id in [303,206]))

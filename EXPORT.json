@@ -53,6 +53,7 @@
     "scripts/export_source.py",
     "scripts/fetch_vendor.py",
     "scripts/gui_layout.py",
+    "scripts/hunter_arts.py",
     "scripts/mhgu_assets.py",
     "scripts/mhgu_binary.py",
     "scripts/mod_distribution.py",

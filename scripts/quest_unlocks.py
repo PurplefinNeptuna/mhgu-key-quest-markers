@@ -26,7 +26,8 @@ Two native sources decide when a quest appears on the counter:
 A quest unlocks another when its clear is loaded by a case body, or is a condition
 of a conversation that sets a flag such a body loads, directly or through further
 conversations. A reward quest is a cleared-quest condition of a conversation that
-grants Hunter Arts or Felyne ingredients; its chain is every quest its unlock requires.
+grants Hunter Arts or Felyne ingredients, or whose clear a granted Hunter Art's check
+needs (`hunter_arts.py`); its chain is every quest its unlock requires.
 """
 import struct
 from collections import defaultdict
@@ -238,7 +239,8 @@ def quest_lists(script, tables, image):
     bases = quest_table(image)
     needs, talks = requirements(script, tables, bases)
     unlocks = set().union(*needs.values())
-    rewards, pending = set(), list(reward_quests(talks, bases))
+    from hunter_arts import art_quests
+    rewards, pending = set(), list(reward_quests(talks, bases) | art_quests(image))
     while pending:
         q = pending.pop()
         if q not in rewards:

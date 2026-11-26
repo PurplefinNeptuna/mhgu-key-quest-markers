@@ -1,13 +1,17 @@
-# Key Quest Markers r31: testing
+# Key Quest Markers r32: testing
 
-r31 adds the Finished quests setting: Colored, Gray or Hidden. It also carries r25 (the game's save
-lock held while it saves its settings) and r24 (the quests The Scorching Blade needs are green at
-Village 5★). Purple-lib r17 or later is optional and only needed for step 5.
+r32 shows more quests orange. Many Hunter Arts unlock when you clear one particular quest, and r31
+only knew the few that a talk row names. r32 reads the quest each Hunter Art checks for in the game
+itself, so quests such as Hub 3★ Wyvern Sand Runners now count. The rest is as in r31: the Finished
+quests setting (Colored, Gray or Hidden), the game's save lock while it saves its settings, and
+green for the quests The Scorching Blade needs at Village 5★. Purple-lib r17 or later is optional
+and only needed for step 5.
 
 ## Steps
 
-1. Open the quest counter. Badges show as in r23, plus more blue and orange ones: r24 reads the
-   game's talk conditions in full, so more quests count as unlocking or leading to a reward.
+1. Open the Hub quest counter on the 3★ page. Wyvern Sand Runners is orange, or gray if you have
+   cleared it. Expect more orange and fewer blue badges than in r31, because quests
+   that lead to one of these Hunter Arts quests are orange too.
 2. Open **Plugin UI > Key Quest Markers** in Forge's overlay, choose **Hidden** under Finished
    quests and press **Save & apply**. At the quest counter, finished quests have no badge and the
    other colors stay. Note whether rows already on screen change at once, or only after you
@@ -24,7 +28,8 @@ Village 5★). Purple-lib r17 or later is optional and only needed for step 5.
 6. With a save at Village 5★ that has not been offered The Scorching Blade yet: The Thunderclaw
    Wyvern, The Unwavering Colossus and The Entrancing Water Dancer are green until cleared, and
    so are the earlier chief requests that lead to them, on their own star pages. At other Village
-   ranks these quests are blue, or gray once cleared.
+   ranks these quests are orange, or gray once cleared: they lead to The Scorching Blade, which
+   unlocks a Hunter Art.
 
 ## Log lines
 
@@ -33,7 +38,7 @@ only the `can't find` and `hidden` lines and a failed start appear.
 
 | Line | Meaning |
 | --- | --- |
-| `Key Quest Markers r31 loaded` | Started |
+| `Key Quest Markers r32 loaded` | Started |
 | `Key Quest Markers: setting added to Purple-lib Mod Options` | Purple-lib called the mod and took its page |
 | `Key Quest Markers: Purple-lib API version N is older than 3; Mod Options not added` | An older Purple-lib called the mod: install r17 or later |
 | `Key Quest Markers: Purple-lib refused the Mod Options page` | Send the log |

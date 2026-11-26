@@ -69,10 +69,13 @@ for quest in (102, 202):
     assert quest not in ids, quest
 # Rewards: 11207 grants Hunter Arts and 233 ingredients after their NPC talk; 10529 is required
 # on the way to Hunter Arts quest 11211, and 10124 on the way to ingredient quest 11113.
-for quest in (11207, 233, 10529, 10124):
+# Wyvern Sand Runners (10325) has no talk row: art 2's case in check 0x3efb30 loads its clear.
+for quest in (11207, 233, 10529, 10124, 10325):
     assert quest in rewards, quest
-for quest in (202, 220):
+# 10750 only counts toward 10772's unlock; 220 leads to The Scorching Blade (601), which art 18 checks.
+for quest in (202, 10750):
     assert quest not in rewards, quest
+assert 220 in rewards and 601 in rewards
 # The Scorching Blade (601), Village tier 5: the Bherna Chief's Glavenus talk (npc_001 rows 116-117)
 # needs flags 159, 209 and 259, set after 504, 508 and 510 are reported to the Kokoto, Pokke and
 # Yukumo chiefs; each of those opens through its chief's request line (219/220/318, 224/225/323,

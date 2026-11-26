@@ -4841,5 +4841,23 @@
     "uploaded_assets_match_local": true,
     "gamebanana_mirror": "https://gamebanana.com/mods/727960",
     "gamebanana_mirrored_by": "the user"
+  },
+  "static_r32": {
+    "date": "2026-11-26",
+    "nro_sha256": "b0b1fe0520f340f0c0d3660c5fd0959a783fda495506726bed48d179c09b4dd9",
+    "manifest_sha256": "402cb27ee316875f5efdd5263183b80b8138bac81bb43dec2866b6dd50d8f337",
+    "change": "Reward list adds the quests a granted Hunter Art's check 0x3efb30 loads as cleared, from talk-row and result-loop art tables",
+    "quest_lists": {
+      "unlocks": 587,
+      "rewards": 281,
+      "urgent_keys": 12,
+      "hunter_art_quests": 78,
+      "granted_arts": 162,
+      "sha256": "f251816960fc870267d1fa6157568ecb37b97a30085796132a346572d91552bf"
+    },
+    "native_adapter_cases": 46,
+    "runtime_test": "NOT RUN",
+    "user_report": "A Hunter Arts Quest is missing. (Hub 3★ Hunters Hub Quest \"Wyvern Sand Runners\".) are you not checking them all?",
+    "user_report_quest": 10325
   }
 }

@@ -32,7 +32,7 @@ CASES = [
     ('viewing does not complete key', dict()),
     ('key completion', dict(completed=(207, 213))),
     ('urgent completion', dict(completed=(303, 213))),
-    ('unlocking quest completion', dict(completed=(213, 220))),
+    ('unlocking quest completion', dict(completed=(213, 208))),
     ('reward quest completion', dict(completed=(213, 233))),
     ('resource object mismatch', dict(invalid_object=True)),
     ('animation address is not the GUI owner', dict(invalid_owner=True)),
@@ -65,6 +65,6 @@ def row_colors(palette, completed, offered, available, prerequisites, simultaneo
         2: done if 303 in completed else urgency,
         3: urgent if simultaneous and 206 in offered else done,
         4: done,
-        5: done if 220 in completed else unlocks,
+        5: done if 208 in completed else unlocks,
         7: done if 233 in completed else reward,
     }
