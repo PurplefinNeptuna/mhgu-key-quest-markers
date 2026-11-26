@@ -1,7 +1,7 @@
-# Key Quest Markers r35: testing
+# Key Quest Markers r36: testing
 
-r35 lets you hide each badge color: green, red, orange and blue. A quest whose color is hidden
-shows its next badge instead, in that order. r35 also carries r33: many Hunter Arts quests are
+r36 lets you hide each badge color: green, red, orange and blue. A quest whose color is hidden
+shows its next badge instead, in that order. r36 also carries r33: many Hunter Arts quests are
 orange, such as Hub 3★ Wyvern Sand Runners, and a group where any few quests open a reward quest
 stays orange only until enough of it is cleared. The rest is as in r31: the Finished quests
 setting (Colored, Gray or Hidden), the game's save lock while it saves its settings, and green
@@ -50,7 +50,7 @@ only the `can't find` and `hidden` lines and a failed start appear.
 
 | Line | Meaning |
 | --- | --- |
-| `Key Quest Markers r35 loaded` | Started |
+| `Key Quest Markers r36 loaded` | Started |
 | `Key Quest Markers: setting added to Purple-lib Mod Options` | Purple-lib called the mod and took its page |
 | `Key Quest Markers: Purple-lib API version N is older than 3; Mod Options not added` | An older Purple-lib called the mod: install r17 or later |
 | `Key Quest Markers: Purple-lib refused the Mod Options page` | Send the log |

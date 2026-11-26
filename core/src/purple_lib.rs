@@ -82,10 +82,9 @@ pub const GREY_LABELS: [&CStr; 3] = [c"Colored", c"Gray", c"Hidden"];
 /// Badge kind rows, in `colors::KINDS` order. Value 0 shows the badge, 1 hides it.
 pub const KIND_NAMES: [&CStr; 4] = [c"Key quests", c"Urgent quests", c"Reward quests", c"Chain quests"];
 pub const KIND_HELP: [&CStr; 4] = [
-    c"Shows the green badge on key quests.\r\nIf hidden, they show orange or blue\r\nwhen that applies.",
-    c"Shows the red badge on urgent quests.\r\nIf hidden, they show orange or blue\r\nwhen that applies.",
-    c"Shows the orange badge on quests that\r\nlead to Hunter Arts or ingredients. If\r\n\
-      hidden, they show blue if that applies.",
-    c"Shows the blue badge on quests that\r\nunlock another quest.",
+    c"Shows or hides the green badge on key\r\nquests.",
+    c"Shows or hides the red badge on urgent\r\nquests.",
+    c"Shows or hides the orange badge on\r\nquests that lead to Hunter Arts or\r\ningredients.",
+    c"Shows or hides the blue badge on quests\r\nthat unlock another quest.",
 ];
 pub const KIND_LABELS: [&CStr; 2] = [c"Shown", c"Hidden"];
