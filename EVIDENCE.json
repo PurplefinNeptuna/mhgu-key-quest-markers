@@ -4959,6 +4959,8 @@
       "NOTICES.txt": "ddd4bcb49697f8e6cb8b5423100110a0e21f7959ed364da8563d062671b85122"
     },
     "uploaded_assets_match_local": true,
-    "user_request": "ran on eden, now publish release to github"
+    "user_request": "ran on eden, now publish release to github",
+    "gamebanana_mirror": "https://gamebanana.com/mods/727960",
+    "gamebanana_mirrored_by": "the user"
   }
 }
