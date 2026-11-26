@@ -55,7 +55,7 @@ assert uc.body_needs(both) == ({1, 2}, set())
 assert uc.body_needs(both[:4] + [(0, 0xa7, '[WORK2]', '1')]) == (set(), set())
 assert uc.body_needs([(0, 0x16, '[HR]', '9'), (0, 0x76, '1', ''), (0, 0xa1, '[WORK1]', '1')]) == (set(), set())
 
-ids, rewards, chained = qu.from_inputs(input_path)
+ids, rewards, pools, chained = qu.from_inputs(input_path)
 assert ids == sorted(set(ids)) and 0 not in ids and rewards == sorted(set(rewards)) and 0 not in rewards
 # Traced in the pinned base 1.4.0 data:
 #   220: npc_*_td sets the flag that unlocks 219 once 220 is cleared.
@@ -76,6 +76,17 @@ for quest in (11207, 233, 10529, 10124, 10325):
 for quest in (202, 10750):
     assert quest not in rewards, quest
 assert 220 in rewards and 601 in rewards
+# Pinnacle Problems (11488) opens once any 6 of 26 G4 quests are cleared, so a pool member such as
+# 11434 leads to its art only while fewer than 6 are cleared; Death at My Greaves (11487) is in the
+# pool and gives an art itself.
+g4 = [p for p in pools if p[0] == 6]
+assert len(g4) == 1 and len(g4[0][1]) == 26 and 11434 in g4[0][2] and 11434 not in rewards
+assert 11487 in g4[0][1] and 11487 in rewards and 11487 not in g4[0][2]
+assert all(p[2] == sorted(set(p[2]) - set(rewards)) for p in pools)
+# body_rules: a count below its loads is a pool; other loads (0x9e) need nothing.
+body = [(0, 0x9e, '12', ''), (0, 0xa1, '[WORK1]', '1'), (0, 0x76, '7', ''), (0, 0x50, '[WORK2]', '[WORK1]'),
+        (0, 0x76, '8', ''), (0, 0x50, '[WORK2]', '[WORK1]'), (0, 0xa7, '[WORK2]', '1'), (0, 0x03, '', '')]
+assert uc.body_rules(body) == (set(), set(), [(1, [7, 8])])
 # The Scorching Blade (601), Village tier 5: the Bherna Chief's Glavenus talk (npc_001 rows 116-117)
 # needs flags 159, 209 and 259, set after 504, 508 and 510 are reported to the Kokoto, Pokke and
 # Yukumo chiefs; each of those opens through its chief's request line (219/220/318, 224/225/323,
@@ -84,7 +95,8 @@ assert chained == [(q, 5) for q in (219, 220, 224, 225, 229, 230, 318, 323, 328,
 for quest in (508, 510):
     assert quest in ids, quest
 expected = ('pub static UNLOCKS: &[u32] = &[1, 2];\npub static REWARDS: &[u32] = &[3];\n'
+            'pub static POOLS: &[(u8, &[u32], &[u32])] = &[\n    (1, &[6, 7], &[6, 7, 9]),\n];\n'
             'pub static URGENT_KEYS: &[(u32, u8)] = &[(4, 5)];\n')
-assert qu.rust_lists([1, 2], [3], [(4, 5)]) == expected
-print('PASS: unlock list', len(ids), 'quests; reward list', len(rewards), 'quests;',
+assert qu.rust_lists([1, 2], [3], [(1, [6, 7], [6, 7, 9])], [(4, 5)]) == expected
+print('PASS: unlock list', len(ids), 'quests; reward list', len(rewards), 'quests;', len(pools), 'reward pools;',
       'urgent quest chain', len(chained), 'quests')

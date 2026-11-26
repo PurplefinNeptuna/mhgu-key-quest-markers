@@ -59,10 +59,10 @@ def prepare():
     record('resource.json',info)
     # Game-derived IDs stay out of Git: build.rs embeds these generated lists.
     from quest_unlocks import from_inputs, rust_lists
-    unlocks,rewards,chained=from_inputs(input_path)
+    unlocks,rewards,pools,chained=from_inputs(input_path)
     QUEST_LISTS.parent.mkdir(parents=True,exist_ok=True)
-    QUEST_LISTS.write_text(rust_lists(unlocks,rewards,chained))
-    counts={'unlocks':len(unlocks),'rewards':len(rewards),'urgent_keys':len(chained)}
+    QUEST_LISTS.write_text(rust_lists(unlocks,rewards,pools,chained))
+    counts={'unlocks':len(unlocks),'rewards':len(rewards),'reward_pools':len(pools),'urgent_keys':len(chained)}
     inputs={n:digest(input_path(n)) for n in ['village_common.arc','talk.arc','main']}
     record('quest-lists.json',{**counts,'sha256':digest(QUEST_LISTS),'inputs':inputs})
 

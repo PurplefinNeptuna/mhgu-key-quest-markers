@@ -3,16 +3,16 @@
   "mod": "key-quest-markers",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "Orange badge also covers quests whose clear a Hunter Art's own unlock check needs, such as Wyvern Sand Runners",
+  "reason": "A quest in an any-N-of pool on the way to a Hunter Art is orange only until N of the pool are cleared",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r32",
+  "version": "r33",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r32-candidate.zip",
-  "runtime_test": "r32 has not run. See EVIDENCE.json.",
+  "archive": "key-quest-markers-r33-candidate.zip",
+  "runtime_test": "r33 has not run. See EVIDENCE.json.",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -65,8 +65,9 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r32 has not run in the game; r31 ran on MHGU Recomp on the user's report, unitemized; Eden, Ryujinx and Switch hardware have no r31 or r32 run",
+    "r33 has not run in the game; r31 ran on MHGU Recomp on the user's report, unitemized; Eden, Ryujinx and Switch hardware have no r31 or later run",
     "The orange, blue and urgent-chain green badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
+    "The pool check (orange until N of a group are cleared) is covered by a core unit test; the ARM adapter fixture has no pool quest",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
     "The tester's updated Forge loader revision and physical Switch compatibility have not been verified."
   ],
@@ -89,7 +90,7 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r32: built, tested (unlock lists: 587 unlock quests, 281 reward quests; 46 ARM adapter cases) and verified on the host; no game run.",
+    "static_summary": "r33: built, tested (unlock lists: 587 unlock quests, 178 reward quests, 8 reward pools; 46 ARM adapter cases) and verified on the host; no game run.",
     "manual_summary": "r31 on MHGU Recomp: \"okay, this run well\", unitemized. r23 on Eden and MHGURecomp, beside WishFinder r143: \"its working well\", after many runs, unitemized; see EVIDENCE.json."
   },
   "dependencies": [
@@ -105,15 +106,15 @@
   },
   "payloads": {
     "manifest.json": {
-      "source": "build/key-quest-markers/candidates/r32/package/manifest.json",
+      "source": "build/key-quest-markers/candidates/r33/package/manifest.json",
       "sha256": ""
     },
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
-      "source": "build/key-quest-markers/candidates/r32/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "source": "build/key-quest-markers/candidates/r33/package/romfs/nativeNX/plugins/key_quest_markers.nro",
       "sha256": ""
     }
   },
   "archives": {},
-  "candidate": "build/key-quest-markers/candidates/r32/delivery",
+  "candidate": "build/key-quest-markers/candidates/r33/delivery",
   "candidate_builder": "scripts/build.py"
 }

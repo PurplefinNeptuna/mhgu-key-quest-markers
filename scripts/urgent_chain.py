@@ -9,9 +9,9 @@ every way to open the urgent clears it:
 - a conversation tag outside an OR group; an OR group needs only what all its
   alternatives need, and a flag set by several conversations only what all of them need.
 
-Bodies with other commands (branches, other loads) add nothing, so a list never
-names a quest the game does not need. Key and urgent categories are left out: the
-game's own key check covers them.
+Loads of other values (0x7e, 0x9e, 0xa8) need no quest. Bodies with other commands
+(branches) add nothing, so a list never names a quest the game does not need. Key and
+urgent categories are left out: the game's own key check covers them.
 
 Village urgent category 24 + T is offered at Village tier T, the tier whose key
 check (tag kind 13, counter 0x3b1a18 through 0x526d28) its chain makes. The build
@@ -25,6 +25,10 @@ GROUPS = ('quest\\quest_group', 0x61cf79af)
 GROUP_RECORD = '<IBBB'
 TALK_KEY_CHECK = 13
 SCRIPT_STEPS = {0x27, 0x26, 0xa1, 0x50, 0x52, 0xa7, 0x03, *qu.QUEST_CLEARED, *qu.FLAG_SET}
+# Loads that are neither a quest clear nor a story flag: 0x7e the Hub/G tier (+0x3e2 of the
+# progression record, handler 0x3d234c), 0x9e and 0xa8 (handlers 0x3d245c, 0x3d4f94, unread).
+# A comparison of one of them needs no quest. Branches (0x07, 0x13, 0x16) stay unmodeled.
+OTHER_LOADS = {0x7e, 0x9e, 0xa8}
 
 
 def quest_groups(data):
@@ -49,29 +53,44 @@ def urgent(category):
     return 24 <= category <= 54
 
 
-def body_needs(body):
-    """(quests, flags) a case body requires one by one; nothing for a body it cannot model."""
-    if any(command not in SCRIPT_STEPS for _, command, _, _ in body):
-        return set(), set()
-    needed, pending, counted = set(), None, []
+def body_rules(body):
+    """(quests, flags, pools) a case body requires, or None for a body it cannot model.
+
+    Quests and flags are needed one by one. A pool is (N, quests) from a count check whose
+    threshold N is below the number of loads it adds: any N of those quests open the case.
+    """
+    if any(command not in SCRIPT_STEPS | OTHER_LOADS for _, command, _, _ in body):
+        return None
+    needed, pending, counted, pools = set(), None, [], []
     for _, command, first, second in body:
         if command in qu.QUEST_CLEARED:
             pending = ('quest', qu.number(first, 'Cleared-quest operand'))
         elif command in qu.FLAG_SET:
             pending = ('flag', qu.number(first, 'Flag operand'))
+        elif command in OTHER_LOADS:
+            pending = None
         elif command == 0xa1 and (first, second) == ('[WORK1]', '1') and pending:
             needed.add(pending)
             pending = None
-        elif command == 0x50 and (first, second) == ('[WORK2]', '[WORK1]') and pending:
+        elif command == 0x50 and (first, second) == ('[WORK2]', '[WORK1]'):
             counted.append(pending)
             pending = None
         elif command == 0xa7 and first == '[WORK2]' and second.isdigit():
             if int(second) >= len(counted):
-                needed.update(counted)
+                needed.update(c for c in counted if c)
+            elif all(c and c[0] == 'quest' for c in counted):
+                pools.append((int(second), sorted(v for _, v in counted)))
             counted = []
         elif command == 0x52:
             counted = []
-    return {v for k, v in needed if k == 'quest'}, {v for k, v in needed if k == 'flag'}
+    quests = {v for k, v in needed if k == 'quest'}
+    return quests, {v for k, v in needed if k == 'flag'}, pools
+
+
+def body_needs(body):
+    """(quests, flags) a case body requires one by one; nothing for a body it cannot model."""
+    rules = body_rules(body)
+    return (set(), set()) if rules is None else rules[:2]
 
 
 class Chains:

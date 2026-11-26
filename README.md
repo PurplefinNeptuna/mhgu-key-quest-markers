@@ -13,7 +13,7 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r32.zip`.
+2. Extract `key-quest-markers-r33.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -51,6 +51,10 @@ A quest is orange when clearing it gets you new Hunter Arts or Felyne kitchen
 ingredients. For some of these rewards you also have to talk to someone after
 the quest. The quests you need to clear before a reward quest shows up are
 orange too.
+
+Some reward quests show up once you clear any few quests from a group, such as
+any 6 of 26. The quests in that group are orange until you have cleared enough
+of them. After that, the rest turn blue.
 
 A quest is blue when clearing it unlocks a different quest, straight away or
 after you talk to someone. Some quests unlock only after several others are

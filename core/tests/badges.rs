@@ -369,3 +369,13 @@ fn kept_colours_replace_grey_for_done_quests() {
     assert_eq!(kept_colour(group(3), None, state(), Badge::Key), Badge::Key);
     assert_eq!(kept_colour(group(0), None, done, Badge::Hidden), Badge::Hidden);
 }
+
+#[test]
+fn pool_quests_lead_to_a_reward_until_enough_members_are_cleared() {
+    use quest_badges_core::{pool_reward, Pool};
+    static POOLS: &[Pool] = &[(2, &[10, 20, 30], &[5, 10, 20, 30])];
+    assert!(pool_reward(20, POOLS, |q| q == 10));
+    assert!(pool_reward(5, POOLS, |_| false));
+    assert!(!pool_reward(30, POOLS, |q| q == 10 || q == 20));
+    assert!(!pool_reward(40, POOLS, |_| false));
+}

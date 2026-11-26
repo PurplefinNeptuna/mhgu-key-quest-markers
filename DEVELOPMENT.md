@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r32 is DEVELOPMENT and has not been built or run. It adds to the orange reward list every quest whose clear a granted Hunter Art's own check needs (Hub 3★ Wyvern Sand Runners among them), and the quests on their unlock chains. The last accepted build is r31, PUBLISHED (2026-11-26) as the GitHub release `r31`, archived at `backups/accepted/key-quest-markers/r31-before-r32/` with its candidate in `build/key-quest-markers/candidates/r31/`; it ran on MHGU Recomp, where the user reports it working. Eden, Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r33 is DEVELOPMENT and has not been built into a run. It marks orange every quest whose clear a granted Hunter Art's own check needs (Hub 3★ Wyvern Sand Runners among them) and every quest each way to such a quest needs. A quest that is one of an "any N of" pool on the way is orange only until N of the pool are cleared. r32 was packaged, never run. The last accepted build is r31, PUBLISHED (2026-11-26) as the GitHub release `r31`, archived at `backups/accepted/key-quest-markers/r31-before-r32/` with its candidate in `build/key-quest-markers/candidates/r31/`; it ran on MHGU Recomp, where the user reports it working. Eden, Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native
@@ -138,16 +138,21 @@ loaded by the first case of the unlock script labelled with that quest, or is a
 condition of a conversation that sets a flag such a case loads, directly or through
 further conversations. A conversation's conditions are the tags of its first row and
 of every following row up to one whose first tag is 0. The 1.4.0 inputs give 587 IDs;
-479 are neither key nor urgent, and the 317 of those outside the reward list show blue. Event/DLC IDs
+479 are neither key nor urgent, and the 393 of those outside the reward list show blue once their pools are done (352 before). Event/DLC IDs
 (1,000,000 and up) appear in no unlock rule. An ID another mod adds is absent,
 so it gets no badge; MHGU Definitive Edition 3.1.0 adds 51 such IDs (3.0.0, 48) and patches no
 checked window.
 
 The reward list holds the cleared-quest conditions of conversations with a row whose
 mAction2 grants Hunter Arts or ingredients, the quests a granted Hunter Art's own check
-loads as cleared (`scripts/hunter_arts.py`), and every quest their unlock requires,
-recursively: 104 reward quests (78 Hunter Arts, 28 ingredients, 2 both) and 177 chain
-quests, 281 IDs; 214 are neither key nor urgent. A talk row can grant arts with no quest
+loads as cleared (`scripts/hunter_arts.py`), and every quest that each way of opening them
+needs (`urgent_chain.Chains`): 104 reward quests (78 Hunter Arts, 28 ingredients, 2 both),
+178 IDs; 138 are neither key nor urgent. A count check below the number of loads it adds
+(`0xa7 [WORK2] >= N`) is a pool: any N of its quests open the case. The 8 pools in reward-path
+cases go to `POOLS` with their members and what each member needs (50 IDs outside the list);
+the core shows those orange while fewer than N members are cleared, reading each member's
+clear only after its group record is found. Pools inside a member's chain or behind a talk
+flag are not followed. A talk row can grant arts with no quest
 condition (the 92-art base set on flag 847), but each art is granted only once its check
 passes. The 7 quests that art rows name are among the 78. Level-gated ingredients add nothing.
 
@@ -165,6 +170,7 @@ refuses a Hub/G urgent with such quests, because its tier pairing is unverified.
 | --- | --- |
 | `script\check_quest_unlocked` (rCommonScript, `village/common.arc`) | sCommonScript (0x8e8 bytes) query 0x3d7e90 runs it with the quest in `[WORK0]`, cached per quest at +0x8e0. Records: u32 index, u8 command, two strings; header f32 1.0, count. |
 | VM 0x3d17f8 | Command - 1 indexes the jump table at 0x3d5874. 0x0e labels a case; a body ends at 0x23 (or 0x24 at a switch boundary). 0xa1 requires A == B, 0xa7 A >= B (failure returns 0); 0x03 returns 1; every body returns, so the first matching case decides. 0x75..0x78 load quest cleared (0x523da4); 0x40..0x43 load story flag bit P of `[0x18390e0]+0x500`; 0x50 adds, 0x52 sets. A clear never locks a quest. |
+| VM other commands | 0x7e loads the Hub/G tier (+0x3e2 of the progression record, handler 0x3d234c). 0x9e and 0xa8 load other values (handlers 0x3d245c, 0x3d4f94, unread); 0x07, 0x13 and 0x16 share branch-style handlers (0x3d187c, 0x3d1b44, unread). A body with a branch adds no requirement. |
 | rNpcTalkData (`npc/talk.arc`, 171 tables) | 37-byte packed records (cNpcTalkData fields). Evaluator 0x2451c8 returns 1 when a tag holds: 1 flag set, 2 not set, 11 quest cleared, 12 not cleared, 13 Village key check (0x526d28 → 0x3b1a18); 16..18 share the handlers of 1, 2, 11; quest = param plus `[10000,100000,40000][fixed-10002]` for fixed 10002..10004 (table via literal at 0x2464f0). Action switch at 0x2479d8 on mAction1: 1 and 4 set flag mAction1Param in the same array (0x247a14), 2 clears; mAction2 writes no flag. |
 | Talk selector 0x243d00 | A table splits into blocks ending at page attribute 2, 7, 8, 10, 14 or 15 (mask 0x3161). A block plays when the tags of its first row and every following row up to one whose first tag is 0 hold (0x2443ec). Kinds 16..21, 119, 147 OR with the tag before; 15 only continues. |
 | Talk progress and runner 0x246b1c | Village progress byte (+0x3e0 at 0x243c2c): 0 any, 1..20 equal, 21..40 at least value-20, 41..60 at most value-40. The runner applies every row's actions without checking tags. |

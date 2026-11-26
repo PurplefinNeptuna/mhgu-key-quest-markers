@@ -179,3 +179,13 @@ fn rank_badge(group: Group, urgent_flag: bool, state: Evidence) -> Badge {
         Some(false) => Badge::Completed,
     }
 }
+/// A count pool from the unlock script: `need` cleared quests of `members` open a quest on the
+/// way to a reward. `attached` (sorted) is the members and what they need.
+pub type Pool = (u8, &'static [u32], &'static [u32]);
+/// True while `id` leads to a reward through a pool that still has fewer than `need` members
+/// cleared. `cleared` must answer only for quests whose group record exists.
+pub fn pool_reward(id: u32, pools: &[Pool], cleared: impl Fn(u32) -> bool) -> bool {
+    pools.iter().any(|&(need, members, attached)| {
+        attached.binary_search(&id).is_ok() && members.iter().filter(|&&m| cleared(m)).count() < need as usize
+    })
+}

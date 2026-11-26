@@ -234,19 +234,39 @@ def checked(ids, what):
 
 
 def quest_lists(script, tables, image):
-    """(unlocks, rewards): quests whose clear unlocks a different quest, and reward
-    quests together with every quest their unlock chains require."""
+    """(unlocks, rewards, pools): quests whose clear unlocks a different quest; reward quests
+    with every quest that each way of opening them needs; and the "any N of" pools on the way."""
+    from hunter_arts import art_quests
+    from urgent_chain import Chains
     bases = quest_table(image)
     needs, talks = requirements(script, tables, bases)
     unlocks = set().union(*needs.values())
-    from hunter_arts import art_quests
-    rewards, pending = set(), list(reward_quests(talks, bases) | art_quests(image))
-    while pending:
-        q = pending.pop()
-        if q not in rewards:
-            rewards.add(q)
-            pending += needs.get(q, ())
-    return checked(unlocks, 'Unlock'), checked(rewards, 'Reward')
+    chains = Chains(script, tables, bases)
+    roots = reward_quests(talks, bases) | art_quests(image)
+    rewards = set(roots)
+    for quest in roots:
+        rewards |= chains.quest(quest)[0]
+    rewards = set(checked(rewards, 'Reward'))
+    return checked(unlocks, 'Unlock'), sorted(rewards), reward_pools(chains, rewards)
+
+
+def reward_pools(chains, rewards):
+    """Sorted (need, members, attached) for each count check in a reward-path quest's case that
+    any `need` of `members` pass. `attached` is the members and what each of them needs, outside
+    `rewards`: the quests that lead to a reward only while fewer than `need` members are cleared.
+    shortcut: a pool inside a member's own chain or behind a talk flag is not followed; such
+    quests stay blue."""
+    from urgent_chain import body_rules
+    found = {}
+    for quest in sorted(rewards):
+        rules = body_rules(chains.cases.get(quest, []))
+        for need, members in rules[2] if rules else ():
+            require(0 < need <= 255, f'Quest {quest} pool threshold {need} is implausible')
+            attached = set(members)
+            for member in members:
+                attached |= chains.quest(member)[0]
+            found[(need, tuple(members))] = checked(attached - rewards, 'Pool')
+    return [(need, list(members), attached) for (need, members), attached in sorted(found.items())]
 
 
 def from_inputs(input_path):
@@ -261,14 +281,17 @@ def from_inputs(input_path):
     image, _ = main_image(input_path('main').read_bytes())
     from urgent_chain import GROUPS, quest_groups, urgent_keys
     require(GROUPS in common, 'Quest groups missing from village common archive')
-    unlocks, rewards = quest_lists(common[SCRIPT]['data'], tables, image)
+    unlocks, rewards, pools = quest_lists(common[SCRIPT]['data'], tables, image)
     groups = quest_groups(common[GROUPS]['data'])
     chained = urgent_keys(common[SCRIPT]['data'], tables, quest_table(image), groups)
-    return unlocks, rewards, chained
+    return unlocks, rewards, pools, chained
 
 
-def rust_lists(unlocks, rewards, chained):
+def rust_lists(unlocks, rewards, pools, chained):
     lists = ''.join(f'pub static {name}: &[u32] = &[{", ".join(map(str, ids))}];\n'
                     for name, ids in (('UNLOCKS', unlocks), ('REWARDS', rewards)))
+    rows = ''.join(f'    ({need}, &[{", ".join(map(str, members))}], &[{", ".join(map(str, attached))}]),\n'
+                   for need, members, attached in pools)
+    lists += f'pub static POOLS: &[(u8, &[u32], &[u32])] = &[\n{rows}];\n'
     pairs = ', '.join(f'({quest}, {tier})' for quest, tier in chained)
     return lists + f'pub static URGENT_KEYS: &[(u32, u8)] = &[{pairs}];\n'

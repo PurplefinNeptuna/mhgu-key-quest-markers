@@ -236,7 +236,8 @@ pub fn update(ui: u32, quests: u32) {
             alternative_done: alternative(&groups, profile, g),
             urgent_listed: in_list,
             unlocks: crate::quest_lists::unlocks_another(id),
-            reward: crate::quest_lists::leads_to_reward(id),
+            reward: crate::quest_lists::leads_to_reward(id)
+                || crate::quest_lists::pool_reward(id, |q| groups.find(q).is_some() && completed(profile, q)),
         };
         *badge = quest_badges_core::decide(g, flags & 1 != 0, evidence);
         if palette.grey == quest_badges_core::colors::GreyBadges::Coloured {

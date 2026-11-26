@@ -14,6 +14,11 @@ pub fn leads_to_reward(id: u32) -> bool {
     REWARDS.binary_search(&id).is_ok()
 }
 
+/// This quest counts toward a pool on the way to a reward, and the pool still needs clears.
+pub fn pool_reward(id: u32, cleared: impl Fn(u32) -> bool) -> bool {
+    quest_badges_core::pool_reward(id, POOLS, cleared)
+}
+
 /// Village tier (1..10) at which a rank-up urgent quest needs this quest although its
 /// group is neither key nor urgent. The list is sorted by quest ID.
 pub fn urgent_key_tier(id: u32) -> Option<u8> {
