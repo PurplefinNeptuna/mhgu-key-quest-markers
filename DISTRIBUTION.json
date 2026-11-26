@@ -106,8 +106,8 @@
   },
   "payloads": {
     "manifest.json": {
-      "source": "build/key-quest-markers/candidates/r36/package/manifest.json",
-      "sha256": "a8272be01dff2e495ee1f4fdaa45c4b572d2f7e64d2a43acb13cb12a25ec8859"
+      "source": "mods/key-quest-markers/manifest.json",
+      "sha256": "4bc5a21106ecfc1f4e9c201b02c1e877538879f386d20d6902c691ee866e32cc"
     },
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
       "source": "build/key-quest-markers/candidates/r36/package/romfs/nativeNX/plugins/key_quest_markers.nro",

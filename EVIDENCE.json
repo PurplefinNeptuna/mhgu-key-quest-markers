@@ -4955,12 +4955,13 @@
     "github_release": "https://github.com/PurplefinNeptuna/mhgu-key-quest-markers/releases/tag/r36",
     "tag_commit": "35f5aa0",
     "assets_sha256": {
-      "key-quest-markers-r36.zip": "14821887a07e6baa8d360bf0c4f7291a64f67a0a479d63aeae4ae4bfaf11a91e",
+      "key-quest-markers-r36.zip": "5f4bc2cc18be1fc547ce3d4abaee6d4f207fe20476a81719a2b66625d1d53971",
       "NOTICES.txt": "ddd4bcb49697f8e6cb8b5423100110a0e21f7959ed364da8563d062671b85122"
     },
     "uploaded_assets_match_local": true,
     "user_request": "ran on eden, now publish release to github",
     "gamebanana_mirror": "https://gamebanana.com/mods/727960",
-    "gamebanana_mirrored_by": "the user"
+    "gamebanana_mirrored_by": "the user",
+    "manifest_refresh": "The ZIP was replaced on the release to add the GameBanana link to manifest.json; the NRO is unchanged (5329c408...)."
   }
 }

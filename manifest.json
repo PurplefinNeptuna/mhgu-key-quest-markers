@@ -4,8 +4,8 @@
   "version": "0.36.0",
   "name": "Key Quest Markers",
   "authors": ["PurplefinNeptuna"],
-  "description": "Marks key quests, urgent quests, quests that give Hunter Arts or ingredients and quests that unlock other quests with coloured badges at the quest counter.",
-  "gamebananalink": "",
+  "description": "Marks key quests, urgent quests, quests that give Hunter Arts or ingredients and quests that unlock other quests with colored badges at the quest counter.",
+  "gamebananalink": "https://gamebanana.com/mods/727960",
   "requires": {},
   "conflicts": {},
   "load": {"after": [], "before": []}
