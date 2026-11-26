@@ -80,7 +80,7 @@ pub const GREY_HELP: &CStr = c"Colored keeps their color, Gray shows\r\nthem gra
 /// Indexed by the row's value, which is `GreyBadges as u32`: Colored, Gray, Hidden.
 pub const GREY_LABELS: [&CStr; 3] = [c"Colored", c"Gray", c"Hidden"];
 /// Badge kind rows, in `colors::KINDS` order. Value 0 shows the badge, 1 hides it.
-pub const KIND_NAMES: [&CStr; 4] = [c"Key quests", c"Urgent quests", c"Reward quests", c"Unlocking quests"];
+pub const KIND_NAMES: [&CStr; 4] = [c"Key quests", c"Urgent quests", c"Reward quests", c"Chain quests"];
 pub const KIND_HELP: [&CStr; 4] = [
     c"Shows the green badge on key quests.\r\nIf hidden, they show orange or blue\r\nwhen that applies.",
     c"Shows the red badge on urgent quests.\r\nIf hidden, they show orange or blue\r\nwhen that applies.",

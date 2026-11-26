@@ -4900,5 +4900,14 @@
     ],
     "native_adapter_cases": 46,
     "runtime_test": "NOT RUN"
+  },
+  "static_r35": {
+    "date": "2026-11-26",
+    "nro_sha256": "50f3e4ec9be832ca92076284f9b4c1a0ffeb06a49e778d0db00f869122766968",
+    "manifest_sha256": "723ca9b2d79c7d23476dcd859846a365e1c6e8420407cb92f585ee95671844d7",
+    "change": "The blue badge's Mod Options row is named Chain quests",
+    "user_request": "i prefer chain quests rather than unlocking quests",
+    "native_adapter_cases": 46,
+    "runtime_test": "NOT RUN"
   }
 }

@@ -13,7 +13,7 @@ Felyne ingredients, and quests that unlock other quests, get a badge too.
 ## Installation
 
 1. Close the emulator.
-2. Extract `key-quest-markers-r34.zip`.
+2. Extract `key-quest-markers-r35.zip`.
 3. Copy the whole `key-quest-markers` folder into your emulator's MHGU mod directory:
    - Eden: `~/.local/share/eden/load/0100770008DD8000/`
    - Ryujinx: `mods/contents/0100770008dd8000/` inside its data directory.
@@ -101,7 +101,7 @@ defaults followed by Save & apply. All colors stay opaque.
 ### In the game's Options menu
 
 With Purple-lib installed, **Finished quests** and a row for each badge color
-(**Key quests**, **Urgent quests**, **Reward quests** and **Unlocking quests**, each
+(**Key quests**, **Urgent quests**, **Reward quests** and **Chain quests**, each
 Shown or Hidden) are also under **Options > Mod Options** in the start menu: choose "Key Quest Markers" from the
 list of mods (with Purple-lib r19 or older, press L or R until its page shows). A change
 takes effect as soon as you make it, and closing the window saves it to the same INI.

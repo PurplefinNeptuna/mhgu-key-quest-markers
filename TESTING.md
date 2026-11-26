@@ -1,7 +1,7 @@
-# Key Quest Markers r34: testing
+# Key Quest Markers r35: testing
 
-r34 lets you hide each badge color: green, red, orange and blue. A quest whose color is hidden
-shows its next badge instead, in that order. r34 also carries r33: many Hunter Arts quests are
+r35 lets you hide each badge color: green, red, orange and blue. A quest whose color is hidden
+shows its next badge instead, in that order. r35 also carries r33: many Hunter Arts quests are
 orange, such as Hub 3★ Wyvern Sand Runners, and a group where any few quests open a reward quest
 stays orange only until enough of it is cleared. The rest is as in r31: the Finished quests
 setting (Colored, Gray or Hidden), the game's save lock while it saves its settings, and green
@@ -21,7 +21,7 @@ only needed for steps 4 and 8.
    Show badges, then press **Save & apply**. With Finished quests on Colored, Death at My Greaves
    and Pinnacle Problems on the Hub G4★ page lose their orange badge. A quest that also unlocks another quest, such as
    Silver-Tongued Storyteller, turns blue. Turn the box back on and press Save & apply.
-4. With Purple-lib, open **Options > Mod Options** and choose "Key Quest Markers". Set **Unlocking
+4. With Purple-lib, open **Options > Mod Options** and choose "Key Quest Markers". Set **Chain
    quests** to Hidden. The blue badges go away at once, and quests that are only blue show no
    badge. Close the window, restart, and blue stays hidden. Set it back to Shown.
 5. Open **Plugin UI > Key Quest Markers** in Forge's overlay, choose **Hidden** under Finished
@@ -50,7 +50,7 @@ only the `can't find` and `hidden` lines and a failed start appear.
 
 | Line | Meaning |
 | --- | --- |
-| `Key Quest Markers r34 loaded` | Started |
+| `Key Quest Markers r35 loaded` | Started |
 | `Key Quest Markers: setting added to Purple-lib Mod Options` | Purple-lib called the mod and took its page |
 | `Key Quest Markers: Purple-lib API version N is older than 3; Mod Options not added` | An older Purple-lib called the mod: install r17 or later |
 | `Key Quest Markers: Purple-lib refused the Mod Options page` | Send the log |

@@ -29,7 +29,7 @@ NO_REWARD = SAVED.replace(b'reward = shown', b'reward = hidden')
 # Panel check boxes and Mod Options rows 1..4, in priority order.
 BOXES = ['Key##kqm-show-key', 'Urgent##kqm-show-urgent', 'Gives a reward##kqm-show-reward',
          'Unlocks a quest##kqm-show-unlocks']
-KIND_ROWS = ['Key quests', 'Urgent quests', 'Reward quests', 'Unlocking quests']
+KIND_ROWS = ['Key quests', 'Urgent quests', 'Reward quests', 'Chain quests']
 REWARD_ROW = 3
 RADIOS = ['Colored##kqm-gray-colored', 'Gray##kqm-gray-gray', 'Hidden##kqm-gray-hidden']
 LABELS = ['Colored', 'Gray', 'Hidden']

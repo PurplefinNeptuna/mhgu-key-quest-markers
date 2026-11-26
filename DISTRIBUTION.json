@@ -3,16 +3,16 @@
   "mod": "key-quest-markers",
   "status": "DEVELOPMENT",
   "runtime_platform": "switch",
-  "reason": "Each badge color can be hidden; a hidden color gives way to the quest's next badge",
+  "reason": "The blue badge's Mod Options row is named Chain quests",
   "publication": {
     "published": false,
     "url": null,
     "date": null
   },
-  "version": "r34",
+  "version": "r35",
   "package_name": "key-quest-markers",
-  "archive": "key-quest-markers-r34-candidate.zip",
-  "runtime_test": "r34 has not run. See EVIDENCE.json.",
+  "archive": "key-quest-markers-r35-candidate.zip",
+  "runtime_test": "r35 has not run. See EVIDENCE.json.",
   "runtime_active": true,
   "gamebanana": {
     "ai_code": {
@@ -65,7 +65,7 @@
   },
   "target": "MHGU Nintendo Switch 1.4.0; upstream Forge 1.5.1; Eden/Ryujinx. Base game and optional MHGU HD Project.",
   "limitations": [
-    "r34 has not run in the game; r33 ran on MHGU Recomp (G4 badges match the lists, unitemized otherwise); Eden, Ryujinx and Switch hardware have no r32 or later run",
+    "r35 has not run in the game; r33 ran on MHGU Recomp (G4 badges match the lists, unitemized otherwise); Eden, Ryujinx and Switch hardware have no r32 or later run",
     "The orange, blue and urgent-chain green badges follow the base 1.4.0 unlock rules and rewards; quests another mod adds get none, and changed unlock rules are not followed",
     "The pool check (orange until N of a group are cleared) is covered by a core unit test; the ARM adapter fixture has no pool quest",
     "Loading beside a real second row-child mod has only run in the ARM fixture",
@@ -90,7 +90,7 @@
     "manual": [
       "mods/key-quest-markers/EVIDENCE.json"
     ],
-    "static_summary": "r34: built, tested (core badge, INI and Mod Options text tests; 46 ARM adapter cases with the badge kind check box and the five Mod Options rows) and verified on the host; no game run.",
+    "static_summary": "r35: not built yet.",
     "manual_summary": "r31 on MHGU Recomp: \"okay, this run well\", unitemized. r23 on Eden and MHGURecomp, beside WishFinder r143: \"its working well\", after many runs, unitemized; see EVIDENCE.json."
   },
   "dependencies": [
@@ -106,15 +106,15 @@
   },
   "payloads": {
     "manifest.json": {
-      "source": "build/key-quest-markers/candidates/r34/package/manifest.json",
+      "source": "build/key-quest-markers/candidates/r35/package/manifest.json",
       "sha256": ""
     },
     "romfs/nativeNX/plugins/key_quest_markers.nro": {
-      "source": "build/key-quest-markers/candidates/r34/package/romfs/nativeNX/plugins/key_quest_markers.nro",
+      "source": "build/key-quest-markers/candidates/r35/package/romfs/nativeNX/plugins/key_quest_markers.nro",
       "sha256": ""
     }
   },
   "archives": {},
-  "candidate": "build/key-quest-markers/candidates/r34/delivery",
+  "candidate": "build/key-quest-markers/candidates/r35/delivery",
   "candidate_builder": "scripts/build.py"
 }
