@@ -4921,5 +4921,22 @@
     ],
     "native_adapter_cases": 46,
     "runtime_test": "NOT RUN"
+  },
+  "runtime_r36_recomp_2026_11_26": {
+    "version": "r36",
+    "host": "MHGU Recomp",
+    "installed_nro_sha256": "5329c408d56a82d195eb5905415963e30d12889d4dbe16a73a3b5ce148ca14d0",
+    "log_lines": [
+      "[forge] [INFO] Key Quest Markers r36 loaded",
+      "[forge] [INFO] Key Quest Markers: setting added to Purple-lib Mod Options"
+    ],
+    "user_report": "okay, it ran and work good",
+    "itemized": false
+  },
+  "approval_r36_2026_11_26": {
+    "version": "r36",
+    "user_request": "okay, it ran and work good, promote it",
+    "nro_sha256": "5329c408d56a82d195eb5905415963e30d12889d4dbe16a73a3b5ce148ca14d0",
+    "basis": "MHGU Recomp run on the installed r36 NRO"
   }
 }
