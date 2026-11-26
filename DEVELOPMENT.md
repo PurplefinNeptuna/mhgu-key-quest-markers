@@ -1,6 +1,6 @@
 # Key Quest Markers: development and research
 
-**Current state.** r36 is READY_TO_DISTRIBUTE (2026-11-26) at `build/key-quest-markers/releases/r36/`, the last accepted build: it ran on MHGU Recomp, where the user reports it working. It marks orange every quest whose clear a granted Hunter Art's check needs and what each way to it needs, keeps an "any N of" pool orange until N are cleared, and adds a Shown/Hidden setting per badge kind (Plugin UI, INI, four Mod Options rows) with fallback to the quest's next kind. Eden, Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
+**Current state.** r36 is PUBLISHED (2026-11-26) as the GitHub release `r36`, at `build/key-quest-markers/releases/r36/`, the last accepted build: it ran on MHGU Recomp and Eden, where the user reports it working. It marks orange every quest whose clear a granted Hunter Art's check needs and what each way to it needs, keeps an "any N of" pool orange until N are cleared, and adds a Shown/Hidden setting per badge kind (Plugin UI, INI, four Mod Options rows) with fallback to the quest's next kind. Ryujinx and native Switch gameplay remain unconfirmed. DISTRIBUTION.json is authoritative; EVIDENCE.json holds exact results.
 
 The mod draws badges with the game's own GUI objects: native cGUIObjTexture
 children on each quest row, the already-loaded lobby emblem and the native

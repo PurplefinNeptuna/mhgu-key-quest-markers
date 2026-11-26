@@ -4949,5 +4949,16 @@
     ],
     "user_report": "ran on eden",
     "itemized": false
+  },
+  "publication_r36_2026_11_26": {
+    "version": "r36",
+    "github_release": "https://github.com/PurplefinNeptuna/mhgu-key-quest-markers/releases/tag/r36",
+    "tag_commit": "35f5aa0",
+    "assets_sha256": {
+      "key-quest-markers-r36.zip": "14821887a07e6baa8d360bf0c4f7291a64f67a0a479d63aeae4ae4bfaf11a91e",
+      "NOTICES.txt": "ddd4bcb49697f8e6cb8b5423100110a0e21f7959ed364da8563d062671b85122"
+    },
+    "uploaded_assets_match_local": true,
+    "user_request": "ran on eden, now publish release to github"
   }
 }
