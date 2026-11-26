@@ -53,3 +53,18 @@ CASES = [
     ('repeat update finds the badge after another plugin child', dict(foreign=True, repeat=True)),
     ('partial allocation failure recovers without duplicate children', dict(fail_at=4)),
 ]
+
+
+def row_colors(palette, completed, offered, available, prerequisites, simultaneous, alternative_done):
+    """Expected badge color of each ordinary fixture row; row 6 holds no quest."""
+    key, urgent, done, unlocks, reward = palette
+    urgency = urgent if 303 in offered and available and prerequisites else done
+    return {
+        0: done if 207 in completed or alternative_done else key,
+        1: done,
+        2: done if 303 in completed else urgency,
+        3: urgent if simultaneous and 206 in offered else done,
+        4: done,
+        5: done if 220 in completed else unlocks,
+        7: done if 233 in completed else reward,
+    }

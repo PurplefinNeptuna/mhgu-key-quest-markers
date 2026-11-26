@@ -17,7 +17,7 @@ from unicorn import arm_const as arm
 # Inputs, symbols and memory layout every case shares.
 from adapter_fixture import *
 from adapter_settings import Settings
-from adapter_cases import CASES as CASE_LIST
+from adapter_cases import CASES as CASE_LIST, row_colors
 CASES=0
 
 def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequisites=True,invalid_object=False,
@@ -469,9 +469,8 @@ def test_case(label, *, offered=(303,),completed=(213,),available=True,prerequis
             assert colors=={i:(COMPLETED_COLOR if not available or i not in special_enabled or any(id in completed for id in ids[(i//2)*2:(i//2)*2+2]) else URGENT_COLOR) for i in range(8)}
         else:
             assert states=={i:v for i,v in enumerate([1,1,1,1,1,1,0,1]) if not(i==0 and (invalid_request or invalid_title))}
-            urgency=URGENT_COLOR if 303 in offered and available and prerequisites else COMPLETED_COLOR
-            expected_colors={0:COMPLETED_COLOR if 207 in completed or alternative_done else KEY_COLOR,1:COMPLETED_COLOR,
-                           2:COMPLETED_COLOR if 303 in completed else urgency,3:URGENT_COLOR if simultaneous and 206 in offered else COMPLETED_COLOR,4:COMPLETED_COLOR,5:COMPLETED_COLOR if 220 in completed else UNLOCKS_COLOR,7:COMPLETED_COLOR if 233 in completed else REWARD_COLOR}
+            palette=(KEY_COLOR,URGENT_COLOR,COMPLETED_COLOR,UNLOCKS_COLOR,REWARD_COLOR)
+            expected_colors=row_colors(palette,completed,offered,available,prerequisites,simultaneous,alternative_done)
             if invalid_request or invalid_title:expected_colors.pop(0)
             assert colors==expected_colors
         request_bytes=[]
